@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAP S/4HANA — Manage Sales & Material Orders</title>
+    <style>
+        :root {
+            --sap-shell: #0a6ed1;
+            --sap-shell-dark: #0854a0;
+            --sap-bg: #eff4f9;
+            --sap-card-bg: #ffffff;
+            --sap-text: #32363a;
+            --sap-text-muted: #6a6d70;
+            --sap-border: #d9e2ec;
+            --sap-accent-blue: #0070f2;
+            --sap-success: #107e3e;
+            --sap-warning: #e9730c;
+            --sap-error: #bb0000;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: "72", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--sap-bg);
+            color: var(--sap-text);
+            line-height: 1.4;
+        }
+
+        /* SAP Fiori Shell Header */
+        header.sap-shell {
+            background-color: var(--sap-shell);
+            color: #ffffff;
+            padding: 0.6rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .sap-shell-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .sap-logo-badge {
+            background-color: #ffffff;
+            color: var(--sap-shell);
+            font-weight: 900;
+            padding: 0.2rem 0.5rem;
+            border-radius: 3px;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+        }
+
+        .sap-app-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .sap-shell-meta {
+            font-size: 0.8rem;
+            opacity: 0.9;
+        }
+
+        /* Subheader Bar */
+        .sap-subheader {
+            background-color: #ffffff;
+            border-bottom: 1px solid var(--sap-border);
+            padding: 0.8rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .sap-subheader h1 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--sap-text);
+        }
+
+        .sap-kpi-container {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .sap-kpi-item {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+
+        .sap-kpi-value {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--sap-accent-blue);
+        }
+
+        .sap-kpi-label {
+            font-size: 0.75rem;
+            color: var(--sap-text-muted);
+            text-transform: uppercase;
+        }
+
+        /* Main Container */
+        main.sap-container {
+            max-width: 1300px;
+            margin: 1.5rem auto;
+            padding: 0 1rem;
+            display: grid;
+            grid-template-columns: 380px 1fr;
+            gap: 1.5rem;
+        }
+
+        /* Banners */
+        .sap-banner {
+            grid-column: 1 / -1;
+            padding: 0.8rem 1.2rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-weight: 500;
+        }
+
+        .sap-banner-error {
+            background-color: #fbeae5;
+            color: var(--sap-error);
+            border-left: 4px solid var(--sap-error);
+        }
+
+        .sap-banner-success {
+            background-color: #e5f5ea;
+            color: var(--sap-success);
+            border-left: 4px solid var(--sap-success);
+        }
+
+        /* Cards */
+        .sap-card {
+            background: var(--sap-card-bg);
+            border: 1px solid var(--sap-border);
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            padding: 1.2rem;
+        }
+
+        .sap-card-header {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--sap-text);
+            padding-bottom: 0.8rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid var(--sap-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Forms */
+        .sap-form-group {
+            margin-bottom: 1rem;
+        }
+
+        .sap-form-group label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--sap-text);
+            margin-bottom: 0.3rem;
+        }
+
+        .sap-form-group input, 
+        .sap-form-group select {
+            width: 100%;
+            padding: 0.5rem 0.7rem;
+            font-size: 0.85rem;
+            border: 1px solid var(--sap-border);
+            border-radius: 3px;
+            background-color: #ffffff;
+            color: var(--sap-text);
+            outline: none;
+            transition: border-color 0.15s;
+        }
+
+        .sap-form-group input:focus, 
+        .sap-form-group select:focus {
+            border-color: var(--sap-accent-blue);
+            box-shadow: 0 0 0 1px var(--sap-accent-blue);
+        }
+
+        .sap-btn {
+            display: inline-block;
+            padding: 0.55rem 1rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            border-radius: 3px;
+            cursor: pointer;
+            border: 1px solid transparent;
+            text-decoration: none;
+            text-align: center;
+            transition: all 0.15s;
+        }
+
+        .sap-btn-primary {
+            background-color: var(--sap-shell);
+            color: #ffffff;
+            width: 100%;
+        }
+
+        .sap-btn-primary:hover {
+            background-color: var(--sap-shell-dark);
+        }
+
+        .sap-btn-secondary {
+            background-color: #ffffff;
+            color: var(--sap-text);
+            border-color: var(--sap-border);
+            font-size: 0.75rem;
+            padding: 0.3rem 0.6rem;
+        }
+
+        .sap-btn-secondary:hover {
+            background-color: #f7f9fa;
+        }
+
+        .sap-btn-danger {
+            background-color: #ffffff;
+            color: var(--sap-error);
+            border-color: #f7b2b2;
+            font-size: 0.75rem;
+            padding: 0.3rem 0.6rem;
+        }
+
+        .sap-btn-danger:hover {
+            background-color: #fff1f1;
+        }
+
+        /* Order Table */
+        table.sap-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+
+        table.sap-table th {
+            background-color: #f4f7fa;
+            color: var(--sap-text-muted);
+            font-weight: 600;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 0.6rem 0.8rem;
+            text-align: left;
+            border-bottom: 1px solid var(--sap-border);
+        }
+
+        table.sap-table td {
+            padding: 0.75rem 0.8rem;
+            border-bottom: 1px solid #f0f3f6;
+            vertical-align: middle;
+        }
+
+        table.sap-table tr:hover {
+            background-color: #f8fbfe;
+        }
+
+        /* Status Badges */
+        .sap-status-badge {
+            display: inline-block;
+            padding: 0.2rem 0.55rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .status-Submitted {
+            background-color: #fff8e1;
+            color: #b78103;
+        }
+
+        .status-Approved {
+            background-color: #e8f5e9;
+            color: #1b5e20;
+        }
+
+        .status-Dispatched {
+            background-color: #e3f2fd;
+            color: #0d47a1;
+        }
+
+        .status-Completed {
+            background-color: #ede7f6;
+            color: #4a148c;
+        }
+
+        .status-Cancelled {
+            background-color: #ffebee;
+            color: #b71c1c;
+        }
+
+        .status-Draft {
+            background-color: #f5f5f5;
+            color: #616161;
+        }
+
+        .action-cell {
+            display: flex;
+            gap: 0.4rem;
+        }
+
+        footer.sap-footer {
+            text-align: center;
+            font-size: 0.75rem;
+            color: var(--sap-text-muted);
+            padding: 2rem 0 1rem;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- SAP Fiori Shell Header -->
+    <header class="sap-shell">
+        <div class="sap-shell-brand">
+            <span class="sap-logo-badge">SAP</span>
+            <span class="sap-app-title">S/4HANA Sales &amp; Material Management</span>
+        </div>
+        <div class="sap-shell-meta">
+            <span>System: <strong>S4H-PRD</strong> | Client: <strong>100</strong> | User: <strong>QA_AUTOMATION</strong></span>
+        </div>
+    </header>
+
+    <!-- Subheader & KPIs -->
+    <div class="sap-subheader">
+        <div>
+            <h1>Manage Material Sales Orders</h1>
+            <p style="font-size: 0.8rem; color: var(--sap-text-muted);">Process and verify material movements, order-to-cash approvals, and lifecycle dispatch</p>
+        </div>
+        <div class="sap-kpi-container">
+            <div class="sap-kpi-item">
+                <span class="sap-kpi-value" id="kpi-total-orders">{{ total_orders }}</span>
+                <span class="sap-kpi-label">Total Orders</span>
+            </div>
+            <div class="sap-kpi-item">
+                <span class="sap-kpi-value" id="kpi-pending-approval" style="color: var(--sap-warning);">{{ pending_approval }}</span>
+                <span class="sap-kpi-label">Pending Approval</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="sap-container">
+
+        <!-- Notification Banners -->
+        {% if error_msg %}
+        <div class="sap-banner sap-banner-error" data-testid="error-banner" id="error-banner">
+            <span>⚠️ <strong>Error:</strong> {{ error_msg }}</span>
+        </div>
+        {% endif %}
+
+        {% if success_msg %}
+        <div class="sap-banner sap-banner-success" data-testid="success-banner" id="success-banner">
+            <span>✅ <strong>Success:</strong> {{ success_msg }}</span>
+        </div>
+        {% endif %}
+
+        <!-- Left Column: Create Order Form -->
+        <section class="sap-card">
+            <div class="sap-card-header">
+                <span>Create Sales Order</span>
+                <span style="font-size: 0.75rem; color: var(--sap-text-muted);">VA01 Fast-Entry</span>
+            </div>
+
+            <form action="/orders/create" method="POST" id="create-order-form" novalidate>
+                <div class="sap-form-group">
+                    <label for="customer_id">Sold-to Party (Customer ID) *</label>
+                    <input type="text" id="customer_id" name="customer_id" data-testid="customer-id-input" placeholder="e.g. CUST-3001" required>
+                </div>
+
+                <div class="sap-form-group">
+                    <label for="customer_name">Customer Legal Name</label>
+                    <input type="text" id="customer_name" name="customer_name" data-testid="customer-name-input" placeholder="e.g. Acme Fabrication Corp">
+                </div>
+
+                <div class="sap-form-group">
+                    <label for="material_id">Material Number *</label>
+                    <select id="material_id" name="material_id" data-testid="material-select" required>
+                        <option value="">-- Select Material from SAP Catalog --</option>
+                        {% for mat_id, mat in catalog.items() %}
+                        <option value="{{ mat_id }}">{{ mat_id }} - {{ mat.name }} (${{ "%.2f"|format(mat.unit_price) }} / {{ mat.unit }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="sap-form-group">
+                    <label for="quantity">Order Quantity *</label>
+                    <input type="number" id="quantity" name="quantity" data-testid="quantity-input" placeholder="e.g. 5" min="1" max="500" required>
+                </div>
+
+                <div class="sap-form-group">
+                    <label for="priority">Delivery Priority</label>
+                    <select id="priority" name="priority" data-testid="priority-select">
+                        <option value="Standard">Standard (5 Days)</option>
+                        <option value="Urgent">Urgent (48 Hours)</option>
+                        <option value="Express">Express (Next Day)</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="sap-btn sap-btn-primary" data-testid="submit-order-button" id="submit-order-btn">
+                    Submit Sales Order
+                </button>
+            </form>
+
+            <hr style="margin: 1.5rem 0; border: none; border-top: 1px dashed var(--sap-border);">
+
+            <!-- Database Seed Reset (for automated tests) -->
+            <form action="/reset" method="POST" id="reset-db-form">
+                <button type="submit" class="sap-btn sap-btn-secondary" style="width: 100%;" data-testid="reset-db-button" id="reset-db-btn">
+                    🔄 Reset Database to Initial Seed
+                </button>
+            </form>
+        </section>
+
+        <!-- Right Column: Orders Lifecycle Table -->
+        <section class="sap-card" data-testid="order-table">
+            <div class="sap-card-header">
+                <span>Active Sales &amp; Material Orders</span>
+                <span style="font-size: 0.75rem; color: var(--sap-text-muted);">Real-time ERP Ledger</span>
+            </div>
+
+            <table class="sap-table" data-testid="orders-table" id="orders-table">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Sold-to Party</th>
+                        <th>Material &amp; Qty</th>
+                        <th>Net Value</th>
+                        <th>Lifecycle Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                    <tr data-testid="order-row-{{ order.order_id }}" id="row-{{ order.order_id }}">
+                        <td><strong>{{ order.order_id }}</strong><br><small style="color: var(--sap-text-muted);">{{ order.created_at }}</small></td>
+                        <td>{{ order.customer_name }}<br><small style="color: var(--sap-text-muted);">{{ order.customer_id }}</small></td>
+                        <td>
+                            {% for item in order.items %}
+                            <div>{{ item.material_name }}</div>
+                            <small style="color: var(--sap-text-muted);">Qty: {{ item.quantity }} {{ item.unit }} @ ${{ "%.2f"|format(item.unit_price) }}</small>
+                            {% endfor %}
+                        </td>
+                        <td data-testid="net-value-cell"><strong>${{ "%.2f"|format(order.total_amount) }}</strong></td>
+                        <td data-testid="order-status-cell">
+                            <span class="sap-status-badge status-{{ order.status.value }}" data-testid="status-badge-{{ order.order_id }}">
+                                {{ order.status.value }}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="action-cell">
+                                {% if order.status.value not in ['Completed', 'Cancelled'] %}
+                                <form action="/orders/{{ order.order_id }}/advance" method="POST" style="display:inline;">
+                                    <button type="submit" class="sap-btn sap-btn-secondary" data-testid="advance-btn-{{ order.order_id }}">
+                                        {% if order.status.value == 'Submitted' %}Approve{% elif order.status.value == 'Approved' %}Dispatch{% else %}Complete{% endif %}
+                                    </button>
+                                </form>
+                                <form action="/orders/{{ order.order_id }}/cancel" method="POST" style="display:inline;">
+                                    <button type="submit" class="sap-btn sap-btn-danger" data-testid="cancel-btn-{{ order.order_id }}">
+                                        Cancel
+                                    </button>
+                                </form>
+                                {% else %}
+                                <small style="color: var(--sap-text-muted);">Locked</small>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+
+    </main>
+
+    <footer class="sap-footer">
+        <p>Let me TEST it....! | SAP Fiori Test Target Application | Running locally for Agentic Playwright QA</p>
+    </footer>
+
+</body>
+</html>
+

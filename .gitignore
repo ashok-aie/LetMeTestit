@@ -1,0 +1,43 @@
+# Python virtual environment
+.venv/
+venv/
+ENV/
+env/
+
+# Python bytecode & cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+
+# Environment variables & secrets
+.env
+.env.local
+*.pem
+*.key
+
+# Application runtime database & logs
+testpilot.db
+testpilot.db-journal
+testpilot.db-wal
+*.db
+*.sqlite3
+
+# Playwright & execution artifacts
+artifacts/runs/
+artifacts/logs/
+*.zip
+*.png
+*.log
+*.rdp
+
+# Streamlit config & cache
+.streamlit/secrets.toml
+
+# IDE & OS files
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
