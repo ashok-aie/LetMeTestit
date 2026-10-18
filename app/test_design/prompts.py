@@ -4,6 +4,8 @@ Includes XML structural delimiters to defend against prompt injection
 and specifies strict Pydantic JSON schema constraints for local LLMs.
 """
 import json
+from typing import Optional
+from app.config import settings
 from app.models.requirements import JiraRequirement, AcceptanceCriterion
 from app.models.test_suite import ActionType, LocatorStrategy, TestCategory
 
@@ -21,38 +23,45 @@ RULES & CONSTRAINTS:
    - "click": Clicks an element or button (requires selector_value or role_name)
    - "select_option": Selects a dropdown value (requires selector_value and input_value)
    - "assert_text": Asserts visible text content (requires expected_value, and optional selector_value)
-   - "wait_for": Bounded wait for element state (requires selector_value)
+   - "wait_for": Bounded wait for element state or duration pause (e.g. input_value="20s" or "20000" or selector_value="#some-id")
 4. ALLOWED LOCATOR STRATEGIES:
-   - "test_id": Preferred! For data-testid attributes (e.g. "customer-id-input", "customer-name-input", "material-select", "quantity-input", "priority-select", "submit-order-button", "success-banner", "error-banner", "order-table")
+   - "test_id": For data-testid attributes (e.g. "customer-id-input", "material-select", etc.)
+   - "css": Standard CSS selector (e.g. "#USERNAME_FIELD-inner", "#PASSWORD_FIELD-inner", "#LOGIN_LINK", "#meAreaHeaderButton", "#logoutBtn")
    - "role": For accessible ARIA roles
    - "text": For visible text matches
-   - "css": Standard CSS selector (fallback)
-5. TEST COVERAGE FOR ALL ACCEPTANCE CRITERIA:
-   - Synthesize at least one dedicated TestCase for EACH Acceptance Criterion provided (e.g., TC-01 for AC-01, TC-02 for AC-02, TC-03 for AC-03...).
-   - Do NOT restrict to only 2 test cases; cover all provided criteria with distinct positive and negative flows.
-   - For Positive flows:
-     * Category must be "positive"
-     * Populate all mandatory inputs: customer-id-input (e.g. "CUST-3001"), customer-name-input, material-select ("MAT-1001"), quantity-input ("5"), priority-select ("Standard")
-     * Click submit-order-button
-     * Assert data-testid="success-banner" contains "created successfully"
-   - For Negative / Validation flows:
+5. TEST DESIGN & DOMAIN GUIDELINES:
+   - Synthesize test cases strictly aligned with the provided Acceptance Criteria without hallucinating unrelated fields or workflows.
+   - For SAP S/4HANA Login / Session / Logout workflows:
+     * Navigate to the target SAP URL
+     * Fill SAP username into selector_value="#USERNAME_FIELD-inner"
+     * Fill SAP password into selector_value="#PASSWORD_FIELD-inner"
+     * Click selector_value="#LOGIN_LINK" (Log On button)
+     * Assert text: verify landing page or header indicates successful login
+     * If wait/pause is specified (e.g. wait 20 sec): action="wait_for", input_value="20s", description="Wait for 20 seconds on Launchpad"
+     * Logout: click user profile actions menu selector_value="#meAreaHeaderButton", click selector_value="button:has-text('Sign Out'), #logoutBtn", confirm dialog, assert returned to logon screen
+   - For ERP / Form transactional workflows (e.g. Sales/Material Orders):
+     * Populate relevant form inputs
+     * Click submit button
+     * Assert success banner or error banner
+   - For Negative Validation flows:
      * Category must be "negative"
-     * Test validation (e.g. leave customer-id-input empty, or set invalid quantity)
-     * Click submit-order-button
-     * Assert data-testid="error-banner" contains "Validation Error"
-   - Keep step sequences focused (4-6 steps per test scenario) to ensure fast and deterministic execution.
+     * Provide invalid/missing inputs or incorrect credentials
+     * Trigger submission/login
+     * Assert error banner or validation message
 6. FORMAT: Respond ONLY with a valid JSON object matching the requested schema. No commentary, no markdown ticks around the JSON.
 """
 
 
 def format_requirement_prompt(
     requirement: JiraRequirement,
-    target_base_url: str = "http://localhost:8000",
+    target_base_url: Optional[str] = None,
 ) -> str:
     """
     Constructs the prompt for the LLM to generate the TestSuite JSON.
     Wraps requirement data in XML delimiters to protect against prompt injection.
     """
+    base_url = target_base_url or settings.sap_fiori_url
+    safe_url = base_url if ("?" in base_url or "#" in base_url) else base_url.rstrip("/") + "/"
     clean_summary = requirement.summary.replace("</untrusted_requirement>", "").strip()
     clean_desc = requirement.description_text.replace("</untrusted_requirement>", "").strip()
 
@@ -62,7 +71,14 @@ def format_requirement_prompt(
             ac_lines.append(f"- [{ac.id}] {ac.text}")
     ac_content = "\n".join(ac_lines) if ac_lines else f"- [AC-01] {clean_summary}"
 
-    return f"""Target Application Base URL: {target_base_url}
+    try:
+        from app.storage.repository import get_full_knowledge_base_context
+        kb_ctx = get_full_knowledge_base_context()
+        learned_section = f"\n{kb_ctx}\n" if kb_ctx else ""
+    except Exception:
+        learned_section = ""
+
+    return f"""Target Application Base URL: {safe_url}
 
 <untrusted_requirement>
 Jira Issue Key: {requirement.key}
@@ -74,7 +90,7 @@ Description:
 Extracted Acceptance Criteria to Cover:
 {ac_content}
 </untrusted_requirement>
-
+{learned_section}
 TASK:
 Synthesize a complete TestSuite JSON object covering ALL Acceptance Criteria listed above.
 Generate a dedicated TestCase for EACH Acceptance Criterion with matching "source_ac_id".
@@ -98,7 +114,7 @@ REQUIRED JSON SCHEMA:
         {{
           "step_number": 1,
           "action": "navigate",
-          "input_value": "{target_base_url}/",
+          "input_value": "{safe_url}",
           "description": "Navigate to the order screen"
         }},
         {{
@@ -172,12 +188,14 @@ def format_single_ac_prompt(
     ac: AcceptanceCriterion,
     tc_index: int,
     total_acs: int,
-    target_base_url: str = "http://localhost:8000",
+    target_base_url: Optional[str] = None,
 ) -> str:
     """
     Constructs a targeted prompt for synthesizing exactly ONE TestCase for a specific Acceptance Criterion.
     Handles both Positive and Negative/Boundary test cases with precise few-shot JSON step examples.
     """
+    base_url = target_base_url or settings.sap_fiori_url
+    safe_url = base_url if ("?" in base_url or "#" in base_url) else base_url.rstrip("/") + "/"
     clean_summary = requirement.summary.replace("</untrusted_requirement>", "").strip()
     ac_lower = ac.text.lower()
     is_negative = any(w in ac_lower for w in ["invalid", "without", "missing", "error", "exceed", "blank", "cannot", "fail", "reject", "negative", "boundary", "mandatory", "zero", "limit"])
@@ -190,7 +208,7 @@ def format_single_ac_prompt(
     {{
       "step_number": 1,
       "action": "navigate",
-      "input_value": "{target_base_url}/",
+      "input_value": "{safe_url}",
       "description": "Open SAP order screen"
     }},
     {{
@@ -239,7 +257,7 @@ def format_single_ac_prompt(
     {{
       "step_number": 1,
       "action": "navigate",
-      "input_value": "{target_base_url}/",
+      "input_value": "{safe_url}",
       "description": "Open SAP order screen"
     }},
     {{
@@ -288,7 +306,7 @@ def format_single_ac_prompt(
     {{
       "step_number": 1,
       "action": "navigate",
-      "input_value": "{target_base_url}/",
+      "input_value": "{safe_url}",
       "description": "Open SAP order screen"
     }},
     {{
@@ -329,7 +347,7 @@ def format_single_ac_prompt(
     {{
       "step_number": 1,
       "action": "navigate",
-      "input_value": "{target_base_url}/",
+      "input_value": "{safe_url}",
       "description": "Open SAP order screen"
     }},
     {{
@@ -373,12 +391,181 @@ def format_single_ac_prompt(
     }}
   ]"""
     else:
-        guidance = "- For positive flow: Fill customer-id-input ('CUST-3001'), customer-name-input ('Acme Industrial Corp'), select material-select ('MAT-1001'), fill quantity-input ('5'), click submit-order-button, and assert data-testid='success-banner' contains 'created successfully'."
-        sample_steps_json = f"""[
+        req_corpus = (clean_summary + " " + ac_lower).lower()
+        if any(k in req_corpus for k in ["quotation", "service quotation", "manage service", "tile"]):
+            guidance = "- For SAP Tile Navigation (e.g. Manage Service Quotations): Navigate to SAP URL, fill '#USERNAME_FIELD-inner' with username, fill '#PASSWORD_FIELD-inner' with password, click '#LOGIN_LINK', assert body has 'Home', click tile with locator_strategy='text' and selector_value='Manage Service Quotations', assert body contains 'Service Quotations', wait for specified duration using wait_for (input_value='20s'), click '#userActionsMenuHeaderButton, #meAreaHeaderButton' (User Profile), click 'Sign Out', confirm with 'OK', and assert returned to sign out screen."
+            sample_steps_json = f"""[
     {{
       "step_number": 1,
       "action": "navigate",
-      "input_value": "{target_base_url}/",
+      "input_value": "{safe_url}",
+      "description": "Open SAP Fiori Launchpad"
+    }},
+    {{
+      "step_number": 2,
+      "action": "fill",
+      "locator_strategy": "css",
+      "selector_value": "#USERNAME_FIELD-inner",
+      "input_value": "MYRAR1",
+      "description": "Enter SAP Username"
+    }},
+    {{
+      "step_number": 3,
+      "action": "fill",
+      "locator_strategy": "css",
+      "selector_value": "#PASSWORD_FIELD-inner",
+      "input_value": "Pass23#$",
+      "description": "Enter SAP Password"
+    }},
+    {{
+      "step_number": 4,
+      "action": "click",
+      "locator_strategy": "css",
+      "selector_value": "#LOGIN_LINK",
+      "description": "Click Log On button"
+    }},
+    {{
+      "step_number": 5,
+      "action": "assert_text",
+      "locator_strategy": "css",
+      "selector_value": "body",
+      "expected_value": "Home",
+      "description": "Assert SAP Fiori Launchpad loaded"
+    }},
+    {{
+      "step_number": 6,
+      "action": "click",
+      "locator_strategy": "text",
+      "selector_value": "Manage Service Quotations",
+      "description": "Click Manage Service Quotations tile"
+    }},
+    {{
+      "step_number": 7,
+      "action": "assert_text",
+      "locator_strategy": "css",
+      "selector_value": "body",
+      "expected_value": "Service Quotations",
+      "description": "Assert Service Quotations page loaded"
+    }},
+    {{
+      "step_number": 8,
+      "action": "wait_for",
+      "input_value": "20s",
+      "description": "Wait for 20 seconds on Service Quotations screen"
+    }},
+    {{
+      "step_number": 9,
+      "action": "click",
+      "locator_strategy": "css",
+      "selector_value": "#userActionsMenuHeaderButton, #meAreaHeaderButton",
+      "description": "Click User Profile Avatar Menu"
+    }},
+    {{
+      "step_number": 10,
+      "action": "click",
+      "locator_strategy": "text",
+      "selector_value": "Sign Out",
+      "description": "Click Sign Out"
+    }},
+    {{
+      "step_number": 11,
+      "action": "click",
+      "locator_strategy": "text",
+      "selector_value": "OK",
+      "description": "Confirm Sign Out dialog"
+    }},
+    {{
+      "step_number": 12,
+      "action": "assert_text",
+      "locator_strategy": "css",
+      "selector_value": "body",
+      "expected_value": "signed out",
+      "description": "Verify returned to sign out / logoff screen"
+    }}
+  ]"""
+        elif any(k in req_corpus for k in ["login", "logon", "logout", "sign out", "sign in", "authenticate"]):
+            guidance = "- For SAP Login, Wait, and Logout flow: Navigate to SAP URL, fill '#USERNAME_FIELD-inner' with username, fill '#PASSWORD_FIELD-inner' with password, click '#LOGIN_LINK', wait for specified duration using wait_for (input_value='20s'), click '#meAreaHeaderButton' (User Profile), click 'button:has-text(\"Sign Out\"), #logoutBtn', confirm sign out dialog, and assert returned to Logon screen."
+            sample_steps_json = f"""[
+    {{
+      "step_number": 1,
+      "action": "navigate",
+      "input_value": "{safe_url}",
+      "description": "Open SAP Fiori Launchpad"
+    }},
+    {{
+      "step_number": 2,
+      "action": "fill",
+      "locator_strategy": "css",
+      "selector_value": "#USERNAME_FIELD-inner",
+      "input_value": "MYRAR1",
+      "description": "Enter SAP Username"
+    }},
+    {{
+      "step_number": 3,
+      "action": "fill",
+      "locator_strategy": "css",
+      "selector_value": "#PASSWORD_FIELD-inner",
+      "input_value": "Pass23#$",
+      "description": "Enter SAP Password"
+    }},
+    {{
+      "step_number": 4,
+      "action": "click",
+      "locator_strategy": "css",
+      "selector_value": "#LOGIN_LINK",
+      "description": "Click Log On button"
+    }},
+    {{
+      "step_number": 5,
+      "action": "assert_text",
+      "locator_strategy": "css",
+      "selector_value": "body",
+      "expected_value": "Home",
+      "description": "Assert SAP Fiori Launchpad loaded"
+    }},
+    {{
+      "step_number": 6,
+      "action": "wait_for",
+      "input_value": "20s",
+      "description": "Wait for 20 seconds on Launchpad"
+    }},
+    {{
+      "step_number": 7,
+      "action": "click",
+      "locator_strategy": "css",
+      "selector_value": "#userActionsMenuHeaderButton, #meAreaHeaderButton",
+      "description": "Click User Profile Avatar Menu"
+    }},
+    {{
+      "step_number": 8,
+      "action": "click",
+      "locator_strategy": "text",
+      "selector_value": "Sign Out",
+      "description": "Click Sign Out"
+    }},
+    {{
+      "step_number": 9,
+      "action": "click",
+      "locator_strategy": "text",
+      "selector_value": "OK",
+      "description": "Confirm Sign Out dialog"
+    }},
+    {{
+      "step_number": 10,
+      "action": "assert_text",
+      "locator_strategy": "css",
+      "selector_value": "body",
+      "expected_value": "logged off",
+      "description": "Verify returned to Logoff screen"
+    }}
+  ]"""
+        else:
+            guidance = "- For positive flow: Fill customer-id-input ('CUST-3001'), customer-name-input ('Acme Industrial Corp'), select material-select ('MAT-1001'), fill quantity-input ('5'), click submit-order-button, and assert data-testid='success-banner' contains 'created successfully'."
+            sample_steps_json = f"""[
+    {{
+      "step_number": 1,
+      "action": "navigate",
+      "input_value": "{safe_url}",
       "description": "Open SAP order screen"
     }},
     {{
@@ -430,7 +617,7 @@ def format_single_ac_prompt(
     }}
   ]"""
 
-    return f"""Target Application Base URL: {target_base_url}
+    return f"""Target Application Base URL: {safe_url}
 
 <untrusted_requirement>
 Jira Story: {requirement.key} — {clean_summary}
@@ -454,7 +641,7 @@ REQUIRED JSON SCHEMA (return ONLY this JSON object):
   "title": "Validation of {ac.id}",
   "objective": "Detailed validation objective for {ac.id}",
   "category": "{category_str}",
-  "preconditions": ["User navigates to {target_base_url}/"],
+  "preconditions": ["User navigates to {safe_url}"],
   "test_data": {{"customer_id": "CUST-3001"}},
   "steps": {sample_steps_json},
   "expected_result": "System behavior matches [{ac.id}]",

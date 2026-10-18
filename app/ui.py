@@ -54,36 +54,26 @@ from app.browser.recorder import (
 )
 from app.policies.guardrails import PolicyEngine
 from app.reporting.reporter import ExecutionReportGenerator
+from app.storage.repository import (
+    save_regression_suite,
+    list_regression_suites,
+    load_regression_suite,
+    delete_regression_suite,
+    get_cached_suite_for_requirement,
+    list_reusable_flows,
+    get_reusable_flow_steps,
+    save_reusable_flow,
+    get_learned_selectors,
+    save_learned_selector,
+    list_execution_runs,
+    save_golden_example,
+    list_golden_examples,
+    save_correction,
+    list_corrections,
+    get_testing_standards,
+)
 
 
-# ==============================================================================
-# Background Demo App Helper (Ensures http://127.0.0.1:8000 is always responsive)
-# ==============================================================================
-def is_demo_app_active(url: str = "http://127.0.0.1:8000/") -> bool:
-    try:
-        req = urllib.request.Request(url, headers={"User-Agent": "LetMeTestIt-Health"})
-        with urllib.request.urlopen(req, timeout=1.5) as resp:
-            return resp.status == 200
-    except Exception:
-        return False
-
-
-def start_demo_app_background():
-    """Starts the local SAP S/4HANA FastAPI demo app in an embedded daemon thread."""
-    if not is_demo_app_active():
-        import uvicorn
-        from demo_app.main import app as demo_fastapi_app
-
-        def _run():
-            uvicorn.run(demo_fastapi_app, host="127.0.0.1", port=8000, log_level="error")
-
-        server_thread = threading.Thread(target=_run, daemon=True)
-        server_thread.start()
-        time.sleep(1.0)
-
-
-# Initialize demo app in background
-start_demo_app_background()
 
 
 # ==============================================================================
@@ -114,7 +104,7 @@ if "synthesis_logs" not in st.session_state:
 
 
 # ==============================================================================
-# Custom CSS Styling (Completely hide sidebar and provide clean modern UI)
+# Custom CSS Styling (Johnson & Johnson Red & White Theme)
 # ==============================================================================
 st.markdown(
     """
@@ -125,36 +115,65 @@ st.markdown(
     }
 
     :root {
-        --primary: #0284c7;
-        --primary-dark: #0369a1;
-        --primary-light: #f0f9ff;
-        --border-color: #e2e8f0;
-        --text-main: #0f172a;
-        --text-muted: #64748b;
+        --primary: #D51900;           /* Signature J&J Scarlet Red */
+        --primary-dark: #B81500;      /* Deep Crimson */
+        --primary-light: #FFF1F0;     /* Soft warm white / light crimson tint */
+        --primary-border: #FFCCC7;    /* Subtle red border */
+        --border-color: #E5E7EB;
+        --text-main: #111827;
+        --text-muted: #64748B;
     }
 
-    .main-title {
-        font-size: 2.2rem;
-        font-weight: 700;
-        color: #0f172a;
-        margin-bottom: 0.1rem;
+    /* Johnson & Johnson Header Banner */
+    .jnj-banner {
+        background: #FFFFFF;
+        border: 1px solid #E5E7EB;
+        border-top: 4px solid #D51900;
+        border-radius: 10px;
+        padding: 0.95rem 1.4rem;
+        margin-bottom: 0.75rem;
+        box-shadow: 0 4px 14px rgba(213, 25, 0, 0.06);
+    }
+    .jnj-brand-row {
+        display: flex;
+        align-items: center;
+        margin-bottom: 0.35rem;
+    }
+    .jnj-badge {
+        background-color: #D51900;
+        color: #FFFFFF;
+        font-size: 0.78rem;
+        font-weight: 600;
+        padding: 3px 10px;
+        border-radius: 4px;
+        letter-spacing: 0.2px;
+        text-transform: none;
+        display: inline-block;
+        font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    .jnj-banner-title {
+        font-size: 2.15rem;
+        font-weight: 800;
+        color: #111827;
+        margin: 0;
+        line-height: 1.2;
         letter-spacing: -0.5px;
     }
-    .sub-title {
-        font-size: 1.0rem;
-        color: #64748b;
-        margin-bottom: 0.8rem;
-        font-weight: 400;
+    .jnj-highlight {
+        color: #D51900;
+        font-style: italic;
+        font-weight: 900;
     }
     .step-log-item {
         padding: 0.5rem 0.8rem;
         margin: 0.25rem 0;
-        border-radius: 6px;
-        background-color: #f8fafc;
-        border-left: 3px solid #0284c7;
+        border-radius: 0 6px 6px 0;
+        background-color: #FFFFFF;
+        border: 1px solid #F3F4F6;
+        border-left: 3px solid #D51900;
         font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
         font-size: 0.85rem;
-        color: #1e293b;
+        color: #1E293B;
         box-shadow: 0 1px 2px rgba(0,0,0,0.02);
     }
     .badge-pass {
@@ -162,9 +181,9 @@ st.markdown(
         padding: 2px 8px;
         font-size: 0.75rem;
         font-weight: 600;
-        color: #15803d;
-        background-color: #dcfce7;
-        border: 1px solid #bbf7d0;
+        color: #15803D;
+        background-color: #DCFCE7;
+        border: 1px solid #BBF7D0;
         border-radius: 9999px;
     }
     .badge-fail {
@@ -172,22 +191,101 @@ st.markdown(
         padding: 2px 8px;
         font-size: 0.75rem;
         font-weight: 600;
-        color: #b91c1c;
-        background-color: #fee2e2;
-        border: 1px solid #fecaca;
+        color: #B91C1C;
+        background-color: #FEE2E2;
+        border: 1px solid #FECACA;
         border-radius: 9999px;
     }
-    div[data-testid="stRadio"] > div[role="radiogroup"] {
-        gap: 8px;
-        margin-bottom: 1rem;
+
+    /* Tabs styling - Johnson & Johnson Red & White pills */
+    div[data-testid="stRadio"] div[role="radiogroup"] {
+        gap: 10px !important;
+        margin-bottom: 1.2rem !important;
+        flex-wrap: wrap !important;
     }
-    div[data-testid="stRadio"] > div[role="radiogroup"] > label {
-        background-color: #f8fafc;
-        border: 1px solid #e2e8f0;
-        padding: 8px 18px;
-        border-radius: 6px;
-        cursor: pointer;
-        font-weight: 600;
+    div[data-testid="stRadio"] label {
+        background-color: #FFFFFF !important;
+        border: 1px solid #E5E7EB !important;
+        padding: 8px 18px !important;
+        border-radius: 8px !important;
+        cursor: pointer !important;
+        font-weight: 600 !important;
+        color: #374151 !important;
+        transition: all 0.2s ease-in-out !important;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+    }
+    div[data-testid="stRadio"] label:hover {
+        border-color: #D51900 !important;
+        background-color: #FFF1F0 !important;
+        color: #D51900 !important;
+        transform: translateY(-1px);
+    }
+    div[data-testid="stRadio"] label:has(input:checked) {
+        background-color: #D51900 !important;
+        border-color: #D51900 !important;
+        color: #FFFFFF !important;
+        box-shadow: 0 3px 10px rgba(213, 25, 0, 0.3) !important;
+    }
+    div[data-testid="stRadio"] label:has(input:checked) p {
+        color: #FFFFFF !important;
+        font-weight: 700 !important;
+    }
+    div[data-testid="stRadio"] div[role="radiogroup"] label > div > div:first-child {
+        display: none !important;
+    }
+
+    /* Popover Settings Button */
+    div[data-testid="stPopover"] > button {
+        border-radius: 8px !important;
+        border: 1px solid #D51900 !important;
+        color: #D51900 !important;
+        background-color: #FFFFFF !important;
+        font-weight: 700 !important;
+        box-shadow: 0 2px 6px rgba(213, 25, 0, 0.08) !important;
+        transition: all 0.2s ease-in-out !important;
+    }
+    div[data-testid="stPopover"] > button:hover {
+        background-color: #FFF1F0 !important;
+        border-color: #B81500 !important;
+        color: #B81500 !important;
+    }
+
+    /* Buttons styling - Johnson & Johnson Primary Red */
+    button[kind="primary"], .stButton > button[type="primary"] {
+        background-color: #D51900 !important;
+        border-color: #D51900 !important;
+        color: #FFFFFF !important;
+        font-weight: 600 !important;
+        border-radius: 6px !important;
+        box-shadow: 0 2px 5px rgba(213, 25, 0, 0.22) !important;
+        transition: all 0.2s ease-in-out !important;
+    }
+    button[kind="primary"]:hover, .stButton > button[type="primary"]:hover {
+        background-color: #B81500 !important;
+        border-color: #B81500 !important;
+        box-shadow: 0 4px 12px rgba(213, 25, 0, 0.35) !important;
+    }
+    button[kind="secondary"], .stButton > button[kind="secondary"] {
+        background-color: #FFFFFF !important;
+        border: 1px solid #D51900 !important;
+        color: #D51900 !important;
+        font-weight: 600 !important;
+        border-radius: 6px !important;
+    }
+    button[kind="secondary"]:hover, .stButton > button[kind="secondary"]:hover {
+        background-color: #FFF1F0 !important;
+        border-color: #B81500 !important;
+        color: #B81500 !important;
+    }
+
+    /* Expanders styling */
+    div[data-testid="stExpander"] {
+        background-color: #FFFFFF !important;
+        border: 1px solid #E5E7EB !important;
+        border-radius: 8px !important;
+    }
+    div[data-testid="stExpander"]:hover {
+        border-color: #FFCCC7 !important;
     }
     </style>
     """,
@@ -198,11 +296,22 @@ st.markdown(
 # ==============================================================================
 # Header with Right-Side Three-Dot Menu (Replacing Left Sidebar)
 # ==============================================================================
-header_col1, header_col2 = st.columns([11, 1])
+header_col1, header_col2 = st.columns([11, 1], vertical_alignment="center")
 
 with header_col1:
-    st.markdown('<div class="main-title">Let me TEST it....!</div>', unsafe_allow_html=True)
-    st.markdown('<div class="sub-title">Agentic Quality Engineering Platform</div>', unsafe_allow_html=True)
+    st.markdown(
+        """
+        <div class="jnj-banner">
+            <div class="jnj-banner-title">
+                Let me <span class="jnj-highlight">TEST</span> it....!
+            </div>
+            <div class="jnj-brand-row" style="margin-top: 0.4rem; margin-bottom: 0;">
+                <span class="jnj-badge">Agentic Quality Engineering Platform</span>
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
 with header_col2:
     with st.popover("⋮", use_container_width=True):
@@ -214,14 +323,11 @@ with header_col2:
         else:
             st.warning("**Jira Cloud:** Disconnected / Token needed")
 
-        demo_online = is_demo_app_active()
-        if demo_online:
-            st.success("**Target ERP:** Online (Port 8000)")
-        else:
-            st.error("**Target ERP:** Offline")
-            if st.button("Start SAP Demo App", key="menu_start_demo_app"):
-                start_demo_app_background()
-                st.rerun()
+        st.success(
+            f"**Target System:** SAP S/4HANA\n"
+            f"- Host: `{settings.sap_host_domain}`\n"
+            f"- Client: `{settings.sap_client}` | User: `{settings.sap_username or 'MYRAR1'}`"
+        )
 
         st.markdown("---")
         st.markdown("### Observability & Telemetry")
@@ -257,15 +363,6 @@ with header_col2:
                 f"- Failed: `{st.session_state.execution_run.failed_tests}`"
             )
 
-        st.markdown("---")
-        if st.button("Reset Demo Database", key="menu_reset_demo_db"):
-            try:
-                req = urllib.request.Request("http://127.0.0.1:8000/reset", data=b"", method="POST")
-                with urllib.request.urlopen(req) as resp:
-                    st.success("Database reset to clean seed state.")
-            except Exception as e:
-                st.error(f"Reset failed: {e}")
-
 
 # ==============================================================================
 # Seamless Tab Navigation
@@ -273,7 +370,7 @@ with header_col2:
 def navigate_to_tab(tab_name: str) -> None:
     st.session_state["main_tab_selector"] = tab_name
 
-nav_tabs = ["1. Ingest & Design", "2. Review Center", "3. Evidence & Jira Defects"]
+nav_tabs = ["1. Ingest & Design", "2. Review Center", "3. Evidence & Jira Defects", "4. Regression Repository", "5. Admin"]
 selected_nav = st.radio(
     "Navigation Tabs",
     options=nav_tabs,
@@ -290,8 +387,8 @@ if selected_nav == "1. Ingest & Design":
     # --------------------------------------------------------------------------
     # Platform Configuration: Model Selection, Jira User, Browser Settings
     # --------------------------------------------------------------------------
-    with st.expander("Agent & Browser Execution Configuration", expanded=True):
-        cfg_col1, cfg_col2, cfg_col3, cfg_col4 = st.columns(4)
+    with st.expander("Agent Model & Jira Configuration", expanded=True):
+        cfg_col1, cfg_col2, cfg_col3 = st.columns(3)
 
         with cfg_col1:
             provider_choice = st.selectbox(
@@ -323,80 +420,29 @@ if selected_nav == "1. Ingest & Design":
                 key="cfg_jira_user_input",
             )
 
-        with cfg_col4:
-            view_mode_choice = st.radio(
-                "View Mode:",
-                options=["Headed (Watch on Screen)", "Headless (Background)"],
-                index=0,
-                key="cfg_view_mode",
-            )
-
-    # --------------------------------------------------------------------------
-    # Target Environment & Remote Execution (Option 2: Remote Windows Chrome via CDP)
-    # --------------------------------------------------------------------------
-    with st.expander("Target Environment & Remote Execution (Option 2: Remote Chrome CDP)", expanded=True):
-        env_choice = st.radio(
-            "Execution Target Application:",
-            options=["Local Demo ERP (Port 8000)", "Remote Windows Desktop Chrome (SAP Fiori via CDP)"],
-            index=1,
-            key="cfg_env_target",
-            horizontal=True,
-        )
-        if "Remote Windows" in env_choice:
-            st.info("Directing browser execution to Chrome running inside the Remote Desktop VM (`183.82.97.234`).")
-            cdp_col1, cdp_col2 = st.columns([3, 1])
-            with cdp_col1:
-                cdp_url = st.text_input(
-                    "Remote Chrome CDP Endpoint URL:",
-                    value=settings.cdp_endpoint_url or "http://183.82.97.234:9222",
-                    help="URL of remote Chrome debugging port (e.g. http://183.82.97.234:9222 or your tunnel URL)",
-                    key="cdp_url_input",
-                )
-            with cdp_col2:
-                st.write("")
-                st.write("")
-                test_cdp_btn = st.button("Test CDP Connection", key="btn_test_cdp")
-            
-            if test_cdp_btn and cdp_url:
-                try:
-                    from playwright.sync_api import sync_playwright
-                    with sync_playwright() as p:
-                        b = p.chromium.connect_over_cdp(cdp_url.strip(), timeout=5000)
-                        st.success(f"Connected to Remote Chrome successfully! Open contexts: {len(b.contexts)}")
-                        b.close()
-                except Exception as cdp_err:
-                    st.error(f"Could not connect to Remote Chrome at {cdp_url}: {cdp_err}")
-
     st.markdown("---")
-    st.subheader("Jira Requirement Ingestion")
+    st.subheader("JIRA Info")
 
     col1, col2 = st.columns([2, 1])
     with col1:
         issue_key_input = st.text_input(
-            "Jira Issue Key",
+            "JIRA ID",
             value="",
-            placeholder="",
+            placeholder="e.g. SAP-101",
             help="Enter Jira issue key from your project",
             key="jira_issue_key_field",
         )
     with col2:
         st.write("")
         st.write("")
-        fetch_btn = st.button("Ingest Story & Synthesize Tests", type="primary", use_container_width=True)
-
-    synthesize_negative = st.checkbox(
-        "Synthesize Negative & Boundary Scenarios (Mandatory Fields, Plant Limits, Error Banners)",
-        value=True,
-        help="Synthesizes negative test scenarios alongside positive flows to verify application validation rules and error banners.",
-        key="chk_synthesize_negative",
-    )
+        fetch_btn = st.button("Read User Story & Create Test Scripts", type="primary", use_container_width=True)
 
     # Synthesis Execution
     if fetch_btn and issue_key_input:
         st.session_state.synthesis_logs = []
 
         # Step 1: Fetching requirement
-        st.markdown("**Step 1:** Fetching requirement from Jira Cloud...")
+        st.markdown("**Step 1:** Reading User Story from Jira Cloud...")
         try:
             requirement = jira_client.get_issue(issue_key_input.strip())
             st.session_state.jira_requirement = requirement
@@ -405,8 +451,8 @@ if selected_nav == "1. Ingest & Design":
             st.error(f"Could not fetch issue '{issue_key_input}': {e}")
             st.stop()
 
-        # Step 2: Extracting Acceptance Criteria
-        st.markdown("**Step 2:** Normalizing text and extracting Acceptance Criteria...")
+        # Step 2: Extracting Acceptance Criteria dynamically
+        st.markdown("**Step 2:** Extracting Acceptance Criteria from User Story...")
         lines = [l.strip() for l in requirement.description_text.splitlines() if l.strip()]
         ac_list = []
         for idx, line in enumerate(lines, start=1):
@@ -423,44 +469,21 @@ if selected_nav == "1. Ingest & Design":
                     ac_list.append(AcceptanceCriterion(id=f"AC-{len(ac_list)+1:02d}", text=ac_text))
 
         if not ac_list:
-            ac_list.append(AcceptanceCriterion(id="AC-01", text=f"Positive Flow: Verify valid order creation for {requirement.summary}"))
-
-        if synthesize_negative:
-            has_negative_ac = any(
-                any(w in ac.text.lower() for w in ["invalid", "without", "missing", "error", "exceed", "blank", "cannot", "fail", "reject", "negative", "boundary", "mandatory", "zero", "limit"])
-                for ac in ac_list
-            )
-            if not has_negative_ac:
-                ac_list.append(AcceptanceCriterion(
-                    id=f"AC-{len(ac_list)+1:02d}",
-                    text="Negative Validation: Rejects submission and displays error when mandatory Sold-to Party (Customer ID) is missing",
-                ))
-                ac_list.append(AcceptanceCriterion(
-                    id=f"AC-{len(ac_list)+1:02d}",
-                    text="Negative Boundary: Rejects submission and displays error when order quantity exceeds plant limit (max 500)",
-                ))
-                ac_list.append(AcceptanceCriterion(
-                    id=f"AC-{len(ac_list)+1:02d}",
-                    text="Negative Validation: Rejects submission and displays error when order quantity is zero or negative",
-                ))
+            ac_list.append(AcceptanceCriterion(id="AC-01", text=requirement.summary.strip()))
 
         requirement.acceptance_criteria = ac_list
         st.session_state.acceptance_criteria = ac_list
-        pos_count = sum(1 for ac in ac_list if not any(w in ac.text.lower() for w in ["invalid", "without", "missing", "error", "exceed", "blank", "cannot", "fail", "reject", "negative", "boundary", "mandatory", "zero", "limit"]))
-        neg_count = len(ac_list) - pos_count
-        st.write(f"Extracted **{len(ac_list)}** Acceptance Criteria (**{pos_count}** Positive, **{neg_count}** Negative / Boundary).")
+        st.write(f"Extracted **{len(ac_list)}** Acceptance Criteria dynamically from `{requirement.key}`.")
 
-        # Show Requirement Description AND Extracted Acceptance Criteria together right here after Step 1
+        # Show Requirement Description AND Extracted Acceptance Criteria together
         with st.expander(f"Requirement Details: `{requirement.key}` — {requirement.summary}", expanded=True):
             st.markdown(requirement.description_text)
             st.markdown("#### Extracted Acceptance Criteria")
             for ac in requirement.acceptance_criteria:
-                is_neg_ac = any(w in ac.text.lower() for w in ["invalid", "without", "missing", "error", "exceed", "blank", "cannot", "fail", "reject", "negative", "boundary", "mandatory", "zero", "limit"])
-                ac_badge = '<span class="badge-fail" style="background:#fef3c7; color:#92400e; border-color:#fde68a;">NEGATIVE</span>' if is_neg_ac else '<span class="badge-pass">POSITIVE</span>'
-                st.markdown(f"**[{ac.id}]** {ac_badge} {ac.text}", unsafe_allow_html=True)
+                st.markdown(f"**[{ac.id}]** {ac.text}")
 
         # Step 3: Synthesis
-        st.markdown(f"**Step 3:** Synthesizing test cases using {provider_choice} ({selected_model})...")
+        st.markdown(f"**Step 3:** Generating SAP Test Scripts using {provider_choice} ({selected_model})...")
         p_bar = st.progress(0.0)
         p_text = st.empty()
 
@@ -476,7 +499,7 @@ if selected_nav == "1. Ingest & Design":
                 provider=provider_choice,
                 model=selected_model,
             )
-            target_app_url = settings.sap_fiori_url if "Remote Windows" in env_choice else "http://127.0.0.1:8000"
+            target_app_url = settings.sap_fiori_url
             designer = TestDesigner(llm_client=active_llm)
             suite = designer.generate_suite(
                 requirement=requirement,
@@ -520,13 +543,101 @@ elif selected_nav == "2. Review Center":
     suite: Optional[TestSuite] = st.session_state.test_suite
 
     if not suite:
-        st.info("No test suite staged for review. Ingest a Jira requirement in Tab 1 first.")
+        st.info("No test suite staged for review. Ingest a Jira requirement in Tab 1, or create a new test suite from scratch.")
+        if st.button("➕ Create New Test Suite from Scratch", type="primary", key="btn_create_empty_suite"):
+            st.session_state.test_suite = TestSuite(
+                suite_id=f"SUITE-MANUAL-{datetime.now().strftime('%Y%m%d%H%M')}",
+                requirement_key="MANUAL-01",
+                target_application="SAP S/4HANA Fiori",
+                test_cases=[],
+            )
+            st.rerun()
     else:
-        header_col1, header_col2, header_col3 = st.columns([2.5, 1.2, 1.2])
+        header_col1, header_col2, header_col3, header_col4, header_col5 = st.columns([1.8, 1.2, 1.2, 1.4, 1.1])
         with header_col1:
             st.markdown(f"**Staged Suite:** `{suite.suite_id}` | **Total Scenarios:** `{len(suite.test_cases)}`")
         with header_col2:
-            with st.popover("Record a New Test", use_container_width=True):
+            with st.popover("➕ New Test Case", use_container_width=True):
+                st.markdown("**Create New Test Case (Manual Steps)**")
+                st.caption("Define a test scenario and enter manual browser steps without touching Playwright code.")
+                new_tc_title = st.text_input(
+                    "Scenario Title:",
+                    value=f"Manual Scenario {len(suite.test_cases) + 1}",
+                    key="new_tc_pop_title",
+                )
+                new_tc_obj = st.text_input(
+                    "Objective:",
+                    value="Verify user action on SAP screen",
+                    key="new_tc_pop_obj",
+                )
+                new_tc_cat = st.selectbox(
+                    "Category:",
+                    options=["positive", "negative", "boundary", "validation"],
+                    index=0,
+                    key="new_tc_pop_cat",
+                )
+                new_tc_expected = st.text_input(
+                    "Expected Result:",
+                    value="Action completed successfully without errors",
+                    key="new_tc_pop_expected",
+                )
+                new_tc_group = st.text_input(
+                    "Functional Group / Module:",
+                    value="General",
+                    key="new_tc_pop_group",
+                    placeholder="e.g. Authentication, Quotations, Orders",
+                )
+                include_sap_logon = st.checkbox(
+                    "Include standard SAP Fiori Logon steps",
+                    value=True,
+                    key="new_tc_pop_include_sap",
+                )
+                new_tc_persist_reg = st.checkbox(
+                    "Persist directly into Regression Suite Repository",
+                    value=True,
+                    key="new_tc_pop_persist_reg",
+                    help="Automatically saves or updates the suite in data/cases/ upon creation",
+                )
+
+                if st.button("Create Test Case & Add Steps", type="primary", use_container_width=True, key="btn_create_manual_tc"):
+                    next_id = f"TC-{len(suite.test_cases) + 1:02d}"
+                    if include_sap_logon:
+                        init_steps = [
+                            TestStep(step_number=1, action=ActionType.NAVIGATE, input_value=settings.sap_fiori_url, description="Open SAP Fiori Logon screen"),
+                            TestStep(step_number=2, action=ActionType.FILL, locator_strategy=LocatorStrategy.CSS, selector_value="#USERNAME_FIELD-inner", input_value=(settings.sap_username or "MYRAR1").strip(), description="Enter SAP username"),
+                            TestStep(step_number=3, action=ActionType.FILL, locator_strategy=LocatorStrategy.CSS, selector_value="#PASSWORD_FIELD-inner", input_value=(settings.sap_password or "Pass23#$").strip(), description="Enter SAP password"),
+                            TestStep(step_number=4, action=ActionType.CLICK, locator_strategy=LocatorStrategy.CSS, selector_value="#LOGIN_LINK", description="Click Log On button"),
+                            TestStep(step_number=5, action=ActionType.ASSERT_TEXT, locator_strategy=LocatorStrategy.CSS, selector_value="body", expected_value="Home", description="Assert SAP Fiori Launchpad loaded"),
+                        ]
+                    else:
+                        init_steps = [
+                            TestStep(step_number=1, action=ActionType.NAVIGATE, input_value=settings.sap_fiori_url, description="Open SAP target screen"),
+                        ]
+                    new_tc = TestCase(
+                        id=next_id,
+                        requirement_key=suite.requirement_key,
+                        source_ac_id=f"AC-MANUAL-{len(suite.test_cases) + 1}",
+                        title=new_tc_title.strip() or f"Manual Scenario {next_id}",
+                        objective=new_tc_obj.strip() or "Manual test scenario",
+                        expected_result=new_tc_expected.strip() or "Success",
+                        category=TestCategory(new_tc_cat),
+                        group=new_tc_group.strip() or "General",
+                        steps=init_steps,
+                    )
+                    suite.test_cases.append(new_tc)
+
+                    if new_tc_persist_reg:
+                        try:
+                            save_regression_suite(suite, last_run_status="Manual Draft")
+                        except Exception:
+                            pass
+
+                    st.session_state[f"editing_{new_tc.id}"] = True
+                    st.session_state.approval_record = None
+                    st.success(f"Scenario '{new_tc.id}: {new_tc.title}' created and grouped under '{new_tc.group}'! Customize steps below.")
+                    st.rerun()
+        with header_col3:
+            with st.popover("Record via Browser", use_container_width=True):
                 st.markdown("**Record a New Test (npx playwright codegen)**")
                 st.caption("Launches interactive browser recorder to capture clicks, inputs, and navigations.")
                 rec_title = st.text_input(
@@ -536,8 +647,20 @@ elif selected_nav == "2. Review Center":
                 )
                 rec_url = st.text_input(
                     "Target URL:",
-                    value="http://127.0.0.1:8000/",
+                    value=settings.sap_fiori_url,
                     key="rec_pop_url",
+                )
+                rec_group = st.text_input(
+                    "Functional Group / Module:",
+                    value="Recorded",
+                    key="rec_pop_group",
+                    placeholder="e.g. Authentication, Quotations, Orders",
+                )
+                rec_persist_reg = st.checkbox(
+                    "Persist directly into Regression Suite Repository",
+                    value=True,
+                    key="rec_pop_persist_reg",
+                    help="Automatically saves or updates the suite in data/cases/ upon recording completion",
                 )
                 if st.button("Launch Recorder", type="primary", use_container_width=True, key="btn_launch_rec_pop"):
                     with st.spinner("Launching npx playwright codegen... Perform your actions in Chromium and close the browser window when finished."):
@@ -547,23 +670,94 @@ elif selected_nav == "2. Review Center":
                             if recorded_code.strip():
                                 parsed_steps = parse_recorded_script(recorded_code, default_url=rec_url.strip())
                                 next_id = f"TC-{len(suite.test_cases) + 1:02d}"
+                                clean_title = rec_title.strip() or f"Recorded Scenario {next_id}"
+                                chosen_group = rec_group.strip() or "Recorded"
                                 new_tc = create_test_case_from_recording(
-                                    title=rec_title.strip() or f"Recorded Scenario {next_id}",
+                                    title=clean_title,
                                     steps=parsed_steps,
                                     requirement_key=suite.requirement_key,
                                     tc_id=next_id,
+                                    group=chosen_group,
                                 )
                                 suite.test_cases.append(new_tc)
+
+                                # 1. Export standalone Playwright Python script file
+                                clean_req = suite.requirement_key.replace("-", "_").lower()
+                                script_filename = f"recorded_{clean_req}_{next_id.lower()}.py"
+                                rec_script_dest = Path("artifacts/scripts").resolve() / script_filename
+                                rec_script_dest.write_text(recorded_code, encoding="utf-8")
+                                rec_script_alt = Path("app/browser/test_scripts").resolve() / script_filename
+                                rec_script_alt.write_text(recorded_code, encoding="utf-8")
+
+                                # 2. Harvest all verified selectors into Continuous Learning Knowledge Catalog
+                                learned_cnt = 0
+                                for stp in parsed_steps:
+                                    if stp.selector_value:
+                                        try:
+                                            save_learned_selector(
+                                                element_label=stp.description or stp.selector_value,
+                                                selector=stp.selector_value,
+                                                strategy=stp.locator_strategy.value if stp.locator_strategy else "css",
+                                                action=stp.action.value,
+                                                role_type=stp.role_name,
+                                                app_domain="SAP S/4HANA",
+                                                notes=f"Harvested from recording: {clean_title}",
+                                            )
+                                            learned_cnt += 1
+                                        except Exception:
+                                            pass
+
+                                # 3. Save as Reusable Flow Template in data/library/flows.json
+                                try:
+                                    save_reusable_flow(
+                                        flow_name=f"Recorded: {clean_title}",
+                                        description=f"Recorded workflow from Playwright Codegen for {suite.requirement_key}",
+                                        category="Recorded Flow",
+                                        steps=parsed_steps,
+                                    )
+                                except Exception:
+                                    pass
+
+                                # 4. Save into Golden Examples Knowledge Base for future LLM few-shot synthesis
+                                try:
+                                    save_golden_example(
+                                        pattern=f"Recorded Workflow ({clean_title})",
+                                        description=f"Human-recorded interaction sequence on {rec_url.strip()}",
+                                        test_case=new_tc,
+                                    )
+                                except Exception:
+                                    pass
+
+                                # 5. Auto-persist into Regression Suite Repository
+                                if rec_persist_reg:
+                                    try:
+                                        save_regression_suite(suite, last_run_status="Recorded (Unexecuted)")
+                                    except Exception:
+                                        pass
+
                                 st.session_state.approval_record = None
-                                st.success(f"Recorded test case '{new_tc.id}: {new_tc.title}' successfully captured and added to the suite.")
+                                st.success(
+                                    f"✅ Recorded scenario '{new_tc.id}: {new_tc.title}' added!\n\n"
+                                    f"- **Playwright Script Saved:** `artifacts/scripts/{script_filename}`\n"
+                                    f"- **Regression Suite:** Automatically updated in `data/cases/{suite.suite_id}.json`\n"
+                                    f"- **Learned Selectors Added:** `{learned_cnt}` elements added to Knowledge Catalog\n"
+                                    f"- **Reusable Flow Created:** `Recorded: {clean_title}` in Flow Library\n"
+                                    f"- **Golden Knowledge Base:** Pattern saved for future LLM test generation"
+                                )
                                 st.rerun()
                             else:
                                 st.warning("No interactions were recorded or the browser was closed before any actions.")
-        with header_col3:
-            if st.button("Export Script 💾", use_container_width=True, help="Exports standalone Playwright script into app/browser/test_scripts/"):
+                        except Exception as e:
+                            st.error(f"Recording session failed: {e}")
+        with header_col4:
+            if st.button("💾 Save to Regression", use_container_width=True, help="Saves this verified suite into the Regression Suite Repository"):
+                saved_f = save_regression_suite(suite)
+                st.success(f"Saved: `{saved_f.name}` in `data/cases/`")
+        with header_col5:
+            if st.button("Export Script 🐍", use_container_width=True, help="Exports standalone Playwright script into app/browser/test_scripts/ and artifacts/scripts/"):
                 from app.browser.exporter import export_suite_to_playwright_script
                 exported_path = export_suite_to_playwright_script(suite)
-                st.success(f"Exported: `{exported_path.name}` in `app/browser/test_scripts/`")
+                st.success(f"Exported: `{exported_path.name}` in `artifacts/scripts/`")
 
         approval: Optional[ApprovalRecord] = st.session_state.approval_record
         is_approved = approval is not None and approval.decision == ApprovalDecision.APPROVED
@@ -576,145 +770,355 @@ elif selected_nav == "2. Review Center":
             st.warning("Pending Human Review: Review test steps below, edit or record new scenarios, then approve.")
 
         # ----------------------------------------------------------------------
-        # Test Scenarios with Edit & Delete Buttons at the Right Side of Objective
+        # Test Scenarios: Selection & Custom Execution Sequence
         # ----------------------------------------------------------------------
-        for tc in suite.test_cases:
+        st.markdown("### Test Scenarios & Execution Scope")
+        sc_col1, sc_col2, sc_col3 = st.columns([1.5, 1.5, 3.5])
+        with sc_col1:
+            if st.button("✅ Select All Scenarios", use_container_width=True, key="btn_sel_all_scenarios"):
+                for c in suite.test_cases:
+                    st.session_state[f"exec_chk_{c.id}"] = True
+                st.rerun()
+        with sc_col2:
+            if st.button("❌ Deselect All", use_container_width=True, key="btn_desel_all_scenarios"):
+                for c in suite.test_cases:
+                    st.session_state[f"exec_chk_{c.id}"] = False
+                st.rerun()
+
+        # Module Group Filter and Batch Selection
+        distinct_groups = sorted(list(set(getattr(tc, "group", None) or "General" for tc in suite.test_cases)))
+        grp_col1, grp_col2, grp_col3 = st.columns([2.0, 1.2, 1.2])
+        with grp_col1:
+            rev_grp_filter = st.selectbox(
+                "Filter Scenarios by Functional Group / Module:",
+                options=["All Groups"] + distinct_groups,
+                key="rev_grp_filter",
+            )
+        with grp_col2:
+            if st.button("Select Group", use_container_width=True, key="btn_sel_rev_grp", help="Select all scenarios in the filtered group"):
+                for c in suite.test_cases:
+                    c_grp = getattr(c, "group", None) or "General"
+                    if rev_grp_filter == "All Groups" or c_grp == rev_grp_filter:
+                        st.session_state[f"exec_chk_{c.id}"] = True
+                st.rerun()
+        with grp_col3:
+            if st.button("Deselect Group", use_container_width=True, key="btn_desel_rev_grp", help="Deselect all scenarios in the filtered group"):
+                for c in suite.test_cases:
+                    c_grp = getattr(c, "group", None) or "General"
+                    if rev_grp_filter == "All Groups" or c_grp == rev_grp_filter:
+                        st.session_state[f"exec_chk_{c.id}"] = False
+                st.rerun()
+
+        # Compute selected test cases in their current order
+        selected_scenarios = [
+            tc for tc in suite.test_cases
+            if st.session_state.get(f"exec_chk_{tc.id}", True)
+        ]
+        with sc_col3:
+            order_label = " → ".join(tc.id for tc in selected_scenarios) if selected_scenarios else "None (0 selected)"
+            st.info(f"**Execution Scope:** `{len(selected_scenarios)} of {len(suite.test_cases)} Selected` | **Order:** `{order_label}`")
+
+        for idx, tc in enumerate(suite.test_cases):
+            tc_group = getattr(tc, "group", None) or "General"
+            if rev_grp_filter != "All Groups" and tc_group != rev_grp_filter:
+                continue
+
             with st.container():
                 st.markdown("---")
-                col_meta, col_actions = st.columns([4, 1.4])
+                col_chk, col_meta, col_actions = st.columns([0.4, 4.2, 1.4])
+                with col_chk:
+                    st.write("")
+                    st.checkbox(
+                        f"Select {tc.id}",
+                        value=st.session_state.get(f"exec_chk_{tc.id}", True),
+                        key=f"exec_chk_{tc.id}",
+                        help=f"Select {tc.id} for execution",
+                        label_visibility="collapsed",
+                    )
+                is_editing = st.session_state.get(f"editing_{tc.id}", False)
                 with col_meta:
-                    is_neg_tc = tc.category == TestCategory.NEGATIVE
-                    cat_badge = '<span class="badge-fail" style="background:#fef3c7; color:#92400e; border-color:#fde68a;">NEGATIVE VALIDATION</span>' if is_neg_tc else '<span class="badge-pass">POSITIVE FLOW</span>'
-                    st.markdown(f"#### **[{tc.id}]** {tc.title} &nbsp;{cat_badge}", unsafe_allow_html=True)
-                    st.markdown(f"**Objective:** {tc.objective}")
-                    st.caption(f"Category: `{tc.category.value.upper()}` | Priority: `{tc.priority}` | Steps: `{len(tc.steps)}`")
+                    group_badge = f'<span style="background:#ede9fe; color:#5b21b6; border: 1px solid #ddd6fe; padding: 2px 8px; border-radius: 9999px; font-size: 0.75rem; font-weight: 600;">📁 {tc_group}</span>'
+                    st.markdown(f"#### **[{tc.id}]** {tc.title} &nbsp;{group_badge}", unsafe_allow_html=True)
+                    st.caption(f"Sequence: `#{idx + 1}` | Group: `{tc_group}` | Priority: `{tc.priority}` | Steps: `{len(tc.steps)}`")
 
                 with col_actions:
-                    btn_edit_col, btn_del_col = st.columns([1, 1])
+                    btn_edit_col, btn_del_col = st.columns([1.2, 1.0])
                     with btn_edit_col:
-                        is_editing = st.session_state.get(f"editing_{tc.id}", False)
                         if st.button("Edit Steps" if not is_editing else "Close", key=f"btn_edit_tc_{tc.id}", use_container_width=True):
                             st.session_state[f"editing_{tc.id}"] = not is_editing
                             st.rerun()
                     with btn_del_col:
                         if st.button("Delete", key=f"btn_del_tc_{tc.id}", use_container_width=True):
                             suite.test_cases = [c for c in suite.test_cases if c.id != tc.id]
-                            for idx, c in enumerate(suite.test_cases, start=1):
-                                c.id = f"TC-{idx:02d}"
+                            for i, c in enumerate(suite.test_cases, start=1):
+                                c.id = f"TC-{i:02d}"
+                            try:
+                                if load_regression_suite(suite.suite_id):
+                                    save_regression_suite(suite)
+                            except Exception:
+                                pass
                             st.session_state.approval_record = None
                             st.success(f"Scenario {tc.id} deleted and suite re-indexed.")
                             st.rerun()
 
-                # Step table or inline step editor
-                if not st.session_state.get(f"editing_{tc.id}", False):
-                    step_data = []
-                    for s in tc.steps:
-                        step_data.append({
-                            "Step #": s.step_number,
-                            "Action": s.action.value.upper(),
-                            "Strategy": s.locator_strategy.value if s.locator_strategy else "—",
-                            "Target Selector": s.selector_value or "—",
-                            "Input / Expected": s.input_value or s.expected_value or "—",
-                            "Description": s.description,
-                        })
-                    st.dataframe(step_data, use_container_width=True)
-                else:
-                    with st.expander(f"Editing Steps for {tc.id}: {tc.title}", expanded=True):
-                        step_nums = [s.step_number for s in tc.steps]
-                        e_col1, e_col2 = st.columns([1, 1])
-                        with e_col1:
-                            selected_step_num = st.selectbox(
-                                "Select Step to Edit:",
-                                options=step_nums,
-                                format_func=lambda snum: f"Step {snum}: {next((s.action.value.upper() for s in tc.steps if s.step_number == snum), '')} - {next((s.description for s in tc.steps if s.step_number == snum), '')[:35]}",
-                                key=f"step_picker_{tc.id}",
-                            )
-                            current_step = next((s for s in tc.steps if s.step_number == selected_step_num), tc.steps[0])
+                # Expandable / Minimised Steps & Details (by default minimised unless editing)
+                with st.expander(f"View Steps & Details for [{tc.id}] ({len(tc.steps)} steps)", expanded=is_editing):
+                    st.markdown(f"**Objective:** {tc.objective}")
+                    if not is_editing:
+                        step_data = []
+                        for s in tc.steps:
+                            step_data.append({
+                                "Step #": s.step_number,
+                                "Action": s.action.value.upper(),
+                                "Strategy": s.locator_strategy.value if s.locator_strategy else "—",
+                                "Target Selector": s.selector_value or "—",
+                                "Input / Expected": s.input_value or s.expected_value or "—",
+                                "Description": s.description,
+                            })
+                        st.dataframe(step_data, use_container_width=True)
+                    else:
+                        st.markdown(f"##### Step Editor: [{tc.id}] {tc.title}")
+                        if tc.steps:
+                            step_data = []
+                            for s in tc.steps:
+                                step_data.append({
+                                    "Step #": s.step_number,
+                                    "Action": s.action.value.upper(),
+                                    "Strategy": s.locator_strategy.value if s.locator_strategy else "—",
+                                    "Target Selector": s.selector_value or "—",
+                                    "Input / Expected": s.input_value or s.expected_value or "—",
+                                    "Description": s.description,
+                                })
+                            st.dataframe(step_data, use_container_width=True)
 
-                        with e_col2:
-                            action_options = [a.value for a in ActionType]
-                            curr_act = current_step.action.value
-                            current_action_idx = action_options.index(curr_act) if curr_act in action_options else 0
-                            new_action = st.selectbox(
-                                "Action Type:",
-                                options=action_options,
-                                index=current_action_idx,
-                                key=f"edit_act_{tc.id}_{selected_step_num}",
-                            )
+                        tab_mod, tab_add, tab_flow = st.tabs(["✏️ Modify / Delete Existing Step", "➕ Add New Step", "⚡ Insert Reusable Flow"])
 
-                        f_col1, f_col2 = st.columns([1, 1])
-                        with f_col1:
-                            strategy_options = ["test_id", "role", "text", "css"]
-                            curr_strat = current_step.locator_strategy.value if current_step.locator_strategy else "test_id"
-                            curr_strat_idx = strategy_options.index(curr_strat) if curr_strat in strategy_options else 0
-                            new_strategy = st.selectbox(
-                                "Locator Strategy:",
-                                options=strategy_options,
-                                index=curr_strat_idx,
-                                key=f"edit_strat_{tc.id}_{selected_step_num}",
-                            )
-                        with f_col2:
-                            new_selector = st.text_input(
-                                "Target Selector / TestID:",
-                                value=current_step.selector_value or "",
-                                key=f"edit_sel_{tc.id}_{selected_step_num}",
-                            )
+                        with tab_mod:
+                            if not tc.steps:
+                                st.info("No steps exist in this scenario yet. Use the 'Add New Step' tab to add your first step.")
+                            else:
+                                step_nums = [s.step_number for s in tc.steps]
+                                e_col1, e_col2 = st.columns([1, 1])
+                                with e_col1:
+                                    selected_step_num = st.selectbox(
+                                        "Select Step to Modify:",
+                                        options=step_nums,
+                                        format_func=lambda snum: f"Step {snum}: {next((s.action.value.upper() for s in tc.steps if s.step_number == snum), '')} - {next((s.description for s in tc.steps if s.step_number == snum), '')[:35]}",
+                                        key=f"step_picker_{tc.id}",
+                                    )
+                                    current_step = next((s for s in tc.steps if s.step_number == selected_step_num), tc.steps[0])
 
-                        g_col1, g_col2 = st.columns([1, 1])
-                        with g_col1:
-                            new_val = st.text_input(
-                                "Input / Expected Value:",
-                                value=current_step.input_value or current_step.expected_value or "",
-                                key=f"edit_val_{tc.id}_{selected_step_num}",
-                            )
-                        with g_col2:
-                            new_desc = st.text_input(
+                                with e_col2:
+                                    action_options = [a.value for a in ActionType]
+                                    curr_act = current_step.action.value
+                                    current_action_idx = action_options.index(curr_act) if curr_act in action_options else 0
+                                    new_action = st.selectbox(
+                                        "Action Type:",
+                                        options=action_options,
+                                        index=current_action_idx,
+                                        key=f"edit_act_{tc.id}_{selected_step_num}",
+                                    )
+
+                                f_col1, f_col2 = st.columns([1, 1])
+                                with f_col1:
+                                    strategy_options = ["css", "text", "test_id", "role"]
+                                    curr_strat = current_step.locator_strategy.value if current_step.locator_strategy else "css"
+                                    curr_strat_idx = strategy_options.index(curr_strat) if curr_strat in strategy_options else 0
+                                    new_strategy = st.selectbox(
+                                        "Locator Strategy:",
+                                        options=strategy_options,
+                                        index=curr_strat_idx,
+                                        key=f"edit_strat_{tc.id}_{selected_step_num}",
+                                        help="css: CSS selector (#id, .class); text: Visible element text; test_id: data-testid; role: ARIA role",
+                                    )
+                                with f_col2:
+                                    new_selector = st.text_input(
+                                        "Target Selector / Text / Value:",
+                                        value=current_step.selector_value or "",
+                                        key=f"edit_sel_{tc.id}_{selected_step_num}",
+                                        placeholder="e.g. #LOGIN_LINK or Sign Out",
+                                    )
+
+                                g_col1, g_col2 = st.columns([1, 1])
+                                with g_col1:
+                                    new_val = st.text_input(
+                                        "Input / Expected Value:",
+                                        value=current_step.input_value or current_step.expected_value or "",
+                                        key=f"edit_val_{tc.id}_{selected_step_num}",
+                                        placeholder="Value to type, duration (e.g. 5s), or assertion text",
+                                    )
+                                with g_col2:
+                                    new_desc = st.text_input(
+                                        "Step Description:",
+                                        value=current_step.description or "",
+                                        key=f"edit_desc_{tc.id}_{selected_step_num}",
+                                        placeholder="Describe what this step does",
+                                    )
+
+                                act_col1, act_col2 = st.columns([1, 1])
+                                with act_col1:
+                                    if st.button("Save Step Modification", type="primary", use_container_width=True, key=f"btn_save_{tc.id}_{selected_step_num}"):
+                                        old_selector = current_step.selector_value
+                                        current_step.action = ActionType(new_action)
+                                        current_step.locator_strategy = LocatorStrategy(new_strategy) if new_strategy else None
+                                        current_step.selector_value = new_selector.strip() if new_selector else None
+                                        if new_action.startswith("assert"):
+                                            current_step.expected_value = new_val.strip() if new_val else None
+                                            current_step.input_value = None
+                                        else:
+                                            current_step.input_value = new_val.strip() if new_val else None
+                                            current_step.expected_value = None
+                                        current_step.description = new_desc.strip() or f"Step {selected_step_num}"
+
+                                        # Record Human Correction if user updated selector
+                                        if old_selector and current_step.selector_value and old_selector != current_step.selector_value:
+                                            try:
+                                                save_correction(
+                                                    target_pattern=current_step.description or current_step.selector_value,
+                                                    bad_selector=old_selector,
+                                                    recommended_selector=current_step.selector_value,
+                                                    strategy=current_step.locator_strategy.value if current_step.locator_strategy else "css",
+                                                    note=f"Corrected by user during manual review of {tc.id} Step {selected_step_num}",
+                                                )
+                                            except Exception:
+                                                pass
+
+                                        # Continuous Learning: save verified selector into catalog
+                                        if current_step.selector_value:
+                                            try:
+                                                save_learned_selector(
+                                                    element_label=current_step.description or current_step.selector_value,
+                                                    selector=current_step.selector_value,
+                                                    strategy=current_step.locator_strategy.value if current_step.locator_strategy else "css",
+                                                    action=current_step.action.value,
+                                                )
+                                            except Exception:
+                                                pass
+
+                                        st.session_state.approval_record = None
+                                        st.success(f"Step {selected_step_num} for {tc.id} saved.")
+                                        st.rerun()
+
+                                with act_col2:
+                                    if st.button("Delete Selected Step", use_container_width=True, key=f"btn_del_{tc.id}_{selected_step_num}") and len(tc.steps) > 1:
+                                        tc.steps = [s for s in tc.steps if s.step_number != selected_step_num]
+                                        for idx, s in enumerate(tc.steps, start=1):
+                                            s.step_number = idx
+                                        st.session_state.approval_record = None
+                                        st.warning(f"Step {selected_step_num} deleted from {tc.id}.")
+                                        st.rerun()
+
+                        with tab_add:
+                            st.markdown(f"**Add Step {len(tc.steps) + 1} to [{tc.id}]**")
+                            a_col1, a_col2 = st.columns([1, 1])
+                            with a_col1:
+                                add_action = st.selectbox(
+                                    "Action Type:",
+                                    options=[a.value for a in ActionType],
+                                    index=1,
+                                    key=f"add_act_{tc.id}",
+                                )
+                            with a_col2:
+                                add_strategy = st.selectbox(
+                                    "Locator Strategy:",
+                                    options=["css", "text", "test_id", "role"],
+                                    index=0,
+                                    key=f"add_strat_{tc.id}",
+                                    help="css: CSS selector (#id, .class); text: Visible element text; test_id: data-testid attribute; role: ARIA role",
+                                )
+
+                            b_col1, b_col2 = st.columns([1, 1])
+                            with b_col1:
+                                add_selector = st.text_input(
+                                    "Target Selector / Text / Value:",
+                                    value="",
+                                    placeholder="e.g. #LOGIN_LINK or Sign Out or body",
+                                    key=f"add_sel_{tc.id}",
+                                    help="Target locator value",
+                                )
+                            with b_col2:
+                                add_val = st.text_input(
+                                    "Input / Expected Value:",
+                                    value="",
+                                    placeholder="Value to type, duration (e.g. 5s), or expected text",
+                                    key=f"add_val_{tc.id}",
+                                )
+
+                            add_desc = st.text_input(
                                 "Step Description:",
-                                value=current_step.description or "",
-                                key=f"edit_desc_{tc.id}_{selected_step_num}",
+                                value="",
+                                placeholder="e.g. Click user profile avatar or enter order quantity",
+                                key=f"add_desc_{tc.id}",
                             )
 
-                        act_col1, act_col2, act_col3 = st.columns([1, 1, 1])
-                        with act_col1:
-                            if st.button("Save Step Modification", type="primary", use_container_width=True, key=f"btn_save_{tc.id}_{selected_step_num}"):
-                                current_step.action = ActionType(new_action)
-                                current_step.locator_strategy = LocatorStrategy(new_strategy) if new_strategy else None
-                                current_step.selector_value = new_selector if new_selector else None
-                                if new_action.startswith("assert"):
-                                    current_step.expected_value = new_val
-                                    current_step.input_value = None
-                                else:
-                                    current_step.input_value = new_val
-                                    current_step.expected_value = None
-                                current_step.description = new_desc
-                                st.session_state.approval_record = None
-                                st.success(f"Step {selected_step_num} for {tc.id} saved.")
-                                st.rerun()
-
-                        with act_col2:
-                            if st.button("Add New Step", use_container_width=True, key=f"btn_add_{tc.id}"):
+                            if st.button("➕ Add Step to Scenario", type="primary", use_container_width=True, key=f"btn_confirm_add_{tc.id}"):
                                 next_num = len(tc.steps) + 1
+                                is_assert = add_action.startswith("assert")
                                 new_step = TestStep(
                                     step_number=next_num,
-                                    action=ActionType.ASSERT_TEXT,
-                                    locator_strategy=LocatorStrategy.TEST_ID,
-                                    selector_value="success-banner",
-                                    expected_value="created successfully",
-                                    description=f"Assertion step {next_num}",
+                                    action=ActionType(add_action),
+                                    locator_strategy=LocatorStrategy(add_strategy) if add_strategy else None,
+                                    selector_value=add_selector.strip() if add_selector else None,
+                                    input_value=add_val.strip() if not is_assert and add_val else None,
+                                    expected_value=add_val.strip() if is_assert and add_val else None,
+                                    description=add_desc.strip() or f"Step {next_num}: {add_action.upper()}",
                                 )
+                                # Continuous Learning: save new selector into knowledge catalog
+                                if new_step.selector_value:
+                                    try:
+                                        save_learned_selector(
+                                            element_label=new_step.description or new_step.selector_value,
+                                            selector=new_step.selector_value,
+                                            strategy=new_step.locator_strategy.value if new_step.locator_strategy else "css",
+                                            action=new_step.action.value,
+                                        )
+                                    except Exception:
+                                        pass
+
                                 tc.steps.append(new_step)
                                 st.session_state.approval_record = None
-                                st.success(f"Step {next_num} added to {tc.id}.")
+                                st.success(f"Step {next_num} added to {tc.id}!")
                                 st.rerun()
 
-                        with act_col3:
-                            if st.button("Delete Selected Step", use_container_width=True, key=f"btn_del_{tc.id}_{selected_step_num}") and len(tc.steps) > 1:
-                                tc.steps = [s for s in tc.steps if s.step_number != selected_step_num]
-                                for idx, s in enumerate(tc.steps, start=1):
-                                    s.step_number = idx
-                                st.session_state.approval_record = None
-                                st.warning(f"Step {selected_step_num} deleted from {tc.id}.")
-                                st.rerun()
+                        with tab_flow:
+                            st.markdown(f"**⚡ Insert Reusable Building Block Flow into [{tc.id}]**")
+                            st.caption("Insert pre-verified enterprise flows without manually configuring locators.")
+                            avail_flows = list_reusable_flows()
+                            chosen_flow_name = st.selectbox(
+                                "Choose Flow Template:",
+                                options=list(avail_flows.keys()),
+                                key=f"flow_choice_{tc.id}",
+                            )
+                            if chosen_flow_name:
+                                flow_meta = avail_flows[chosen_flow_name]
+                                st.info(f"**{flow_meta.get('description', '')}** — `{len(flow_meta.get('steps', []))} steps` (Category: `{flow_meta.get('category', 'General')}`)")
+
+                                pos_choice = st.radio(
+                                    "Insert Position:",
+                                    options=["Append to End", "Insert at Beginning", "Insert after Step Number"],
+                                    horizontal=True,
+                                    key=f"flow_pos_radio_{tc.id}",
+                                )
+                                insert_at = len(tc.steps)
+                                if pos_choice == "Insert at Beginning":
+                                    insert_at = 0
+                                elif pos_choice == "Insert after Step Number" and tc.steps:
+                                    step_pick = st.selectbox(
+                                        "After Step #:",
+                                        options=[s.step_number for s in tc.steps],
+                                        key=f"flow_after_step_{tc.id}",
+                                    )
+                                    insert_at = step_pick
+
+                                if st.button(f"⚡ Insert '{chosen_flow_name}' ({len(flow_meta.get('steps', []))} steps)", type="primary", use_container_width=True, key=f"btn_insert_flow_{tc.id}"):
+                                    flow_steps = get_reusable_flow_steps(chosen_flow_name)
+                                    combined = tc.steps[:insert_at] + flow_steps + tc.steps[insert_at:]
+                                    for i, s in enumerate(combined, start=1):
+                                        s.step_number = i
+                                    tc.steps = combined
+                                    st.session_state.approval_record = None
+                                    st.success(f"Inserted flow '{chosen_flow_name}'! Scenario now contains {len(tc.steps)} steps.")
+                                    st.rerun()
 
         # ----------------------------------------------------------------------
         # Feature: Human Sign-Off Governance (Hidden once approved)
@@ -775,13 +1179,18 @@ elif selected_nav == "2. Review Center":
             st.markdown("---")
             st.markdown("### Run Approved Tests in Browser")
 
-            view_mode_str = st.session_state.get("cfg_view_mode", "Headed (Watch on Screen)")
-            is_headed_exec = "Headed" in view_mode_str
-
             exec_col1, exec_col2 = st.columns([2, 1])
             with exec_col1:
-                st.markdown(f"**Execution Mode:** `{view_mode_str}`")
+                exec_mode_choice = st.radio(
+                    "Browser Execution Mode:",
+                    options=["Headed (Watch on Screen)", "Headless (Background)"],
+                    index=0,
+                    horizontal=True,
+                    key="review_exec_view_mode",
+                )
+                is_headed_exec = "Headed" in exec_mode_choice
             with exec_col2:
+                st.write("")
                 run_btn = st.button("Run Approved Tests in Browser", type="primary", use_container_width=True)
 
             progress_bar = st.progress(0.0)
@@ -793,8 +1202,13 @@ elif selected_nav == "2. Review Center":
                     st.error("Security Alert: Cryptographic suite hash mismatch. Suite was modified after sign-off.")
                     st.stop()
 
+                cases_to_run = [c for c in suite.test_cases if st.session_state.get(f"exec_chk_{c.id}", True)]
+                if not cases_to_run:
+                    st.error("No scenarios selected for execution. Please check at least one scenario checkbox above.")
+                    st.stop()
+
                 policy = PolicyEngine()
-                for tc in suite.test_cases:
+                for tc in cases_to_run:
                     for s in tc.steps:
                         if s.action == ActionType.NAVIGATE and s.input_value:
                             try:
@@ -804,7 +1218,7 @@ elif selected_nav == "2. Review Center":
                                 st.stop()
 
                 st.session_state.action_logs = []
-                total_steps = sum(len(tc.steps) for tc in suite.test_cases)
+                total_steps = sum(len(tc.steps) for tc in cases_to_run)
                 tracker = {"completed": 0}
 
                 def step_stream_callback(test_case: TestCase, step: TestStep, step_res):
@@ -814,33 +1228,53 @@ elif selected_nav == "2. Review Center":
                         tracker["completed"] += 1
                         progress_bar.progress(min(tracker["completed"] / max(total_steps, 1), 1.0))
                         outcome_tag = "PASS" if step_res.passed else "FAIL"
+                        target_disp = step.selector_value or (step.input_value if step.action == ActionType.NAVIGATE else "")
                         log_entry = (
                             f"[{outcome_tag}] `[{test_case.id}] Step {step.step_number}` **{step.action.value.upper()}** "
-                            f"`{step.selector_value or ''}` | {step_res.duration_ms}ms"
+                            f"`{target_disp}` | {step_res.duration_ms}ms"
                         )
                         if not step_res.passed:
                             log_entry += f" — Error: {step_res.error_message}"
                         st.session_state.action_logs.append(log_entry)
 
-                with st.spinner("Executing browser automation..."):
-                    use_cdp = "Remote Windows" in st.session_state.get("cfg_env_target", "")
-                    cdp_ep = st.session_state.get("cdp_url_input", "").strip() if use_cdp else None
-                    target_exec_url = settings.sap_fiori_url if use_cdp else "http://127.0.0.1:8000"
+                with st.spinner(f"Executing {len(cases_to_run)} selected test cases in browser automation..."):
+                    target_exec_url = settings.sap_fiori_url
+                    cdp_ep = settings.cdp_endpoint_url or None
 
                     executor = TestExecutor(
                         headless=not is_headed_exec,
-                        slow_mo_ms=300 if is_headed_exec else 0,
+                        slow_mo_ms=800 if is_headed_exec else 0,
                         cdp_url=cdp_ep,
                     )
                     run = executor.execute_suite(
                         suite=suite,
                         target_url=target_exec_url,
                         step_callback=step_stream_callback,
+                        test_cases=cases_to_run,
                     )
                     st.session_state.execution_run = run
 
                 progress_bar.progress(1.0)
-                status_text.success(f"Execution Complete: {run.passed_tests}/{run.total_tests} Tests Passed.")
+                if run.passed_tests == run.total_tests and run.total_tests > 0:
+                    status_text.success(f"Execution Complete: All {run.passed_tests}/{run.total_tests} Selected Tests Passed.")
+                elif run.passed_tests == 0:
+                    status_text.error(f"Execution Failed: 0/{run.total_tests} Tests Passed ({run.failed_tests} Failed).")
+                else:
+                    status_text.warning(f"Execution Completed with Failures: {run.passed_tests}/{run.total_tests} Tests Passed ({run.failed_tests} Failed).")
+
+            if st.session_state.execution_run:
+                run_post = st.session_state.execution_run
+                st.write("")
+                post_save_col1, post_save_col2 = st.columns([2.5, 1.5])
+                with post_save_col1:
+                    st.caption(f"Last Execution: `{run_post.passed_tests}/{run_post.total_tests}` Passed | Suite ID: `{suite.suite_id}`")
+                with post_save_col2:
+                    if st.button("💾 Save / Update in Regression Suite", type="secondary", use_container_width=True, key="btn_save_post_run"):
+                        saved_path = save_regression_suite(
+                            suite,
+                            last_run_status=f"{run_post.passed_tests}/{run_post.total_tests} Passed"
+                        )
+                        st.success(f"Updated suite in Regression Repository: `{saved_path.name}`")
 
             # Action Items Stream
             st.markdown("#### Action Items Stream")
@@ -995,13 +1429,12 @@ elif selected_nav == "3. Evidence & Jira Defects":
                     raw_msg = (res.failure_message or "Assertion failed").splitlines()[0].strip()
                     if len(raw_msg) > 160:
                         raw_msg = raw_msg[:157] + "..."
-                    defect_summary = f"[Defect] Test Failure in {res.test_case_id}: {raw_msg}"
+                    defect_title = matching_tc.title if matching_tc else res.test_case_id
+                    defect_summary = f"[SAP Defect] {defect_title}: {raw_msg}"
 
                     repro_steps = []
-                    if st.session_state.test_suite:
-                        matching_tc = next((tc for tc in st.session_state.test_suite.test_cases if tc.id == res.test_case_id), None)
-                        if matching_tc:
-                            repro_steps = [f"{s.action.value.upper()} ({s.selector_value or s.input_value or ''}): {s.description}" for s in matching_tc.steps]
+                    if st.session_state.test_suite and matching_tc:
+                        repro_steps = [f"{s.action.value.upper()} ({s.selector_value or s.input_value or ''}): {s.description}" for s in matching_tc.steps]
 
                     defect = DefectDraft(
                         draft_id=f"DRAFT-{res.test_case_id}",
@@ -1009,8 +1442,8 @@ elif selected_nav == "3. Evidence & Jira Defects":
                         test_case_id=res.test_case_id,
                         summary=defect_summary,
                         steps_to_reproduce=repro_steps,
-                        expected_result="Test assertion should pass on target application.",
-                        actual_result=res.failure_message or "Assertion failed",
+                        expected_result=matching_tc.expected_result if matching_tc else "Action should complete successfully on SAP Fiori.",
+                        actual_result=res.failure_message or "Step execution failed on SAP Fiori.",
                         evidence_paths=evidence_shots,
                     )
 
@@ -1046,3 +1479,294 @@ elif selected_nav == "3. Evidence & Jira Defects":
                                 st.success(f"Jira Defect Ticket `{created_bug_key}` created successfully and linked to `{target_issue_key}`. View at: {settings.jira_base_url}/browse/{created_bug_key}")
                             except Exception as bug_err:
                                 st.error(f"Failed to create defect in Jira: {bug_err}")
+
+
+# ==============================================================================
+# TAB 4: Regression Suite Repository
+# ==============================================================================
+elif selected_nav == "4. Regression Repository":
+    st.subheader("Regression Suite Repository")
+    st.caption("Manage, customize, and execute verified test suites directly from persistent storage without calling Jira or LLMs.")
+
+    # High-level Metrics Cards
+    all_suites = list_regression_suites()
+
+    m1, m2 = st.columns(2)
+    m1.metric("Saved Regression Suites", len(all_suites))
+    m2.metric("Total Scenarios in Repo", sum(s.get("total_cases", 0) for s in all_suites))
+
+    st.markdown("---")
+
+    # Search & Filter
+    search_q = st.text_input("🔍 Search Suites (by Suite ID, Jira Key, or Name):", placeholder="e.g. KAN-11, SAP, Quotations, Authentication...")
+    filtered_suites = [
+        s for s in all_suites
+        if search_q.lower() in s.get("suite_id", "").lower()
+        or search_q.lower() in s.get("name", "").lower()
+        or search_q.lower() in s.get("requirement_key", "").lower()
+    ] if search_q else all_suites
+
+    if not filtered_suites:
+        st.info("No regression suites found matching your search. Ingest a requirement in Tab 1 or save an approved suite in Tab 2 to populate your repository.")
+    else:
+        for suite_meta in filtered_suites:
+            s_id = suite_meta.get("suite_id")
+            s_name = suite_meta.get("name")
+            s_req = suite_meta.get("requirement_key")
+            s_cases_cnt = suite_meta.get("total_cases")
+            s_steps_cnt = suite_meta.get("total_steps")
+            s_status = suite_meta.get("last_run_status")
+            s_saved = suite_meta.get("last_saved_at")
+
+            status_badge = f'<span class="badge-pass">{s_status}</span>' if "Pass" in s_status else f'<span class="badge-fail">{s_status}</span>'
+
+            with st.expander(f"📦 **{s_id}** — {s_name} [{s_cases_cnt} Scenarios | {s_steps_cnt} Steps | Status: {s_status}]", expanded=False):
+                loaded_s = load_regression_suite(s_id)
+                if not loaded_s:
+                    st.error("Failed to read suite file.")
+                    continue
+
+                act_col1, act_col2, act_col3 = st.columns([2.5, 1.3, 1.0])
+                with act_col1:
+                    st.markdown(f"**Jira Requirement:** `{s_req}` | **Version:** `{loaded_s.version}`")
+                    st.caption(f"Last Saved: `{s_saved}` | File: `{suite_meta.get('file_path')}`")
+                with act_col2:
+                    if st.button("📂 Load into Review Center", key=f"btn_load_to_rev_{s_id}", use_container_width=True):
+                        st.session_state.test_suite = loaded_s
+                        st.session_state.approval_record = None
+                        st.session_state.execution_run = None
+                        navigate_to_tab("2. Review Center")
+                        st.rerun()
+                with act_col3:
+                    if st.button("🗑️ Delete Suite", key=f"btn_del_reg_{s_id}", use_container_width=True):
+                        delete_regression_suite(s_id)
+                        st.success(f"Deleted suite {s_id}")
+                        st.rerun()
+
+                # Scenarios & Selective Execution Controls
+                st.markdown("##### Scenarios in this Suite:")
+                reg_groups = sorted(list(set(getattr(c, "group", None) or "General" for c in loaded_s.test_cases)))
+                r_grp_col1, r_grp_col2, r_grp_col3 = st.columns([2.0, 1.2, 1.2])
+                with r_grp_col1:
+                    r_grp_sel = st.selectbox("Filter by Module Group:", ["All Groups"] + reg_groups, key=f"reg_filter_grp_{s_id}")
+                with r_grp_col2:
+                    if st.button("Select Group", key=f"btn_sel_reg_grp_{s_id}", use_container_width=True):
+                        for c in loaded_s.test_cases:
+                            c_g = getattr(c, "group", None) or "General"
+                            if r_grp_sel == "All Groups" or c_g == r_grp_sel:
+                                st.session_state[f"reg_chk_{s_id}_{c.id}"] = True
+                        st.rerun()
+                with r_grp_col3:
+                    if st.button("Deselect Group", key=f"btn_desel_reg_grp_{s_id}", use_container_width=True):
+                        for c in loaded_s.test_cases:
+                            c_g = getattr(c, "group", None) or "General"
+                            if r_grp_sel == "All Groups" or c_g == r_grp_sel:
+                                st.session_state[f"reg_chk_{s_id}_{c.id}"] = False
+                        st.rerun()
+
+                reg_selected = []
+                for idx, c in enumerate(loaded_s.test_cases):
+                    c_grp = getattr(c, "group", None) or "General"
+                    if r_grp_sel != "All Groups" and c_grp != r_grp_sel:
+                        continue
+
+                    tc_chk_col, tc_info_col = st.columns([0.4, 5.0])
+                    with tc_chk_col:
+                        chk_val = st.checkbox(
+                            f"Select {c.id}",
+                            value=st.session_state.get(f"reg_chk_{s_id}_{c.id}", True),
+                            key=f"reg_chk_{s_id}_{c.id}",
+                            label_visibility="collapsed",
+                        )
+                        if chk_val:
+                            reg_selected.append(c)
+                    with tc_info_col:
+                        st.markdown(f"**[{c.id}]** <span style='background:#ede9fe; color:#5b21b6; border: 1px solid #ddd6fe; padding: 2px 6px; border-radius: 4px; font-size: 0.75rem; font-weight: 600;'>📁 {c_grp}</span> {c.title} — *{len(c.steps)} steps*", unsafe_allow_html=True)
+                        st.caption(f"Objective: {c.objective}")
+
+                # Execution Bar for Regression Suite
+                st.markdown("---")
+                exec_reg_col1, exec_reg_col2 = st.columns([2, 1])
+                with exec_reg_col1:
+                    reg_exec_mode = st.radio(
+                        "Execution Mode:",
+                        options=["Visual Headed (Watch on Screen)", "Background Headless"],
+                        index=0,
+                        horizontal=True,
+                        key=f"reg_exec_mode_{s_id}",
+                    )
+                    is_headed_reg = "Headed" in reg_exec_mode
+                with exec_reg_col2:
+                    st.write("")
+                    run_reg_btn = st.button(f"▶️ Run Selected ({len(reg_selected)}) Tests", type="primary", use_container_width=True, key=f"btn_run_reg_{s_id}")
+
+                if run_reg_btn:
+                    if not reg_selected:
+                        st.error("Please select at least one scenario to execute.")
+                    else:
+                        reg_pbar = st.progress(0.0)
+                        reg_status = st.empty()
+                        reg_logs = []
+                        total_reg_steps = sum(len(tc.steps) for tc in reg_selected)
+                        reg_tracker = {"done": 0}
+
+                        def reg_callback(tc, step, step_res):
+                            if step_res is None:
+                                reg_status.markdown(f"**Executing:** `[{tc.id}] Step {step.step_number}`: *{step.description}*")
+                            else:
+                                reg_tracker["done"] += 1
+                                reg_pbar.progress(min(reg_tracker["done"] / max(total_reg_steps, 1), 1.0))
+                                outcome_tag = "PASS" if step_res.passed else "FAIL"
+                                reg_logs.append(f"[{outcome_tag}] `[{tc.id}] Step {step.step_number}` **{step.action.value.upper()}** `{step.selector_value or ''}` | {step_res.duration_ms}ms")
+
+                        with st.spinner(f"Executing {len(reg_selected)} scenarios in Playwright..."):
+                            executor = TestExecutor(headless=not is_headed_reg, slow_mo_ms=800 if is_headed_reg else 0)
+                            run_res = executor.execute_suite(
+                                suite=loaded_s,
+                                target_url=settings.sap_fiori_url,
+                                step_callback=reg_callback,
+                                test_cases=reg_selected,
+                            )
+                            # Update last run status on suite
+                            save_regression_suite(
+                                loaded_s,
+                                last_run_status=f"{run_res.passed_tests}/{run_res.total_tests} Passed"
+                            )
+                            reg_pbar.progress(1.0)
+                            if run_res.passed_tests == run_res.total_tests and run_res.total_tests > 0:
+                                reg_status.success(f"Execution Complete: All {run_res.passed_tests}/{run_res.total_tests} Tests Passed!")
+                            else:
+                                reg_status.error(f"Execution Failed: {run_res.passed_tests}/{run_res.total_tests} Passed ({run_res.failed_tests} Failed).")
+
+                        for l in reg_logs:
+                            st.markdown(f'<div class="step-log-item">{l}</div>', unsafe_allow_html=True)
+
+# ==============================================================================
+# TAB 5: Admin & Continuous Learning Console
+# ==============================================================================
+elif selected_nav == "5. Admin":
+    st.subheader("Admin & Continuous Learning Console")
+    st.caption("Manage enterprise knowledge bases, reusable flow building blocks, self-healing selectors, and testing standards.")
+
+    all_flows = list_reusable_flows()
+    all_selectors = get_learned_selectors()
+    all_golden = list_golden_examples()
+    all_corrections = list_corrections()
+
+    # Metrics Overview
+    am1, am2, am3, am4 = st.columns(4)
+    am1.metric("Learned Selectors", len(all_selectors))
+    am2.metric("Reusable Flows", len(all_flows))
+    am3.metric("Golden Exemplars", len(all_golden))
+    am4.metric("Rule Corrections", len(all_corrections))
+
+    st.markdown("---")
+
+    admin_tabs = st.tabs([
+        "🧠 Learned Selectors",
+        "⚡ Reusable Flows",
+        "🌟 Golden Exemplars",
+        "💡 Testing Standards & Rules",
+        "⚙️ System Environment & Diagnostics",
+    ])
+
+    with admin_tabs[0]:
+        st.markdown("### 🧠 Learned Selector Catalog")
+        st.caption("Self-healing selectors verified from successful runs in `data/knowledge/element_catalog.json`.")
+        cat_table = []
+        for el in all_selectors:
+            cat_table.append({
+                "Element Label": el.get("element_label"),
+                "Selector": el.get("selector"),
+                "Strategy": el.get("strategy"),
+                "Action": el.get("action"),
+                "Passes": el.get("pass_count", 1),
+            })
+        if cat_table:
+            st.dataframe(cat_table, use_container_width=True)
+        else:
+            st.info("No learned selectors recorded yet.")
+
+    with admin_tabs[1]:
+        st.markdown("### ⚡ Reusable Flow Library")
+        st.caption("Pre-configured enterprise building blocks stored in `data/library/flows.json`.")
+        if not all_flows:
+            st.info("No reusable flows registered yet.")
+        else:
+            for flow_name, flow_info in all_flows.items():
+                with st.expander(f"🔹 {flow_name} ({len(flow_info.get('steps', []))} steps)"):
+                    st.markdown(f"**Category:** `{flow_info.get('category', 'General')}`")
+                    st.write(flow_info.get("description", ""))
+                    flow_step_data = []
+                    for s in flow_info.get("steps", []):
+                        flow_step_data.append({
+                            "Step #": s.get("step_number"),
+                            "Action": s.get("action", "").upper(),
+                            "Target": s.get("selector_value") or "—",
+                            "Input/Expected": s.get("input_value") or s.get("expected_value") or "—",
+                            "Description": s.get("description", ""),
+                        })
+                    st.dataframe(flow_step_data, use_container_width=True)
+
+    with admin_tabs[2]:
+        st.markdown("### 🌟 Golden Test Case Exemplars")
+        st.caption("Human-verified few-shot patterns injected into LLM prompts (`data/knowledge/golden_examples.json`).")
+        if not all_golden:
+            st.info("No golden examples saved yet.")
+        else:
+            for g in all_golden:
+                with st.expander(f"⭐ {g.get('pattern', 'Exemplar')} ({g.get('example_id')})"):
+                    st.write(g.get("description", ""))
+                    tc_data = g.get("test_case", {})
+                    st.markdown(f"**Title:** {tc_data.get('title')}")
+                    st.caption(f"Objective: {tc_data.get('objective')}")
+                    g_steps = []
+                    for s in tc_data.get("steps", []):
+                        g_steps.append({
+                            "Step #": s.get("step_number"),
+                            "Action": s.get("action", "").upper(),
+                            "Target": s.get("selector_value") or "—",
+                            "Input/Expected": s.get("input_value") or s.get("expected_value") or "—",
+                            "Description": s.get("description", ""),
+                        })
+                    st.dataframe(g_steps, use_container_width=True)
+
+    with admin_tabs[3]:
+        st.markdown("### 💡 Human Corrections & Testing Standards")
+        st.caption("Preferences memory and standards guide (`testing_standards.md` & `corrections.json`).")
+        t_corr, t_std = st.tabs(["Corrections Memory", "Testing Standards Guide"])
+        with t_corr:
+            if not all_corrections:
+                st.info("No manual corrections recorded yet.")
+            else:
+                corr_rows = []
+                for c in all_corrections:
+                    corr_rows.append({
+                        "Target Pattern": c.get("target_pattern"),
+                        "Avoid Selector": c.get("bad_selector"),
+                        "Recommended Selector": c.get("recommended_selector"),
+                        "Strategy": c.get("strategy"),
+                        "Rationale / Note": c.get("note"),
+                    })
+                st.dataframe(corr_rows, use_container_width=True)
+        with t_std:
+            st.markdown(get_testing_standards())
+
+    with admin_tabs[4]:
+        st.markdown("### ⚙️ System Environment & Diagnostics")
+        env_col1, env_col2 = st.columns(2)
+        with env_col1:
+            st.markdown("#### SAP Target Application")
+            st.info(
+                f"**Host:** `{settings.sap_host_domain}`\n\n"
+                f"**Client:** `{settings.sap_client}` | **Language:** `{settings.sap_language}`\n\n"
+                f"**Username:** `{settings.sap_username or 'MYRAR1'}`\n\n"
+                f"**URL:** `{settings.sap_fiori_url}`"
+            )
+        with env_col2:
+            st.markdown("#### Jira Cloud Connection")
+            st.info(
+                f"**Base URL:** `{settings.jira_base_url}`\n\n"
+                f"**User Email:** `{settings.jira_user_email}`\n\n"
+                f"**Status:** `{'Connected' if jira_client.is_connected() else 'Disconnected'}`"
+            )

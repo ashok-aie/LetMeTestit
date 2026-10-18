@@ -1,0 +1,35 @@
+{
+  "run_id": "RUN-0742467B",
+  "suite_id": "SUITE-KAN-9",
+  "environment": "local",
+  "target_url": "https://s4srv25.nodomain.com:44325/sap/bc/ui2/flp?sap-client=100&sap-language=EN#Launchpad-openFLPPage?pageId=SAP_CRM_PG_SERVICE_PROCESSING&spaceId=SAP_CRM_SP_SERVICE",
+  "started_at": "2026-10-18T21:33:30.515659Z",
+  "finished_at": "2026-10-18T21:34:11.855028Z",
+  "total_tests": 1,
+  "passed_tests": 0,
+  "failed_tests": 1,
+  "blocked_tests": 0,
+  "error_tests": 0,
+  "trace_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261018_213330\\traces\\trace.zip",
+  "results": [
+    {
+      "test_case_id": "TC-01",
+      "outcome": "FAIL",
+      "classification": "application_defect",
+      "duration_seconds": 39.37,
+      "step_results": [
+        {
+          "step_number": 1,
+          "action": "navigate",
+          "duration_ms": 24357.1,
+          "passed": false,
+          "actual_value": null,
+          "error_message": "Navigation failed: Unable to establish TCP connection to 's4srv25.nodomain.com:44325' (Error code 10035). The target SAP host or VM (s4srv25.nodomain.com) appears to be offline, unreachable on your network, or the SAP service is stopped. Original Playwright error: Page.goto: net::ERR_CONNECTION_TIMED_OUT at https://s4srv25.nodomain.com:44325/sap/bc/ui2/flp?sap-client=100&sap-language=EN#Launchpad-openFLPPage?pageId=SAP_CRM_PG_SERVICE_PROCESSING&spaceId=SAP_CRM_SP_SERVICE\nCall log:\n  - navigating to \"https://s4srv25.nodomain.com:44325/sap/bc/ui2/flp?sap-client=100&sap-language=EN#Launchpad-openFLPPage?pageId=SAP_CRM_PG_SERVICE_PROCESSING&spaceId=SAP_CRM_SP_SERVICE\", waiting until \"domcontentloaded\"\n",
+          "screenshot_path": null
+        }
+      ],
+      "failure_message": "Step 1 (navigate) failed: Navigation failed: Unable to establish TCP connection to 's4srv25.nodomain.com:44325' (Error code 10035). The target SAP host or VM (s4srv25.nodomain.com) appears to be offline, unreachable on your network, or the SAP service is stopped. Original Playwright error: Page.goto: net::ERR_CONNECTION_TIMED_OUT at https://s4srv25.nodomain.com:44325/sap/bc/ui2/flp?sap-client=100&sap-language=EN#Launchpad-openFLPPage?pageId=SAP_CRM_PG_SERVICE_PROCESSING&spaceId=SAP_CRM_SP_SERVICE\nCall log:\n  - navigating to \"https://s4srv25.nodomain.com:44325/sap/bc/ui2/flp?sap-client=100&sap-language=EN#Launchpad-openFLPPage?pageId=SAP_CRM_PG_SERVICE_PROCESSING&spaceId=SAP_CRM_SP_SERVICE\", waiting until \"domcontentloaded\"\n",
+      "screenshot_path": null
+    }
+  ]
+}

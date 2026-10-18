@@ -1,0 +1,162 @@
+{
+  "SAP Standard Logon": {
+    "description": "Navigates to SAP S/4HANA Fiori URL, inputs username & password, and clicks Log On.",
+    "category": "Authentication",
+    "steps": [
+      {
+        "step_number": 1,
+        "action": "navigate",
+        "locator_strategy": null,
+        "selector_value": null,
+        "role_name": null,
+        "input_value": null,
+        "expected_value": null,
+        "description": "Navigate to SAP Fiori Launchpad login URL"
+      },
+      {
+        "step_number": 2,
+        "action": "fill",
+        "locator_strategy": "css",
+        "selector_value": "#USERNAME_FIELD-inner",
+        "role_name": null,
+        "input_value": "MYRAR1",
+        "expected_value": null,
+        "description": "Enter SAP user credentials into username field"
+      },
+      {
+        "step_number": 3,
+        "action": "fill",
+        "locator_strategy": "css",
+        "selector_value": "#PASSWORD_FIELD-inner",
+        "role_name": null,
+        "input_value": "Welcome@123",
+        "expected_value": null,
+        "description": "Enter SAP password securely"
+      },
+      {
+        "step_number": 4,
+        "action": "click",
+        "locator_strategy": "css",
+        "selector_value": "#LOGIN_LINK",
+        "role_name": null,
+        "input_value": null,
+        "expected_value": null,
+        "description": "Click Log On button to establish session"
+      },
+      {
+        "step_number": 5,
+        "action": "assert_text",
+        "locator_strategy": "css",
+        "selector_value": "body",
+        "role_name": null,
+        "input_value": null,
+        "expected_value": "Home",
+        "description": "Assert successful logon by verifying Launchpad dashboard presence"
+      }
+    ]
+  },
+  "SAP Standard Logout": {
+    "description": "Opens user profile action menu (#meAreaHeaderButton), clicks Sign Out, and confirms sign out dialog.",
+    "category": "Authentication",
+    "steps": [
+      {
+        "step_number": 1,
+        "action": "click",
+        "locator_strategy": "css",
+        "selector_value": "#meAreaHeaderButton",
+        "role_name": null,
+        "input_value": null,
+        "expected_value": null,
+        "description": "Click user profile action menu in SAP Launchpad header"
+      },
+      {
+        "step_number": 2,
+        "action": "click",
+        "locator_strategy": "css",
+        "selector_value": "button:has-text('Sign Out'), #logoutBtn",
+        "role_name": null,
+        "input_value": null,
+        "expected_value": null,
+        "description": "Click Sign Out button in user action sheet"
+      },
+      {
+        "step_number": 3,
+        "action": "click",
+        "locator_strategy": "css",
+        "selector_value": "button:has-text('OK'), button:has-text('Sign Out'), #logoutConfirm",
+        "role_name": null,
+        "input_value": null,
+        "expected_value": null,
+        "description": "Confirm sign-out modal dialog"
+      },
+      {
+        "step_number": 4,
+        "action": "assert_text",
+        "locator_strategy": "css",
+        "selector_value": "body",
+        "role_name": null,
+        "input_value": null,
+        "expected_value": "signed out",
+        "description": "Assert SAP logout confirmation screen"
+      }
+    ]
+  },
+  "Open Fiori Tile: Manage Service Quotations": {
+    "description": "Navigates to the Manage Service Quotations tile and waits for the application worklist to load.",
+    "category": "Navigation",
+    "steps": [
+      {
+        "step_number": 1,
+        "action": "click",
+        "locator_strategy": "text",
+        "selector_value": "Manage Service Quotations",
+        "role_name": null,
+        "input_value": null,
+        "expected_value": null,
+        "description": "Click on Manage Service Quotations tile on Fiori Launchpad"
+      },
+      {
+        "step_number": 2,
+        "action": "wait_for",
+        "locator_strategy": "css",
+        "selector_value": "body",
+        "role_name": null,
+        "input_value": "20s",
+        "expected_value": null,
+        "description": "Wait for 20 seconds on Service Quotations worklist page"
+      }
+    ]
+  },
+  "Wait 20 Seconds Pause": {
+    "description": "Inserts an intentional 20-second pause to let asynchronous UI5 services or backend transactions complete.",
+    "category": "Utility",
+    "steps": [
+      {
+        "step_number": 1,
+        "action": "wait_for",
+        "locator_strategy": "css",
+        "selector_value": "body",
+        "role_name": null,
+        "input_value": "20s",
+        "expected_value": null,
+        "description": "Pause execution for 20 seconds"
+      }
+    ]
+  },
+  "Custom Pause 5s": {
+    "description": "Pauses for 5 seconds",
+    "category": "Utility",
+    "steps": [
+      {
+        "step_number": 1,
+        "action": "wait_for",
+        "locator_strategy": null,
+        "selector_value": null,
+        "role_name": null,
+        "input_value": "5s",
+        "expected_value": null,
+        "description": "Wait 5s"
+      }
+    ]
+  }
+}

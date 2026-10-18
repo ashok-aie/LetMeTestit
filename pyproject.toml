@@ -3,7 +3,7 @@ name = "let-me-test-it"
 version = "0.1.0"
 description = "Agentic Quality Engineering Platform — from requirements to verified results"
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = ">=3.10"
 authors = [
     { name = "QA Engineering Team" }
 ]

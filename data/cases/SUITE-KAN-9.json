@@ -1,0 +1,195 @@
+{
+  "suite_id": "SUITE-KAN-9",
+  "name": "SUITE-KAN-9",
+  "description": "Regression Suite for KAN-9",
+  "requirement_key": "KAN-9",
+  "version": 1,
+  "tags": [
+    "regression",
+    "sap"
+  ],
+  "total_cases": 2,
+  "total_steps": 14,
+  "last_saved_at": "2026-10-18T22:54:38.659051+00:00",
+  "last_run_status": "Not Executed",
+  "suite_data": {
+    "suite_id": "SUITE-KAN-9",
+    "requirement_key": "KAN-9",
+    "created_at": "2026-10-18T20:38:35.915001Z",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "TC-02",
+        "requirement_key": "KAN-9",
+        "source_ac_id": "AC-02",
+        "title": "Invalid Credentials Security Boundary",
+        "objective": "Validate that incorrect credentials trigger the SAP authentication error message.",
+        "category": "negative",
+        "preconditions": [],
+        "test_data": {},
+        "steps": [
+          {
+            "step_number": 1,
+            "action": "navigate",
+            "locator_strategy": null,
+            "selector_value": null,
+            "role_name": null,
+            "input_value": null,
+            "expected_value": null,
+            "description": "Navigate to SAP logon page"
+          },
+          {
+            "step_number": 2,
+            "action": "fill",
+            "locator_strategy": "css",
+            "selector_value": "#USERNAME_FIELD-inner",
+            "role_name": null,
+            "input_value": "INVALID_USER",
+            "expected_value": null,
+            "description": "Enter invalid user"
+          },
+          {
+            "step_number": 3,
+            "action": "fill",
+            "locator_strategy": "css",
+            "selector_value": "#PASSWORD_FIELD-inner",
+            "role_name": null,
+            "input_value": "WrongPass!123",
+            "expected_value": null,
+            "description": "Enter wrong password"
+          },
+          {
+            "step_number": 4,
+            "action": "click",
+            "locator_strategy": "css",
+            "selector_value": "#LOGIN_LINK",
+            "role_name": null,
+            "input_value": null,
+            "expected_value": null,
+            "description": "Click Log On"
+          },
+          {
+            "step_number": 5,
+            "action": "assert_text",
+            "locator_strategy": "css",
+            "selector_value": "body",
+            "role_name": null,
+            "input_value": null,
+            "expected_value": "Client, name, or password is not correct",
+            "description": "Verify error notification"
+          }
+        ],
+        "expected_result": "System rejects login with warning message.",
+        "priority": "High",
+        "group": "General",
+        "tags": []
+      },
+      {
+        "id": "TC-01",
+        "requirement_key": "KAN-9",
+        "source_ac_id": "AC-01",
+        "title": "Valid SAP S/4HANA Authentication",
+        "objective": "Validate successful logon and session termination with valid credentials.",
+        "category": "positive",
+        "preconditions": [],
+        "test_data": {},
+        "steps": [
+          {
+            "step_number": 1,
+            "action": "navigate",
+            "locator_strategy": null,
+            "selector_value": null,
+            "role_name": null,
+            "input_value": null,
+            "expected_value": null,
+            "description": "Navigate to SAP logon page"
+          },
+          {
+            "step_number": 2,
+            "action": "fill",
+            "locator_strategy": "css",
+            "selector_value": "#USERNAME_FIELD-inner",
+            "role_name": null,
+            "input_value": "MYRAR1",
+            "expected_value": null,
+            "description": "Input username"
+          },
+          {
+            "step_number": 3,
+            "action": "fill",
+            "locator_strategy": "css",
+            "selector_value": "#PASSWORD_FIELD-inner",
+            "role_name": null,
+            "input_value": "Welcome@123",
+            "expected_value": null,
+            "description": "Input password"
+          },
+          {
+            "step_number": 4,
+            "action": "click",
+            "locator_strategy": "css",
+            "selector_value": "#LOGIN_LINK",
+            "role_name": null,
+            "input_value": null,
+            "expected_value": null,
+            "description": "Click Log On"
+          },
+          {
+            "step_number": 5,
+            "action": "assert_text",
+            "locator_strategy": "css",
+            "selector_value": "body",
+            "role_name": null,
+            "input_value": null,
+            "expected_value": "Home",
+            "description": "Verify home screen"
+          },
+          {
+            "step_number": 6,
+            "action": "click",
+            "locator_strategy": "css",
+            "selector_value": "#meAreaHeaderButton",
+            "role_name": null,
+            "input_value": null,
+            "expected_value": null,
+            "description": "Click user profile"
+          },
+          {
+            "step_number": 7,
+            "action": "click",
+            "locator_strategy": "css",
+            "selector_value": "button:has-text('Sign Out'), #logoutBtn",
+            "role_name": null,
+            "input_value": null,
+            "expected_value": null,
+            "description": "Click Sign Out"
+          },
+          {
+            "step_number": 8,
+            "action": "click",
+            "locator_strategy": "css",
+            "selector_value": "button:has-text('OK'), button:has-text('Sign Out')",
+            "role_name": null,
+            "input_value": null,
+            "expected_value": null,
+            "description": "Confirm Sign Out"
+          },
+          {
+            "step_number": 9,
+            "action": "assert_text",
+            "locator_strategy": "css",
+            "selector_value": "body",
+            "role_name": null,
+            "input_value": null,
+            "expected_value": "signed out",
+            "description": "Verify logged off"
+          }
+        ],
+        "expected_result": "User successfully authenticated and signed out.",
+        "priority": "High",
+        "group": "General",
+        "tags": []
+      }
+    ]
+  }
+}

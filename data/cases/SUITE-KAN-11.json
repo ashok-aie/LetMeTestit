@@ -1,0 +1,159 @@
+{
+  "suite_id": "SUITE-KAN-11",
+  "name": "SAP Manage Service Quotations Navigation Suite",
+  "description": "End-to-end verified SAP logon, Fiori tile navigation, pause, and sign out.",
+  "requirement_key": "KAN-11",
+  "version": 1,
+  "tags": [
+    "sap",
+    "fiori",
+    "quotations",
+    "regression"
+  ],
+  "total_cases": 1,
+  "total_steps": 12,
+  "last_saved_at": "2026-10-18T20:38:35.912002+00:00",
+  "last_run_status": "100% Passed (12/12)",
+  "suite_data": {
+    "suite_id": "SUITE-KAN-11",
+    "requirement_key": "KAN-11",
+    "created_at": "2026-10-18T20:38:35.911002Z",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "TC-01",
+        "requirement_key": "KAN-11",
+        "source_ac_id": "AC-01",
+        "title": "Navigate to Manage Service Quotations Tile and Logout",
+        "objective": "Validate that user can log on to SAP, open the Manage Service Quotations tile, wait 20s, and log out successfully.",
+        "category": "positive",
+        "preconditions": [],
+        "test_data": {},
+        "steps": [
+          {
+            "step_number": 1,
+            "action": "navigate",
+            "locator_strategy": null,
+            "selector_value": null,
+            "role_name": null,
+            "input_value": null,
+            "expected_value": null,
+            "description": "Open SAP S/4HANA Fiori URL"
+          },
+          {
+            "step_number": 2,
+            "action": "fill",
+            "locator_strategy": "css",
+            "selector_value": "#USERNAME_FIELD-inner",
+            "role_name": null,
+            "input_value": "MYRAR1",
+            "expected_value": null,
+            "description": "Enter username"
+          },
+          {
+            "step_number": 3,
+            "action": "fill",
+            "locator_strategy": "css",
+            "selector_value": "#PASSWORD_FIELD-inner",
+            "role_name": null,
+            "input_value": "Welcome@123",
+            "expected_value": null,
+            "description": "Enter password"
+          },
+          {
+            "step_number": 4,
+            "action": "click",
+            "locator_strategy": "css",
+            "selector_value": "#LOGIN_LINK",
+            "role_name": null,
+            "input_value": null,
+            "expected_value": null,
+            "description": "Click Log On"
+          },
+          {
+            "step_number": 5,
+            "action": "assert_text",
+            "locator_strategy": "css",
+            "selector_value": "body",
+            "role_name": null,
+            "input_value": null,
+            "expected_value": "Home",
+            "description": "Verify Launchpad loaded"
+          },
+          {
+            "step_number": 6,
+            "action": "click",
+            "locator_strategy": "text",
+            "selector_value": "Manage Service Quotations",
+            "role_name": null,
+            "input_value": null,
+            "expected_value": null,
+            "description": "Click Manage Service Quotations tile"
+          },
+          {
+            "step_number": 7,
+            "action": "wait_for",
+            "locator_strategy": "css",
+            "selector_value": "body",
+            "role_name": null,
+            "input_value": "20s",
+            "expected_value": null,
+            "description": "Wait for 20 seconds on Service Quotations worklist"
+          },
+          {
+            "step_number": 8,
+            "action": "assert_text",
+            "locator_strategy": "css",
+            "selector_value": "body",
+            "role_name": null,
+            "input_value": null,
+            "expected_value": "Service Quotation",
+            "description": "Verify Service Quotations worklist view"
+          },
+          {
+            "step_number": 9,
+            "action": "click",
+            "locator_strategy": "css",
+            "selector_value": "#meAreaHeaderButton",
+            "role_name": null,
+            "input_value": null,
+            "expected_value": null,
+            "description": "Open user profile actions menu"
+          },
+          {
+            "step_number": 10,
+            "action": "click",
+            "locator_strategy": "css",
+            "selector_value": "button:has-text('Sign Out'), #logoutBtn",
+            "role_name": null,
+            "input_value": null,
+            "expected_value": null,
+            "description": "Click Sign Out"
+          },
+          {
+            "step_number": 11,
+            "action": "click",
+            "locator_strategy": "css",
+            "selector_value": "button:has-text('OK'), button:has-text('Sign Out')",
+            "role_name": null,
+            "input_value": null,
+            "expected_value": null,
+            "description": "Confirm logout dialog"
+          },
+          {
+            "step_number": 12,
+            "action": "assert_text",
+            "locator_strategy": "css",
+            "selector_value": "body",
+            "role_name": null,
+            "input_value": null,
+            "expected_value": "signed out",
+            "description": "Verify signed out confirmation screen"
+          }
+        ],
+        "expected_result": "System successfully opens Manage Service Quotations, waits 20 seconds, and logs out.",
+        "priority": "High"
+      }
+    ]
+  }
+}

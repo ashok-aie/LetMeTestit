@@ -4,6 +4,7 @@ Executes approved TestSuite models against target web application with determini
 duration metrics, evidence capture (traces/screenshots), and failure classification.
 """
 import logging
+import re
 import time
 from typing import Optional, List
 from uuid import uuid4
@@ -67,26 +68,29 @@ class TestExecutor:
         suite: TestSuite,
         target_url: Optional[str] = None,
         step_callback=None,
+        test_cases: Optional[List[TestCase]] = None,
     ) -> ExecutionRun:
         """
-        Executes all test cases in the test suite sequentially.
+        Executes test cases in the test suite sequentially.
         
         Args:
             suite: Cryptographically approved TestSuite model.
             target_url: Target application base URL.
             step_callback: Optional callback(test_case, step, step_result_or_none) for live UI reporting.
+            test_cases: Optional specific subset and order of TestCases to execute. If omitted, executes all suite.test_cases.
             
         Returns:
             ExecutionRun model with detailed step results, outcomes, and evidence paths.
         """
         app_url = target_url or settings.target_base_url
         run_id = f"RUN-{uuid4().hex[:8].upper()}"
+        cases_to_run = test_cases if test_cases is not None else suite.test_cases
 
         run = ExecutionRun(
             run_id=run_id,
             suite_id=suite.suite_id,
             target_url=app_url,
-            total_tests=len(suite.test_cases),
+            total_tests=len(cases_to_run),
             started_at=datetime.now(timezone.utc),
         )
 
@@ -100,7 +104,7 @@ class TestExecutor:
             page = browser_ctx.page
             locators = browser_ctx.locators
 
-            for tc in suite.test_cases:
+            for tc in cases_to_run:
                 tc_result = self._execute_test_case(tc, page, locators, browser_ctx, step_callback=step_callback)
                 run.results.append(tc_result)
 
@@ -111,6 +115,13 @@ class TestExecutor:
         run.error_tests = sum(1 for r in run.results if r.outcome == TestOutcome.ERROR)
         run.finished_at = datetime.now(timezone.utc)
         run.trace_path = str(self.evidence_manager.trace_file_path)
+
+        # Persist execution run summary for regression trends & audit
+        try:
+            from app.storage.repository import save_execution_run_record
+            save_execution_run_record(run)
+        except Exception as e:
+            logger.warning("Could not persist execution run record: %s", e)
 
         return run
 
@@ -160,6 +171,22 @@ class TestExecutor:
                     screenshot_path=step_shot,
                 )
                 step_results.append(step_res)
+
+                # Continuous Learning: Record verified selector into catalog upon step success
+                if step.selector_value:
+                    try:
+                        from app.storage.repository import save_learned_selector
+                        save_learned_selector(
+                            element_label=step.description or step.selector_value,
+                            selector=step.selector_value,
+                            strategy=step.locator_strategy.value if step.locator_strategy else "css",
+                            action=step.action.value,
+                            role_type=step.role_name,
+                            app_domain="SAP S/4HANA",
+                        )
+                    except Exception as learn_err:
+                        logger.debug("Learning selector skipped: %s", learn_err)
+
                 if step_callback:
                     try:
                         step_callback(tc, step, step_res)
@@ -242,36 +269,79 @@ class TestExecutor:
 
         if step.action == ActionType.NAVIGATE:
             url = step.input_value or settings.target_base_url
-            page.goto(url, wait_until="networkidle")
-
-            # Automated SAP S/4HANA Fiori Logon Handler
+            nav_timeout = max(settings.browser_step_timeout_ms, 60000)
             try:
-                sap_user_loc = page.locator("#USERNAME_FIELD-inner")
-                if sap_user_loc.count() > 0 and sap_user_loc.first.is_visible():
-                    sap_user = getattr(settings, "sap_username", "") or ""
-                    sap_pwd = getattr(settings, "sap_password", "") or ""
-                    if sap_user and sap_pwd:
-                        logger.info("SAP Fiori Logon screen detected; automatically submitting SAP credentials...")
-                        sap_user_loc.first.fill(sap_user)
-                        sap_pwd_loc = page.locator("#PASSWORD_FIELD-inner")
-                        if sap_pwd_loc.count() > 0:
-                            sap_pwd_loc.first.fill(sap_pwd)
-                        sap_login_btn = page.locator("#LOGIN_LINK")
-                        if sap_login_btn.count() > 0:
-                            sap_login_btn.first.click()
-                            page.wait_for_load_state("networkidle", timeout=15000)
-            except Exception as auto_login_err:
-                logger.warning("Automated SAP logon encountered: %s", auto_login_err)
+                page.goto(url, wait_until="domcontentloaded", timeout=nav_timeout)
+            except Exception as nav_err:
+                # Diagnostic: check if the remote host/port is reachable via TCP
+                import socket
+                from urllib.parse import urlparse
+                parsed = urlparse(url)
+                host = parsed.hostname or url
+                port = parsed.port or (443 if parsed.scheme == "https" else 80)
+                try:
+                    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                    sock.settimeout(2.5)
+                    conn_res = sock.connect_ex((host, port))
+                    sock.close()
+                    if conn_res != 0:
+                        alt_hint = ""
+                        try:
+                            s_alt = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                            s_alt.settimeout(1.0)
+                            if s_alt.connect_ex(("192.168.1.198", port)) == 0:
+                                alt_hint = (
+                                    f" Diagnosis: The active SAP server was discovered at IP '192.168.1.198:{port}', "
+                                    f"but your Windows hosts file (C:\\Windows\\System32\\drivers\\etc\\hosts) maps '{host}' to an unreachable IP (192.168.1.50)."
+                                )
+                            s_alt.close()
+                        except Exception:
+                            pass
+                        raise RuntimeError(
+                            f"Navigation failed: Unable to establish TCP connection to '{host}:{port}' (Error code {conn_res}). "
+                            f"The target SAP host or VM ({host}) appears to be offline or unreachable on your network.{alt_hint} "
+                            f"Original Playwright error: {nav_err}"
+                        ) from nav_err
+                except Exception as sock_err:
+                    if "Navigation failed: Unable to establish TCP connection" in str(sock_err):
+                        raise
+                raise
+
+            try:
+                page.wait_for_selector("#USERNAME_FIELD-inner", timeout=15000)
+                time.sleep(1)
+            except Exception:
+                try:
+                    page.wait_for_load_state("networkidle", timeout=5000)
+                except Exception:
+                    pass
 
         elif step.action == ActionType.CLICK:
             elem = locators.resolve(strategy=strategy, value=selector, role_type=role_type)
-            elem.click()
+            try:
+                elem.first.click(timeout=3000)
+            except Exception:
+                try:
+                    elem.first.click(force=True, timeout=3000)
+                except Exception:
+                    elem.first.dispatch_event("click")
 
             # Wait for network / DOM update after click
             try:
-                page.wait_for_load_state("networkidle", timeout=2000)
+                page.wait_for_load_state("networkidle", timeout=3000)
             except Exception:
                 pass
+
+            # Handle SAP multiple logon warning dialog if present
+            if "#LOGIN_LINK" in selector or "log on" in selector.lower() or "login" in selector.lower():
+                try:
+                    multi_logon = page.locator("button:has-text('Continue'), input[value*='Continue'], #LOGON_CONTINUE_BUTTON")
+                    if multi_logon.count() > 0 and multi_logon.first.is_visible():
+                        logger.info("Detected SAP multiple logon dialog; acknowledging...")
+                        multi_logon.first.click()
+                        page.wait_for_load_state("networkidle", timeout=5000)
+                except Exception:
+                    pass
 
             # If clicking submitted a form in a positive flow, check if an error banner was immediately returned
             if test_case and test_case.category == TestCategory.POSITIVE:
@@ -299,7 +369,16 @@ class TestExecutor:
 
         elif step.action == ActionType.FILL:
             elem = locators.resolve(strategy=strategy, value=selector, role_type=role_type)
-            elem.fill(step.input_value or "")
+            val = (step.input_value or "")
+            if any(k in selector.lower() for k in ["username", "password", "user", "pwd"]):
+                val = val.strip()
+            elem.click()
+            elem.fill("")
+            if any(k in selector.lower() for k in ["username", "password", "user", "pwd"]):
+                elem.press_sequentially(val, delay=100)
+                time.sleep(0.5)
+            else:
+                elem.fill(val)
 
         elif step.action == ActionType.SELECT_OPTION:
             elem = locators.resolve(strategy=strategy, value=selector, role_type=role_type)
@@ -331,8 +410,20 @@ class TestExecutor:
                         elem.select_option(label=val)
 
         elif step.action == ActionType.WAIT_FOR:
-            elem = locators.resolve(strategy=strategy, value=selector, role_type=role_type)
-            elem.first.wait_for(state="visible", timeout=settings.browser_step_timeout_ms)
+            # Check for duration-based wait (e.g. "20s", "20 sec", "20", "20000")
+            wait_target = (step.input_value or step.selector_value or "").strip()
+            match = re.search(r"^(\d+(?:\.\d+)?)\s*(s|sec|seconds|ms)?$", wait_target, re.IGNORECASE)
+            if match:
+                val, unit = match.groups()
+                val_float = float(val)
+                wait_ms = val_float if (unit and unit.lower() == "ms") or val_float >= 1000 else val_float * 1000
+                logger.info("Executing timed wait_for: %0.1f ms", wait_ms)
+                page.wait_for_timeout(wait_ms)
+            elif selector:
+                elem = locators.resolve(strategy=strategy, value=selector, role_type=role_type)
+                elem.first.wait_for(state="visible", timeout=settings.browser_step_timeout_ms)
+            else:
+                page.wait_for_timeout(5000)
 
         elif step.action == ActionType.ASSERT_TEXT:
             if test_case and test_case.category == TestCategory.NEGATIVE and "error" in selector.lower():
@@ -348,27 +439,47 @@ class TestExecutor:
 
             elem = locators.resolve(strategy=strategy, value=selector, role_type=role_type)
             expected = (step.expected_value or "").strip()
-            # Bounded wait for element to become visible if it is an alert or banner
-            try:
-                elem.first.wait_for(state="visible", timeout=3000)
-            except Exception:
-                pass
 
-            # Handle multiple matching elements (e.g. repeated table cells) without throwing strict mode violation
-            count = elem.count()
-            if count > 1:
-                texts = [elem.nth(i).inner_text().strip() for i in range(count)]
-                if not any(expected.lower() in t.lower() for t in texts):
-                    raise AssertionError(
-                        f"Text assertion failed on '{selector}' (matched {count} elements). "
-                        f"Expected '{expected}' not found in any matching element: {texts}"
-                    )
-            else:
-                actual_text = elem.inner_text().strip()
-                if expected.lower() not in actual_text.lower():
-                    raise AssertionError(
-                        f"Text assertion failed on '{selector}'. Expected '{expected}' to be contained in '{actual_text}'."
-                    )
+            timeout_sec = max(settings.browser_step_timeout_ms / 1000.0, 10.0)
+            poll_start = time.perf_counter()
+            matched = False
+            last_text = ""
+
+            while time.perf_counter() - poll_start < timeout_sec:
+                try:
+                    count = elem.count()
+                    if count > 1:
+                        texts = [elem.nth(i).inner_text().strip() for i in range(count)]
+                        if any(expected.lower() in t.lower() for t in texts):
+                            matched = True
+                            break
+                        if expected.lower() in ("logged off", "signed out", "log off"):
+                            if any(any(k in t.lower() for k in ["logged off", "signed out", "log off", "goodbye"]) for t in texts):
+                                matched = True
+                                break
+                        last_text = str(texts)
+                    elif count == 1:
+                        last_text = elem.first.inner_text().strip()
+                        if expected.lower() in last_text.lower():
+                            matched = True
+                            break
+                        if expected.lower() in ("logged off", "signed out", "log off"):
+                            if any(k in last_text.lower() for k in ["logged off", "signed out", "log off", "goodbye"]):
+                                matched = True
+                                break
+                except Exception:
+                    pass
+                time.sleep(0.5)
+
+            if not matched:
+                try:
+                    if elem.count() > 0:
+                        last_text = elem.first.inner_text().strip()
+                except Exception:
+                    pass
+                raise AssertionError(
+                    f"Text assertion failed on '{selector}'. Expected '{expected}' to be contained in '{last_text}'."
+                )
 
         elif step.action == ActionType.ASSERT_URL:
             expected = step.expected_value or ""

@@ -7,7 +7,7 @@ echo ========================================================
 python --version >nul 2>&1
 if errorlevel 1 (
     echo [ERROR] Python is not installed or not added to your system PATH.
-    echo Please download and install Python 3.11 or 3.12 from:
+    echo Please download and install Python 3.10, 3.11 or 3.12 from:
     echo   https://www.python.org/downloads/
     echo **IMPORTANT**: Make sure to check the box "Add Python to PATH" during install!
     pause

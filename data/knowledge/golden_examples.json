@@ -1,0 +1,71 @@
+[
+  {
+    "example_id": "GOLDEN-SAP-AUTH-01",
+    "pattern": "SAP Logon & Session Termination",
+    "description": "Standard enterprise authentication with dashboard assertion and graceful sign-out.",
+    "test_case": {
+      "id": "TC-01",
+      "requirement_key": "SAP-AUTH",
+      "source_ac_id": "AC-01",
+      "title": "Valid SAP S/4HANA Authentication and Graceful Sign-Out",
+      "objective": "Verify user can log on with valid credentials, access Fiori launchpad, and sign out.",
+      "category": "positive",
+      "priority": "High",
+      "steps": [
+        {"step_number": 1, "action": "navigate", "description": "Open SAP Fiori logon screen"},
+        {"step_number": 2, "action": "fill", "locator_strategy": "css", "selector_value": "#USERNAME_FIELD-inner", "input_value": "MYRAR1", "description": "Input SAP username"},
+        {"step_number": 3, "action": "fill", "locator_strategy": "css", "selector_value": "#PASSWORD_FIELD-inner", "input_value": "Welcome@123", "description": "Input SAP password"},
+        {"step_number": 4, "action": "click", "locator_strategy": "css", "selector_value": "#LOGIN_LINK", "description": "Click Log On button"},
+        {"step_number": 5, "action": "assert_text", "locator_strategy": "css", "selector_value": "body", "expected_value": "Home", "description": "Verify Launchpad dashboard loaded"},
+        {"step_number": 6, "action": "click", "locator_strategy": "css", "selector_value": "#meAreaHeaderButton", "description": "Open user profile actions menu"},
+        {"step_number": 7, "action": "click", "locator_strategy": "css", "selector_value": "button:has-text('Sign Out'), #logoutBtn", "description": "Click Sign Out"},
+        {"step_number": 8, "action": "click", "locator_strategy": "css", "selector_value": "button:has-text('OK'), button:has-text('Sign Out')", "description": "Confirm sign-out dialog"},
+        {"step_number": 9, "action": "assert_text", "locator_strategy": "css", "selector_value": "body", "expected_value": "signed out", "description": "Verify sign-out confirmation"}
+      ],
+      "expected_result": "User session established and terminated cleanly without errors."
+    }
+  },
+  {
+    "example_id": "GOLDEN-SAP-TILE-02",
+    "pattern": "Fiori Launchpad Tile Navigation",
+    "description": "Navigates to specific business application tile using resilient text and aria-label matching.",
+    "test_case": {
+      "id": "TC-02",
+      "requirement_key": "SAP-NAV",
+      "source_ac_id": "AC-01",
+      "title": "Navigate to Manage Service Quotations Application",
+      "objective": "Verify user can click the Manage Service Quotations tile on Launchpad and access the application worklist.",
+      "category": "positive",
+      "priority": "High",
+      "steps": [
+        {"step_number": 1, "action": "click", "locator_strategy": "text", "selector_value": "Manage Service Quotations", "description": "Click Manage Service Quotations tile on Launchpad"},
+        {"step_number": 2, "action": "wait_for", "locator_strategy": "css", "selector_value": "body", "input_value": "20s", "description": "Wait for worklist application to finish loading"},
+        {"step_number": 3, "action": "assert_text", "locator_strategy": "css", "selector_value": "body", "expected_value": "Service Quotation", "description": "Assert Service Quotations worklist header is visible"}
+      ],
+      "expected_result": "Application worklist opens successfully."
+    }
+  },
+  {
+    "example_id": "GOLDEN-SAP-NEG-03",
+    "pattern": "Negative Authentication Validation",
+    "description": "Boundary and error condition validation asserting appropriate client rejection message.",
+    "test_case": {
+      "id": "TC-03",
+      "requirement_key": "SAP-SEC",
+      "source_ac_id": "AC-02",
+      "title": "Invalid Credentials Authentication Boundary",
+      "objective": "Verify system denies access and displays notification banner when invalid credentials are supplied.",
+      "category": "negative",
+      "priority": "High",
+      "steps": [
+        {"step_number": 1, "action": "navigate", "description": "Open SAP logon page"},
+        {"step_number": 2, "action": "fill", "locator_strategy": "css", "selector_value": "#USERNAME_FIELD-inner", "input_value": "UNKNOWN_USER", "description": "Enter unassigned user ID"},
+        {"step_number": 3, "action": "fill", "locator_strategy": "css", "selector_value": "#PASSWORD_FIELD-inner", "input_value": "BadPassword123!", "description": "Enter invalid password"},
+        {"step_number": 4, "action": "click", "locator_strategy": "css", "selector_value": "#LOGIN_LINK", "description": "Submit login request"},
+        {"step_number": 5, "action": "assert_text", "locator_strategy": "css", "selector_value": "body", "expected_value": "Client, name, or password is not correct", "description": "Assert authentication error message is displayed"}
+      ],
+      "expected_result": "Login denied with warning message; session is not created."
+    }
+  }
+]
+

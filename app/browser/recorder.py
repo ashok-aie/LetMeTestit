@@ -266,6 +266,8 @@ def create_test_case_from_recording(
     requirement_key: str,
     tc_id: str,
     objective: Optional[str] = None,
+    group: Optional[str] = "Recorded",
+    tags: Optional[List[str]] = None,
 ) -> TestCase:
     """Wraps recorded steps into a fully validated TestCase model."""
     return TestCase(
@@ -276,6 +278,8 @@ def create_test_case_from_recording(
         objective=objective or f"User-recorded exploratory scenario via Playwright Codegen",
         category=TestCategory.POSITIVE,
         steps=steps,
+        group=group or "Recorded",
+        tags=tags or ["recorded", "browser"],
         expected_result="Recorded sequence completes without browser error",
     )
 

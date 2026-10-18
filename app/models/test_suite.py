@@ -62,6 +62,8 @@ class TestCase(BaseModel):
     steps: List[TestStep] = Field(min_length=1, description="Ordered action steps")
     expected_result: str = Field(description="Final expected outcome of the test case")
     priority: Literal["High", "Medium", "Low"] = "Medium"
+    group: Optional[str] = Field(default="General", description="Logical group or functional module name, e.g. Authentication, Quotations")
+    tags: List[str] = Field(default_factory=list, description="Categorization tags, e.g. ['smoke', 'regression']")
 
 
 class TestSuite(BaseModel):

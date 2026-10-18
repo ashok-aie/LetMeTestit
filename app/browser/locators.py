@@ -89,6 +89,12 @@ class LocatorResolver:
 
         elif strategy == "text":
             locator = self.page.get_by_text(value, exact=exact)
+            safe_val = value.replace('"', '\\"').replace("'", "\\'")
+            locator = locator.or_(
+                self.page.locator(f'[aria-label*="{safe_val}" i]')
+            ).or_(
+                self.page.locator(f'[title*="{safe_val}" i]')
+            )
 
         elif strategy == "css":
             locator = self.page.locator(value)
@@ -116,6 +122,31 @@ class LocatorResolver:
             # Wait for at least one element to be attached/visible
             locator.first.wait_for(state="attached", timeout=timeout_ms)
         except Exception as exc:
+            # Self-Healing Fallback: check learned selector catalog for matching element
+            try:
+                from app.storage.repository import get_learned_selectors
+                catalog = get_learned_selectors()
+                clean_val = value.strip().lower()
+                for item in catalog:
+                    lbl = item.get("element_label", "").lower()
+                    sel = item.get("selector", "")
+                    if (clean_val in lbl or lbl in clean_val or clean_val == sel.lower()) and sel != value:
+                        fallback_strat = item.get("strategy", "css")
+                        fallback_loc = self.resolve(
+                            strategy=fallback_strat,
+                            value=sel,
+                            role_type=item.get("role_type"),
+                            exact=False,
+                        )
+                        try:
+                            fallback_loc.first.wait_for(state="attached", timeout=2000)
+                            if fallback_loc.count() > 0:
+                                return fallback_loc
+                        except Exception:
+                            continue
+            except Exception:
+                pass
+
             raise ElementNotFoundError(
                 f"Element not found using strategy '{strategy}' with value '{value}'."
             ) from exc

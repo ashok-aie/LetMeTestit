@@ -216,15 +216,46 @@ class TestDesigner:
                             TestStep(step_number=6, action=ActionType.ASSERT_TEXT, locator_strategy=LocatorStrategy.TEST_ID, selector_value="error-banner", expected_value="Validation Error", description="Verify mandatory customer ID error banner"),
                         ]
                 else:
-                    steps = [
-                        TestStep(step_number=1, action=ActionType.NAVIGATE, input_value=f"{base_url}/", description="Open SAP screen"),
-                        TestStep(step_number=2, action=ActionType.FILL, locator_strategy=LocatorStrategy.TEST_ID, selector_value="customer-id-input", input_value="CUST-3001", description="Enter customer ID"),
-                        TestStep(step_number=3, action=ActionType.FILL, locator_strategy=LocatorStrategy.TEST_ID, selector_value="customer-name-input", input_value="Acme Industrial Corp", description="Enter customer name"),
-                        TestStep(step_number=4, action=ActionType.SELECT_OPTION, locator_strategy=LocatorStrategy.TEST_ID, selector_value="material-select", input_value="MAT-1001", description="Select material from catalog"),
-                        TestStep(step_number=5, action=ActionType.FILL, locator_strategy=LocatorStrategy.TEST_ID, selector_value="quantity-input", input_value="5", description="Enter quantity"),
-                        TestStep(step_number=6, action=ActionType.CLICK, locator_strategy=LocatorStrategy.TEST_ID, selector_value="submit-order-button", description="Submit form"),
-                        TestStep(step_number=7, action=ActionType.ASSERT_TEXT, locator_strategy=LocatorStrategy.TEST_ID, selector_value="success-banner", expected_value="created successfully", description="Verify order confirmation"),
-                    ]
+                    req_corpus = (requirement.summary.lower() + " " + ac_lower)
+                    target_url = base_url if ("nodomain.com" in base_url or "44325" in base_url) else settings.sap_fiori_url
+                    if any(k in req_corpus for k in ["quotation", "service quotation", "manage service"]):
+                        steps = [
+                            TestStep(step_number=1, action=ActionType.NAVIGATE, input_value=target_url, description="Open SAP Fiori Logon screen"),
+                            TestStep(step_number=2, action=ActionType.FILL, locator_strategy=LocatorStrategy.CSS, selector_value="#USERNAME_FIELD-inner", input_value=(settings.sap_username or "MYRAR1").strip(), description="Enter SAP username"),
+                            TestStep(step_number=3, action=ActionType.FILL, locator_strategy=LocatorStrategy.CSS, selector_value="#PASSWORD_FIELD-inner", input_value=(settings.sap_password or "Pass23#$").strip(), description="Enter SAP password"),
+                            TestStep(step_number=4, action=ActionType.CLICK, locator_strategy=LocatorStrategy.CSS, selector_value="#LOGIN_LINK", description="Click Log On button"),
+                            TestStep(step_number=5, action=ActionType.ASSERT_TEXT, locator_strategy=LocatorStrategy.CSS, selector_value="body", expected_value="Home", description="Assert SAP Fiori Launchpad loaded"),
+                            TestStep(step_number=6, action=ActionType.CLICK, locator_strategy=LocatorStrategy.TEXT, selector_value="Manage Service Quotations", description="Click Manage Service Quotations tile"),
+                            TestStep(step_number=7, action=ActionType.ASSERT_TEXT, locator_strategy=LocatorStrategy.CSS, selector_value="body", expected_value="Service Quotations", description="Verify Service Quotations screen loaded"),
+                            TestStep(step_number=8, action=ActionType.WAIT_FOR, input_value="20s", description="Wait for 20 seconds on Service Quotations screen"),
+                            TestStep(step_number=9, action=ActionType.CLICK, locator_strategy=LocatorStrategy.CSS, selector_value="#userActionsMenuHeaderButton, #meAreaHeaderButton", description="Click User Profile Avatar Menu"),
+                            TestStep(step_number=10, action=ActionType.CLICK, locator_strategy=LocatorStrategy.TEXT, selector_value="Sign Out", description="Click Sign Out"),
+                            TestStep(step_number=11, action=ActionType.CLICK, locator_strategy=LocatorStrategy.TEXT, selector_value="OK", description="Confirm Sign Out dialog"),
+                            TestStep(step_number=12, action=ActionType.ASSERT_TEXT, locator_strategy=LocatorStrategy.CSS, selector_value="body", expected_value="signed out", description="Verify returned to sign out / logoff screen"),
+                        ]
+                    elif any(k in req_corpus for k in ["login", "logon", "logout", "sign out", "sign in", "authenticate"]):
+                        steps = [
+                            TestStep(step_number=1, action=ActionType.NAVIGATE, input_value=target_url, description="Open SAP Fiori Logon screen"),
+                            TestStep(step_number=2, action=ActionType.FILL, locator_strategy=LocatorStrategy.CSS, selector_value="#USERNAME_FIELD-inner", input_value=(settings.sap_username or "MYRAR1").strip(), description="Enter SAP username"),
+                            TestStep(step_number=3, action=ActionType.FILL, locator_strategy=LocatorStrategy.CSS, selector_value="#PASSWORD_FIELD-inner", input_value=(settings.sap_password or "Pass23#$").strip(), description="Enter SAP password"),
+                            TestStep(step_number=4, action=ActionType.CLICK, locator_strategy=LocatorStrategy.CSS, selector_value="#LOGIN_LINK", description="Click Log On button"),
+                            TestStep(step_number=5, action=ActionType.ASSERT_TEXT, locator_strategy=LocatorStrategy.CSS, selector_value="body", expected_value="Home", description="Assert SAP Fiori Launchpad loaded"),
+                            TestStep(step_number=6, action=ActionType.WAIT_FOR, input_value="20s", description="Wait for 20 seconds on Launchpad"),
+                            TestStep(step_number=7, action=ActionType.CLICK, locator_strategy=LocatorStrategy.CSS, selector_value="#userActionsMenuHeaderButton, #meAreaHeaderButton", description="Click User Profile Avatar Menu"),
+                            TestStep(step_number=8, action=ActionType.CLICK, locator_strategy=LocatorStrategy.TEXT, selector_value="Sign Out", description="Click Sign Out"),
+                            TestStep(step_number=9, action=ActionType.CLICK, locator_strategy=LocatorStrategy.TEXT, selector_value="OK", description="Confirm Sign Out dialog"),
+                            TestStep(step_number=10, action=ActionType.ASSERT_TEXT, locator_strategy=LocatorStrategy.CSS, selector_value="body", expected_value="logged off", description="Verify returned to Logoff screen"),
+                        ]
+                    else:
+                        steps = [
+                            TestStep(step_number=1, action=ActionType.NAVIGATE, input_value=f"{base_url}/", description="Open SAP screen"),
+                            TestStep(step_number=2, action=ActionType.FILL, locator_strategy=LocatorStrategy.TEST_ID, selector_value="customer-id-input", input_value="CUST-3001", description="Enter customer ID"),
+                            TestStep(step_number=3, action=ActionType.FILL, locator_strategy=LocatorStrategy.TEST_ID, selector_value="customer-name-input", input_value="Acme Industrial Corp", description="Enter customer name"),
+                            TestStep(step_number=4, action=ActionType.SELECT_OPTION, locator_strategy=LocatorStrategy.TEST_ID, selector_value="material-select", input_value="MAT-1001", description="Select material from catalog"),
+                            TestStep(step_number=5, action=ActionType.FILL, locator_strategy=LocatorStrategy.TEST_ID, selector_value="quantity-input", input_value="5", description="Enter quantity"),
+                            TestStep(step_number=6, action=ActionType.CLICK, locator_strategy=LocatorStrategy.TEST_ID, selector_value="submit-order-button", description="Submit form"),
+                            TestStep(step_number=7, action=ActionType.ASSERT_TEXT, locator_strategy=LocatorStrategy.TEST_ID, selector_value="success-banner", expected_value="created successfully", description="Verify order confirmation"),
+                        ]
 
                 tc_obj = TestCase(
                     id=f"TC-{idx:02d}",
@@ -239,7 +270,7 @@ class TestDesigner:
 
             normalized_tc = self._ensure_initial_navigate(tc_obj, base_url)
             test_cases.append(normalized_tc)
-            progress_callback(idx, total, f"Completed Scenario {idx}/{total}: {normalized_tc.title} ✅")
+            progress_callback(idx, total, f"Completed Scenario {idx}/{total}: {normalized_tc.title} [Done]")
 
         return TestSuite(
             suite_id=f"SUITE-{requirement.key}",
@@ -251,7 +282,7 @@ class TestDesigner:
     @staticmethod
     def _ensure_initial_navigate(tc: TestCase, base_url: str) -> TestCase:
         """Ensures every test case begins with a deterministic navigate step to base_url."""
-        target_url = base_url.rstrip("/") + "/"
+        target_url = base_url if ("?" in base_url or "#" in base_url) else base_url.rstrip("/") + "/"
         steps = list(tc.steps)
         if not steps or steps[0].action != ActionType.NAVIGATE:
             nav_step = TestStep(

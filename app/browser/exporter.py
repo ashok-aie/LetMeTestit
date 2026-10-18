@@ -9,6 +9,7 @@ from app.models.test_suite import TestSuite, ActionType, LocatorStrategy
 
 
 TEST_SCRIPTS_DIR = Path("app/browser/test_scripts").resolve()
+ARTIFACTS_SCRIPTS_DIR = Path("artifacts/scripts").resolve()
 
 
 def export_suite_to_playwright_script(
@@ -29,9 +30,11 @@ def export_suite_to_playwright_script(
     """
     dest_dir = output_dir or TEST_SCRIPTS_DIR
     dest_dir.mkdir(parents=True, exist_ok=True)
+    ARTIFACTS_SCRIPTS_DIR.mkdir(parents=True, exist_ok=True)
     
     clean_id = suite.suite_id.replace("-", "_").lower()
     script_path = dest_dir / f"test_{clean_id}.py"
+    artifact_script_path = ARTIFACTS_SCRIPTS_DIR / f"test_{clean_id}.py"
 
     code_lines = [
         '"""',
@@ -112,6 +115,11 @@ def export_suite_to_playwright_script(
             code_lines.append('')
         code_lines.append('')
 
-    script_path.write_text("\n".join(code_lines), encoding="utf-8")
+    content = "\n".join(code_lines)
+    script_path.write_text(content, encoding="utf-8")
+    try:
+        artifact_script_path.write_text(content, encoding="utf-8")
+    except Exception:
+        pass
     return script_path
 

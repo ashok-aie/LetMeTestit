@@ -1,0 +1,35 @@
+{
+  "run_id": "RUN-F9E1515D",
+  "suite_id": "SUITE-KAN-9",
+  "environment": "local",
+  "target_url": "https://s4srv25.nodomain.com:44325/sap/bc/ui2/flp?sap-client=100&sap-language=EN#Launchpad-openFLPPage?pageId=SAP_CRM_PG_SERVICE_PROCESSING&spaceId=SAP_CRM_SP_SERVICE",
+  "started_at": "2026-10-18T21:16:34.780180Z",
+  "finished_at": "2026-10-18T21:16:57.537841Z",
+  "total_tests": 1,
+  "passed_tests": 0,
+  "failed_tests": 1,
+  "blocked_tests": 0,
+  "error_tests": 0,
+  "trace_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261018_211634\\traces\\trace.zip",
+  "results": [
+    {
+      "test_case_id": "TC-01",
+      "outcome": "FAIL",
+      "classification": "timeout_error",
+      "duration_seconds": 20.84,
+      "step_results": [
+        {
+          "step_number": 1,
+          "action": "navigate",
+          "duration_ms": 10818.88,
+          "passed": false,
+          "actual_value": null,
+          "error_message": "Page.goto: Timeout 10000ms exceeded.\nCall log:\n  - navigating to \"https://s4srv25.nodomain.com:44325/sap/bc/ui2/flp?sap-client=100&sap-language=EN#Launchpad-openFLPPage?pageId=SAP_CRM_PG_SERVICE_PROCESSING&spaceId=SAP_CRM_SP_SERVICE\", waiting until \"domcontentloaded\"\n",
+          "screenshot_path": null
+        }
+      ],
+      "failure_message": "Step 1 (navigate) failed: Page.goto: Timeout 10000ms exceeded.\nCall log:\n  - navigating to \"https://s4srv25.nodomain.com:44325/sap/bc/ui2/flp?sap-client=100&sap-language=EN#Launchpad-openFLPPage?pageId=SAP_CRM_PG_SERVICE_PROCESSING&spaceId=SAP_CRM_SP_SERVICE\", waiting until \"domcontentloaded\"\n",
+      "screenshot_path": null
+    }
+  ]
+}

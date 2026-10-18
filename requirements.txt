@@ -11,7 +11,7 @@ playwright>=1.49.0,<1.51.0
 
 # Agent Orchestration & State Graphs
 langgraph>=0.2.45,<0.3.0
-langgraph-checkpoint-sqlite>=3.0.0
+langgraph-checkpoint-sqlite<3.0.0
 langchain-core>=0.3.0,<0.4.0
 
 # Data Validation & Configuration

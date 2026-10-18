@@ -26,11 +26,16 @@ testpilot.db-wal
 
 # Playwright & execution artifacts
 artifacts/runs/
+artifacts/reports/
 artifacts/logs/
 *.zip
 *.png
+*.pdf
 *.log
 *.rdp
+
+# Local tool binaries
+uv/
 
 # Streamlit config & cache
 .streamlit/secrets.toml
