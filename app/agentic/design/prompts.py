@@ -392,8 +392,213 @@ def format_single_ac_prompt(
   ]"""
     else:
         req_corpus = (clean_summary + " " + ac_lower).lower()
-        if any(k in req_corpus for k in ["quotation", "service quotation", "manage service", "tile"]):
-            guidance = "- For SAP Tile Navigation (e.g. Manage Service Quotations): Navigate to SAP URL, fill '#USERNAME_FIELD-inner' with username, fill '#PASSWORD_FIELD-inner' with password, click '#LOGIN_LINK', assert body has 'Home', click tile with locator_strategy='text' and selector_value='Manage Service Quotations', assert body contains 'Service Quotations', wait for specified duration using wait_for (input_value='20s'), click '#userActionsMenuHeaderButton, #meAreaHeaderButton' (User Profile), click 'Sign Out', confirm with 'OK', and assert returned to sign out screen."
+
+        # Branch 1: Quotation Creation / Header / Customer / ZQDS / E2E
+        if any(k in ac_lower for k in ["e2e", "create", "header", "sold-to", "party", "customer", "zqds", "hospital"]):
+            guidance = "- For SAP Quotation Creation / Header: Navigate to SAP URL, log in with credentials (#USERNAME_FIELD-inner, #PASSWORD_FIELD-inner, #LOGIN_LINK), assert body has 'Home', click 'Manage Service Quotations' tile, click 'Create' button (button:has-text('Create'), #btnCreate, text='Create'), enter Quotation Type 'ZQDS - CE-Direct Sales', enter Sold-to Party ('Brugmann Hospital' or customer ID), enter Description ('RAR'), and assert quotation header populated with customer."
+            sample_steps_json = f"""[
+    {{
+      "step_number": 1,
+      "action": "navigate",
+      "input_value": "{safe_url}",
+      "description": "Open SAP Fiori Launchpad"
+    }},
+    {{
+      "step_number": 2,
+      "action": "fill",
+      "locator_strategy": "css",
+      "selector_value": "#USERNAME_FIELD-inner",
+      "input_value": "MYRAR1",
+      "description": "Enter SAP Username"
+    }},
+    {{
+      "step_number": 3,
+      "action": "fill",
+      "locator_strategy": "css",
+      "selector_value": "#PASSWORD_FIELD-inner",
+      "input_value": "Pass23#$",
+      "description": "Enter SAP Password"
+    }},
+    {{
+      "step_number": 4,
+      "action": "click",
+      "locator_strategy": "css",
+      "selector_value": "#LOGIN_LINK",
+      "description": "Click Log On button"
+    }},
+    {{
+      "step_number": 5,
+      "action": "assert_text",
+      "locator_strategy": "css",
+      "selector_value": "body",
+      "expected_value": "Home",
+      "description": "Assert SAP Fiori Launchpad loaded"
+    }},
+    {{
+      "step_number": 6,
+      "action": "click",
+      "locator_strategy": "text",
+      "selector_value": "Manage Service Quotations",
+      "description": "Click Manage Service Quotations tile"
+    }},
+    {{
+      "step_number": 7,
+      "action": "click",
+      "locator_strategy": "css",
+      "selector_value": "button:has-text('Create'), #btnCreate, text='Create'",
+      "description": "Click Create button on Service Quotations worklist"
+    }},
+    {{
+      "step_number": 8,
+      "action": "fill",
+      "locator_strategy": "css",
+      "selector_value": "input[aria-label*='Sold-to'], input[id*='SoldToParty'], input[placeholder*='Sold-to']",
+      "input_value": "Brugmann Hospital",
+      "description": "Enter Sold-to Party customer"
+    }},
+    {{
+      "step_number": 9,
+      "action": "fill",
+      "locator_strategy": "css",
+      "selector_value": "input[aria-label*='Description'], input[id*='Description']",
+      "input_value": "RAR",
+      "description": "Enter Quotation Description"
+    }},
+    {{
+      "step_number": 10,
+      "action": "assert_text",
+      "locator_strategy": "css",
+      "selector_value": "body",
+      "expected_value": "Brugmann Hospital",
+      "description": "Assert quotation header created with customer"
+    }}
+  ]"""
+
+        # Branch 2: Line Items & Products
+        elif any(k in ac_lower for k in ["item", "product", "quantity", "45157510101"]):
+            guidance = "- For SAP Quotation Line Items: From quotation screen, click 'Items' tab or 'Add Item' button (button:has-text('Add Item'), text='Items'), enter Product ID '45157510101' into product input (input[aria-label*='Product'], input[id*='ProductID']), enter Quantity '1' into quantity input (input[aria-label*='Quantity'], input[id*='Quantity']), and assert item row appears with Product '45157510101' and Quantity '1'."
+            sample_steps_json = f"""[
+    {{
+      "step_number": 1,
+      "action": "click",
+      "locator_strategy": "css",
+      "selector_value": "button:has-text('Add Item'), text='Items'",
+      "description": "Open Items tab and click Add Item"
+    }},
+    {{
+      "step_number": 2,
+      "action": "fill",
+      "locator_strategy": "css",
+      "selector_value": "input[aria-label*='Product'], input[id*='ProductID']",
+      "input_value": "45157510101",
+      "description": "Enter Product ID 45157510101"
+    }},
+    {{
+      "step_number": 3,
+      "action": "fill",
+      "locator_strategy": "css",
+      "selector_value": "input[aria-label*='Quantity'], input[id*='Quantity']",
+      "input_value": "1",
+      "description": "Enter Quantity 1"
+    }},
+    {{
+      "step_number": 4,
+      "action": "assert_text",
+      "locator_strategy": "css",
+      "selector_value": "body",
+      "expected_value": "45157510101",
+      "description": "Assert product added to quotation line items"
+    }}
+  ]"""
+
+        # Branch 3: Pricing & Conditions (ZTAF)
+        elif any(k in ac_lower for k in ["price", "pricing", "ztaf", "condition"]):
+            guidance = "- For SAP Quotation Pricing: Click 'Price Details' or 'Pricing' tab (locator_strategy='text', selector_value='Price Details'), verify condition type 'ZTAF' is present in pricing table, and assert pricing calculations are visible."
+            sample_steps_json = f"""[
+    {{
+      "step_number": 1,
+      "action": "click",
+      "locator_strategy": "text",
+      "selector_value": "Price Details",
+      "description": "Click Price Details tab"
+    }},
+    {{
+      "step_number": 2,
+      "action": "assert_text",
+      "locator_strategy": "css",
+      "selector_value": "body",
+      "expected_value": "ZTAF",
+      "description": "Verify condition type ZTAF present in pricing elements"
+    }}
+  ]"""
+
+        # Branch 4: Save, Release, Accept, Persistence
+        elif any(k in ac_lower for k in ["save", "release", "accept", "persist"]):
+            guidance = "- For SAP Quotation Save, Release, and Accept: Click 'Save' button (button:has-text('Save'), #btnSave), assert quotation saved confirmation, click 'Release' button (button:has-text('Release')), assert status is 'Released', click 'Accept' button (button:has-text('Accept')), and assert status is 'Accepted'."
+            sample_steps_json = f"""[
+    {{
+      "step_number": 1,
+      "action": "click",
+      "locator_strategy": "css",
+      "selector_value": "button:has-text('Save'), #btnSave",
+      "description": "Click Save button to persist quotation"
+    }},
+    {{
+      "step_number": 2,
+      "action": "assert_text",
+      "locator_strategy": "css",
+      "selector_value": "body",
+      "expected_value": "saved",
+      "description": "Verify quotation saved successfully with confirmation"
+    }},
+    {{
+      "step_number": 3,
+      "action": "click",
+      "locator_strategy": "css",
+      "selector_value": "button:has-text('Release')",
+      "description": "Click Release button"
+    }},
+    {{
+      "step_number": 4,
+      "action": "click",
+      "locator_strategy": "css",
+      "selector_value": "button:has-text('Accept')",
+      "description": "Click Accept button"
+    }},
+    {{
+      "step_number": 5,
+      "action": "assert_text",
+      "locator_strategy": "css",
+      "selector_value": "body",
+      "expected_value": "Accepted",
+      "description": "Verify quotation status is updated to Accepted"
+    }}
+  ]"""
+
+        # Branch 5: Duration / Dates / Terms
+        elif any(k in ac_lower for k in ["duration", "date", "term"]):
+            guidance = "- For SAP Quotation Duration & Terms: Click 'Dates' tab, fill validity duration dates, and assert dates confirmed on quotation header."
+            sample_steps_json = f"""[
+    {{
+      "step_number": 1,
+      "action": "click",
+      "locator_strategy": "text",
+      "selector_value": "Dates",
+      "description": "Open Dates and Duration tab"
+    }},
+    {{
+      "step_number": 2,
+      "action": "assert_text",
+      "locator_strategy": "css",
+      "selector_value": "body",
+      "expected_value": "Valid To",
+      "description": "Verify duration and validity dates section displayed"
+    }}
+  ]"""
+
+        # Branch 6: Tile Navigation & Worklist
+        elif any(k in ac_lower for k in ["tile", "worklist", "manage service"]):
+            guidance = "- For SAP Tile Navigation: Log in to SAP Fiori, assert 'Home', click 'Manage Service Quotations' tile with locator_strategy='text', and assert body contains 'Service Quotations'."
             sample_steps_json = f"""[
     {{
       "step_number": 1,
@@ -446,45 +651,12 @@ def format_single_ac_prompt(
       "selector_value": "body",
       "expected_value": "Service Quotations",
       "description": "Assert Service Quotations page loaded"
-    }},
-    {{
-      "step_number": 8,
-      "action": "wait_for",
-      "input_value": "20s",
-      "description": "Wait for 20 seconds on Service Quotations screen"
-    }},
-    {{
-      "step_number": 9,
-      "action": "click",
-      "locator_strategy": "css",
-      "selector_value": "#userActionsMenuHeaderButton, #meAreaHeaderButton",
-      "description": "Click User Profile Avatar Menu"
-    }},
-    {{
-      "step_number": 10,
-      "action": "click",
-      "locator_strategy": "text",
-      "selector_value": "Sign Out",
-      "description": "Click Sign Out"
-    }},
-    {{
-      "step_number": 11,
-      "action": "click",
-      "locator_strategy": "text",
-      "selector_value": "OK",
-      "description": "Confirm Sign Out dialog"
-    }},
-    {{
-      "step_number": 12,
-      "action": "assert_text",
-      "locator_strategy": "css",
-      "selector_value": "body",
-      "expected_value": "signed out",
-      "description": "Verify returned to sign out / logoff screen"
     }}
   ]"""
+
+        # Branch 7: Login, Logout, Auth
         elif any(k in req_corpus for k in ["login", "logon", "logout", "sign out", "sign in", "authenticate"]):
-            guidance = "- For SAP Login, Wait, and Logout flow: Navigate to SAP URL, fill '#USERNAME_FIELD-inner' with username, fill '#PASSWORD_FIELD-inner' with password, click '#LOGIN_LINK', wait for specified duration using wait_for (input_value='20s'), click '#meAreaHeaderButton' (User Profile), click 'button:has-text(\"Sign Out\"), #logoutBtn', confirm sign out dialog, and assert returned to Logon screen."
+            guidance = "- For SAP Login, Wait, and Logout flow: Navigate to SAP URL, fill '#USERNAME_FIELD-inner' with username, fill '#PASSWORD_FIELD-inner' with password, click '#LOGIN_LINK', wait for specified duration using wait_for (input_value='20s'), click '#userActionsMenuHeaderButton, #meAreaHeaderButton' (User Profile), click 'Sign Out', confirm sign out dialog, and assert returned to Logon screen."
             sample_steps_json = f"""[
     {{
       "step_number": 1,

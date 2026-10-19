@@ -8,8 +8,8 @@ from playwright.sync_api import Page, expect
 
 def test_tc_01_positive(page: Page):
     """
-    [Category: POSITIVE] Validate SAP Login, 20 Second Pause, and Logout Workflow
-    Objective: Verify that a user can successfully authenticate into SAP Fiori Launchpad, wait for 20 seconds, and log out cleanly back to the logoff screen.
+    [Category: POSITIVE] Validate AC-01: Login in to SAP wait for 20 sec and then
+    Objective: Verify behavior for Login in to SAP wait for 20 sec and then log out
     """
     # Step 1: navigate
     page.goto("https://s4srv25.nodomain.com:44325/sap/bc/ui2/flp?sap-client=100&sap-language=EN#Launchpad-openFLPPage?pageId=SAP_CRM_PG_SERVICE_PROCESSING&spaceId=SAP_CRM_SP_SERVICE")

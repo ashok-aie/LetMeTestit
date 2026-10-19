@@ -218,7 +218,45 @@ class TestDesigner:
                 else:
                     req_corpus = (requirement.summary.lower() + " " + ac_lower)
                     target_url = base_url if ("nodomain.com" in base_url or "44325" in base_url) else settings.sap_fiori_url
-                    if any(k in req_corpus for k in ["quotation", "service quotation", "manage service"]):
+                    if any(k in ac_lower for k in ["e2e", "create", "header", "sold-to", "party", "customer", "zqds", "hospital"]):
+                        steps = [
+                            TestStep(step_number=1, action=ActionType.NAVIGATE, input_value=target_url, description="Open SAP Fiori Logon screen"),
+                            TestStep(step_number=2, action=ActionType.FILL, locator_strategy=LocatorStrategy.CSS, selector_value="#USERNAME_FIELD-inner", input_value=(settings.sap_username or "MYRAR1").strip(), description="Enter SAP username"),
+                            TestStep(step_number=3, action=ActionType.FILL, locator_strategy=LocatorStrategy.CSS, selector_value="#PASSWORD_FIELD-inner", input_value=(settings.sap_password or "Pass23#$").strip(), description="Enter SAP password"),
+                            TestStep(step_number=4, action=ActionType.CLICK, locator_strategy=LocatorStrategy.CSS, selector_value="#LOGIN_LINK", description="Click Log On button"),
+                            TestStep(step_number=5, action=ActionType.ASSERT_TEXT, locator_strategy=LocatorStrategy.CSS, selector_value="body", expected_value="Home", description="Assert SAP Fiori Launchpad loaded"),
+                            TestStep(step_number=6, action=ActionType.CLICK, locator_strategy=LocatorStrategy.TEXT, selector_value="Manage Service Quotations", description="Click Manage Service Quotations tile"),
+                            TestStep(step_number=7, action=ActionType.CLICK, locator_strategy=LocatorStrategy.CSS, selector_value="button:has-text('Create'), #btnCreate, text='Create'", description="Click Create button on Service Quotations worklist"),
+                            TestStep(step_number=8, action=ActionType.FILL, locator_strategy=LocatorStrategy.CSS, selector_value="input[aria-label*='Sold-to'], input[id*='SoldToParty'], input[placeholder*='Sold-to']", input_value="Brugmann Hospital", description="Enter Sold-to Party customer"),
+                            TestStep(step_number=9, action=ActionType.FILL, locator_strategy=LocatorStrategy.CSS, selector_value="input[aria-label*='Description'], input[id*='Description']", input_value="RAR", description="Enter Quotation Description"),
+                            TestStep(step_number=10, action=ActionType.ASSERT_TEXT, locator_strategy=LocatorStrategy.CSS, selector_value="body", expected_value="Brugmann Hospital", description="Assert quotation header created with customer"),
+                        ]
+                    elif any(k in ac_lower for k in ["item", "product", "quantity", "45157510101"]):
+                        steps = [
+                            TestStep(step_number=1, action=ActionType.CLICK, locator_strategy=LocatorStrategy.CSS, selector_value="button:has-text('Add Item'), text='Items'", description="Open Items tab and click Add Item"),
+                            TestStep(step_number=2, action=ActionType.FILL, locator_strategy=LocatorStrategy.CSS, selector_value="input[aria-label*='Product'], input[id*='ProductID']", input_value="45157510101", description="Enter Product ID 45157510101"),
+                            TestStep(step_number=3, action=ActionType.FILL, locator_strategy=LocatorStrategy.CSS, selector_value="input[aria-label*='Quantity'], input[id*='Quantity']", input_value="1", description="Enter Quantity 1"),
+                            TestStep(step_number=4, action=ActionType.ASSERT_TEXT, locator_strategy=LocatorStrategy.CSS, selector_value="body", expected_value="45157510101", description="Assert product added to quotation line items"),
+                        ]
+                    elif any(k in ac_lower for k in ["price", "pricing", "ztaf", "condition"]):
+                        steps = [
+                            TestStep(step_number=1, action=ActionType.CLICK, locator_strategy=LocatorStrategy.TEXT, selector_value="Price Details", description="Click Price Details tab"),
+                            TestStep(step_number=2, action=ActionType.ASSERT_TEXT, locator_strategy=LocatorStrategy.CSS, selector_value="body", expected_value="ZTAF", description="Verify condition type ZTAF present in pricing elements"),
+                        ]
+                    elif any(k in ac_lower for k in ["save", "release", "accept", "persist"]):
+                        steps = [
+                            TestStep(step_number=1, action=ActionType.CLICK, locator_strategy=LocatorStrategy.CSS, selector_value="button:has-text('Save'), #btnSave", description="Click Save button to persist quotation"),
+                            TestStep(step_number=2, action=ActionType.ASSERT_TEXT, locator_strategy=LocatorStrategy.CSS, selector_value="body", expected_value="saved", description="Verify quotation saved successfully with confirmation"),
+                            TestStep(step_number=3, action=ActionType.CLICK, locator_strategy=LocatorStrategy.CSS, selector_value="button:has-text('Release')", description="Click Release button"),
+                            TestStep(step_number=4, action=ActionType.CLICK, locator_strategy=LocatorStrategy.CSS, selector_value="button:has-text('Accept')", description="Click Accept button"),
+                            TestStep(step_number=5, action=ActionType.ASSERT_TEXT, locator_strategy=LocatorStrategy.CSS, selector_value="body", expected_value="Accepted", description="Verify quotation status is updated to Accepted"),
+                        ]
+                    elif any(k in ac_lower for k in ["duration", "date", "term"]):
+                        steps = [
+                            TestStep(step_number=1, action=ActionType.CLICK, locator_strategy=LocatorStrategy.TEXT, selector_value="Dates", description="Open Dates and Duration tab"),
+                            TestStep(step_number=2, action=ActionType.ASSERT_TEXT, locator_strategy=LocatorStrategy.CSS, selector_value="body", expected_value="Valid To", description="Verify duration and validity dates section displayed"),
+                        ]
+                    elif any(k in ac_lower for k in ["tile", "worklist", "manage service"]):
                         steps = [
                             TestStep(step_number=1, action=ActionType.NAVIGATE, input_value=target_url, description="Open SAP Fiori Logon screen"),
                             TestStep(step_number=2, action=ActionType.FILL, locator_strategy=LocatorStrategy.CSS, selector_value="#USERNAME_FIELD-inner", input_value=(settings.sap_username or "MYRAR1").strip(), description="Enter SAP username"),
@@ -227,11 +265,6 @@ class TestDesigner:
                             TestStep(step_number=5, action=ActionType.ASSERT_TEXT, locator_strategy=LocatorStrategy.CSS, selector_value="body", expected_value="Home", description="Assert SAP Fiori Launchpad loaded"),
                             TestStep(step_number=6, action=ActionType.CLICK, locator_strategy=LocatorStrategy.TEXT, selector_value="Manage Service Quotations", description="Click Manage Service Quotations tile"),
                             TestStep(step_number=7, action=ActionType.ASSERT_TEXT, locator_strategy=LocatorStrategy.CSS, selector_value="body", expected_value="Service Quotations", description="Verify Service Quotations screen loaded"),
-                            TestStep(step_number=8, action=ActionType.WAIT_FOR, input_value="20s", description="Wait for 20 seconds on Service Quotations screen"),
-                            TestStep(step_number=9, action=ActionType.CLICK, locator_strategy=LocatorStrategy.CSS, selector_value="#userActionsMenuHeaderButton, #meAreaHeaderButton", description="Click User Profile Avatar Menu"),
-                            TestStep(step_number=10, action=ActionType.CLICK, locator_strategy=LocatorStrategy.TEXT, selector_value="Sign Out", description="Click Sign Out"),
-                            TestStep(step_number=11, action=ActionType.CLICK, locator_strategy=LocatorStrategy.TEXT, selector_value="OK", description="Confirm Sign Out dialog"),
-                            TestStep(step_number=12, action=ActionType.ASSERT_TEXT, locator_strategy=LocatorStrategy.CSS, selector_value="body", expected_value="signed out", description="Verify returned to sign out / logoff screen"),
                         ]
                     elif any(k in req_corpus for k in ["login", "logon", "logout", "sign out", "sign in", "authenticate"]):
                         steps = [

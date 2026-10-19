@@ -2,6 +2,7 @@
 Workflow Nodes for the LangGraph Quality Engineering Engine.
 Each node performs a distinct, isolated transformation or evaluation step on AgentState.
 """
+import re
 import logging
 from datetime import datetime, timezone
 from typing import Optional, List, Dict, Any
@@ -123,37 +124,107 @@ class WorkflowNodes:
         if not requirement:
             return {"status": "FAILED", "error": "No requirement available for AC assessment."}
 
-        text = requirement.description_text
+        text = requirement.description_text or ""
         ac_list: List[AcceptanceCriterion] = []
 
-        # Parse text lines for AC patterns (e.g. AC-01, AC 1, bullet points)
-        lines = [line.strip() for line in text.splitlines() if line.strip()]
-        ac_idx = 1
-        for line in lines:
-            lower = line.lower()
-            if any(lower.startswith(prefix) for prefix in ("ac-", "ac:", "ac ", "- ac", "* ac", "acceptance criteria")):
-                clean_text = line.lstrip("-* ").strip()
+        def clean_title(s: str) -> str:
+            s = re.sub(r'[*#_`]', '', s)
+            s = s.replace('\ufffd', '-').replace('\u2013', '-').replace('\u2014', '-')
+            return re.sub(r'\s+', ' ', s).strip()
+
+        # 1. Check for Composite Documents / Test Specs (containing E2E-xx or US-xx or TC-xx)
+        user_stories = re.findall(r'#+\s*\*\*?(US-\d+[^#\n\r]+)', text)
+        e2e_match = re.search(r'(E2E-\d+[^\n\r]+)', text)
+        explicit_tcs = re.findall(r'###\s*\*\*?(TC-\d+[^#\n\r]+)', text)
+
+        if user_stories or e2e_match or (explicit_tcs and len(explicit_tcs) >= 3):
+            scenarios = []
+            if e2e_match:
+                scenarios.append(clean_title(e2e_match.group(1)))
+            if user_stories:
+                for us in user_stories[:6]:
+                    c = clean_title(us)
+                    if c not in scenarios:
+                        scenarios.append(c)
+            elif explicit_tcs:
+                for tc in explicit_tcs[:6]:
+                    c = clean_title(tc)
+                    if c not in scenarios:
+                        scenarios.append(c)
+
+            ac_idx = 1
+            for sc in scenarios:
                 ac_list.append(
                     AcceptanceCriterion(
                         id=f"AC-{ac_idx:02d}",
-                        text=clean_text,
-                        type=RequirementType.FUNCTIONAL,
-                    )
-                )
-                ac_idx += 1
-            elif line.startswith(("-", "*")) and len(line) > 5 and not line.startswith("---"):
-                clean_text = line.lstrip("-* ").strip()
-                ac_list.append(
-                    AcceptanceCriterion(
-                        id=f"AC-{ac_idx:02d}",
-                        text=clean_text,
+                        text=sc,
                         type=RequirementType.FUNCTIONAL,
                     )
                 )
                 ac_idx += 1
 
-        # Fallback if no explicit bullet points were formatted: treat non-empty paragraphs as ACs
+        # 2. Standard Ticket parsing (Explicit AC headers or bullet points)
         if not ac_list:
+            lines = [line.strip() for line in text.splitlines() if line.strip()]
+            ac_idx = 1
+            in_ac_section = False
+            for line in lines:
+                lower = line.lower()
+                if "acceptance criteria" in lower or lower.startswith("ac:"):
+                    in_ac_section = True
+                    continue
+                if in_ac_section and line.startswith("#"):
+                    in_ac_section = False
+
+                if in_ac_section and line.startswith(("-", "*", "1.", "2.", "3.", "4.", "5.", "6.", "7.", "8.", "9.")):
+                    clean_text = line.lstrip("-* 0123456789.").strip()
+                    if len(clean_text) > 5:
+                        ac_list.append(
+                            AcceptanceCriterion(
+                                id=f"AC-{ac_idx:02d}",
+                                text=clean_text,
+                                type=RequirementType.FUNCTIONAL,
+                            )
+                        )
+                        ac_idx += 1
+
+            # Fallback to general lines if no explicit section
+            if not ac_list:
+                boilerplate_keywords = (
+                    "treat this document", "use stable accessible", "keep credentials",
+                    "use a dedicated authorized", "wait for observable", "capture evidence",
+                    "create data-cleanup", "for fiori/webgui", "separate ui assertions",
+                    "preconditions", "test data", "automation-specific", "note:"
+                )
+                for line in lines:
+                    lower = line.lower()
+                    if any(lower.startswith(prefix) for prefix in ("ac-", "ac:", "ac ", "- ac", "* ac")):
+                        clean_text = line.lstrip("-* ").strip()
+                        ac_list.append(
+                            AcceptanceCriterion(
+                                id=f"AC-{ac_idx:02d}",
+                                text=clean_text,
+                                type=RequirementType.FUNCTIONAL,
+                            )
+                        )
+                        ac_idx += 1
+                    elif line.startswith(("-", "*")) and len(line) > 5 and not line.startswith("---"):
+                        if not any(bp in lower for bp in boilerplate_keywords):
+                            clean_text = line.lstrip("-* ").strip()
+                            ac_list.append(
+                                AcceptanceCriterion(
+                                    id=f"AC-{ac_idx:02d}",
+                                    text=clean_text,
+                                    type=RequirementType.FUNCTIONAL,
+                                )
+                            )
+                            ac_idx += 1
+                    if len(ac_list) >= 8:
+                        break
+
+        # Fallback if still empty: treat non-empty heading/paragraphs as ACs
+        if not ac_list:
+            lines = [line.strip() for line in text.splitlines() if line.strip()]
             for line in lines:
                 if len(line) > 10 and not line.startswith("#"):
                     ac_list.append(
@@ -164,6 +235,8 @@ class WorkflowNodes:
                         )
                     )
                     ac_idx += 1
+                if len(ac_list) >= 5:
+                    break
 
         # Calculate quality score (0-100)
         score = 100

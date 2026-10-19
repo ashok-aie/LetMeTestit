@@ -8,8 +8,8 @@ from playwright.sync_api import Page, expect
 
 def test_tc_01_positive(page: Page):
     """
-    [Category: POSITIVE] Validate navigation to Manage Service Quotations tile and logout
-    Objective: Verify user can log into SAP, navigate to the Manage Service Quotations tile, wait for 20 seconds, and log out successfully.
+    [Category: POSITIVE] Validate AC-01: Login in to SAP, then click on "Manage S
+    Objective: Verify behavior for Login in to SAP, then click on "Manage Service Quotations", to go to service quotations page, wait for 20 sec and then log out
     """
     # Step 1: navigate
     page.goto("https://s4srv25.nodomain.com:44325/sap/bc/ui2/flp?sap-client=100&sap-language=EN#Launchpad-openFLPPage?pageId=SAP_CRM_PG_SERVICE_PROCESSING&spaceId=SAP_CRM_SP_SERVICE")
