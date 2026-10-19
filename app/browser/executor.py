@@ -319,12 +319,28 @@ class TestExecutor:
         elif step.action == ActionType.CLICK:
             elem = locators.resolve(strategy=strategy, value=selector, role_type=role_type)
             try:
-                elem.first.click(timeout=3000)
+                elem.first.click(timeout=4000)
             except Exception:
+                fallback_elem = None
+                if any(k in selector for k in ("meAreaHeaderButton", "userActionsMenuHeaderButton")):
+                    fallback_elem = page.locator(
+                        "#userActionsMenuHeaderButton, #meAreaHeaderButton, "
+                        "[id*='userActionsMenuHeaderButton'], [id*='meAreaHeaderButton'], "
+                        ".sapUshellShellHeadItm[title*='User'], button[aria-label*='User Settings'], "
+                        "button[title*='User Actions'], [data-sap-ui*='userActions']"
+                    )
+                elif "sign out" in selector.lower() or "logout" in selector.lower():
+                    fallback_elem = page.locator(
+                        "button:has-text('Sign Out'), #logoutBtn, [id*='logout'], "
+                        "div[role='button']:has-text('Sign Out'), span:has-text('Sign Out'), "
+                        "[aria-label*='Sign Out'], text='Sign Out'"
+                    )
+
+                target_elem = fallback_elem if (fallback_elem and fallback_elem.count() > 0) else elem
                 try:
-                    elem.first.click(force=True, timeout=3000)
+                    target_elem.first.click(force=True, timeout=4000)
                 except Exception:
-                    elem.first.dispatch_event("click")
+                    target_elem.first.dispatch_event("click")
 
             # Wait for network / DOM update after click
             try:

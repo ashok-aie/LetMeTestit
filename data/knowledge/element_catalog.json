@@ -4,27 +4,30 @@
     "selector": "#USERNAME_FIELD-inner",
     "strategy": "css",
     "action": "fill",
-    "pass_count": 10,
+    "pass_count": 12,
     "app_domain": "SAP S/4HANA",
-    "notes": "Standard SAP S/4HANA WebGUI/Fiori logon input"
+    "notes": "Standard SAP S/4HANA WebGUI/Fiori logon input",
+    "last_verified": "2026-10-19T01:13:14.999821+00:00"
   },
   {
     "element_label": "SAP Password Input",
     "selector": "#PASSWORD_FIELD-inner",
     "strategy": "css",
     "action": "fill",
-    "pass_count": 10,
+    "pass_count": 12,
     "app_domain": "SAP S/4HANA",
-    "notes": "Standard SAP S/4HANA logon password field"
+    "notes": "Standard SAP S/4HANA logon password field",
+    "last_verified": "2026-10-19T01:13:19.058733+00:00"
   },
   {
     "element_label": "SAP Log On Button",
     "selector": "#LOGIN_LINK",
     "strategy": "css",
     "action": "click",
-    "pass_count": 10,
+    "pass_count": 12,
     "app_domain": "SAP S/4HANA",
-    "notes": "Standard SAP S/4HANA logon submit button"
+    "notes": "Standard SAP S/4HANA logon submit button",
+    "last_verified": "2026-10-19T01:13:24.767053+00:00"
   },
   {
     "element_label": "Manage Service Quotations Tile",
@@ -37,7 +40,7 @@
   },
   {
     "element_label": "User Profile / Me Area Header Button",
-    "selector": "#meAreaHeaderButton",
+    "selector": "#userActionsMenuHeaderButton, #meAreaHeaderButton",
     "strategy": "css",
     "action": "click",
     "pass_count": 5,
@@ -68,9 +71,20 @@
     "strategy": "css",
     "action": "click",
     "role_type": null,
-    "pass_count": 22,
+    "pass_count": 24,
     "app_domain": "SAP S/4HANA",
-    "last_verified": "2026-10-18T23:15:56.114058+00:00",
+    "last_verified": "2026-10-19T01:24:08.174383+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Assert SAP Fiori Launchpad loaded",
+    "selector": "body",
+    "strategy": "css",
+    "action": "assert_text",
+    "role_type": null,
+    "pass_count": 2,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-19T01:13:26.847172+00:00",
     "notes": "Learned from execution"
   }
 ]

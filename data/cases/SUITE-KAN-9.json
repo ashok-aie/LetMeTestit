@@ -148,7 +148,7 @@
             "step_number": 6,
             "action": "click",
             "locator_strategy": "css",
-            "selector_value": "#meAreaHeaderButton",
+            "selector_value": "#userActionsMenuHeaderButton, #meAreaHeaderButton",
             "role_name": null,
             "input_value": null,
             "expected_value": null,

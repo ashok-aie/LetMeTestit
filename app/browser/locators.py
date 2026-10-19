@@ -97,7 +97,21 @@ class LocatorResolver:
             )
 
         elif strategy == "css":
-            locator = self.page.locator(value)
+            if any(k in value for k in ("meAreaHeaderButton", "userActionsMenuHeaderButton")):
+                locator = self.page.locator(
+                    "#userActionsMenuHeaderButton, #meAreaHeaderButton, "
+                    "[id*='userActionsMenuHeaderButton'], [id*='meAreaHeaderButton'], "
+                    ".sapUshellShellHeadItm[title*='User'], button[aria-label*='User Settings'], "
+                    "button[title*='User Actions'], [data-sap-ui*='userActions']"
+                )
+            elif "logoutbtn" in value.lower() or ("sign out" in value.lower() and "button" in value.lower()):
+                locator = self.page.locator(
+                    "button:has-text('Sign Out'), #logoutBtn, [id*='logout'], "
+                    "div[role='button']:has-text('Sign Out'), span:has-text('Sign Out'), "
+                    "[aria-label*='Sign Out'], text='Sign Out'"
+                )
+            else:
+                locator = self.page.locator(value)
 
         else:
             raise ValueError(f"Unsupported locator strategy: {strategy}")

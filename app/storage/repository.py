@@ -222,7 +222,7 @@ _DEFAULT_FLOWS: Dict[str, Dict[str, Any]] = {
                 "step_number": 1,
                 "action": "click",
                 "locator_strategy": "css",
-                "selector_value": "#meAreaHeaderButton",
+                "selector_value": "#userActionsMenuHeaderButton, #meAreaHeaderButton",
                 "role_name": None,
                 "input_value": None,
                 "expected_value": None,
@@ -400,7 +400,7 @@ _DEFAULT_CATALOG: List[Dict[str, Any]] = [
     },
     {
         "element_label": "User Profile / Me Area Header Button",
-        "selector": "#meAreaHeaderButton",
+        "selector": "#userActionsMenuHeaderButton, #meAreaHeaderButton",
         "strategy": "css",
         "action": "click",
         "pass_count": 5,

@@ -16,9 +16,9 @@
   {
     "target_pattern": "SAP Logout",
     "bad_selector": "#sign-out",
-    "recommended_selector": "#meAreaHeaderButton -> button:has-text('Sign Out'), #logoutBtn",
+    "recommended_selector": "#userActionsMenuHeaderButton, #meAreaHeaderButton -> button:has-text('Sign Out'), #logoutBtn",
     "strategy": "css",
-    "note": "User must first click user profile avatar (#meAreaHeaderButton) before sign-out button is rendered"
+    "note": "User must first click user profile avatar (#userActionsMenuHeaderButton in Fiori 3/Horizon, #meAreaHeaderButton in older Fiori) before sign-out button is rendered"
   }
 ]
 
