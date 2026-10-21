@@ -1,0 +1,98 @@
+{
+  "run_id": "RUN-25C7B6FB",
+  "suite_id": "SUITE-KAN-23",
+  "environment": "local",
+  "target_url": "https://s4srv25.nodomain.com:44325/sap/bc/ui2/flp?sap-client=100&sap-language=EN#Launchpad-openFLPPage?pageId=SAP_CRM_PG_SERVICE_PROCESSING&spaceId=SAP_CRM_SP_SERVICE",
+  "started_at": "2026-10-19T16:40:50.188628Z",
+  "finished_at": "2026-10-19T16:41:51.360345Z",
+  "total_tests": 1,
+  "passed_tests": 0,
+  "failed_tests": 1,
+  "blocked_tests": 0,
+  "error_tests": 0,
+  "trace_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261019_164050\\traces\\trace.zip",
+  "results": [
+    {
+      "test_case_id": "TC-01",
+      "outcome": "FAIL",
+      "classification": "timeout_error",
+      "duration_seconds": 57.65,
+      "step_results": [
+        {
+          "step_number": 1,
+          "action": "navigate",
+          "duration_ms": 2138.15,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261019_164050\\screenshots\\TC-01_step_1.png"
+        },
+        {
+          "step_number": 2,
+          "action": "fill",
+          "duration_ms": 3644.6,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261019_164050\\screenshots\\TC-01_step_2.png"
+        },
+        {
+          "step_number": 3,
+          "action": "fill",
+          "duration_ms": 3859.9,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261019_164050\\screenshots\\TC-01_step_3.png"
+        },
+        {
+          "step_number": 4,
+          "action": "click",
+          "duration_ms": 5324.44,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261019_164050\\screenshots\\TC-01_step_4.png"
+        },
+        {
+          "step_number": 5,
+          "action": "assert_text",
+          "duration_ms": 419.06,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261019_164050\\screenshots\\TC-01_step_5.png"
+        },
+        {
+          "step_number": 6,
+          "action": "click",
+          "duration_ms": 5119.16,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261019_164050\\screenshots\\TC-01_step_6.png"
+        },
+        {
+          "step_number": 7,
+          "action": "click",
+          "duration_ms": 15493.96,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261019_164050\\screenshots\\TC-01_step_7.png"
+        },
+        {
+          "step_number": 8,
+          "action": "fill",
+          "duration_ms": 19150.85,
+          "passed": false,
+          "actual_value": null,
+          "error_message": "Locator.fill: Timeout 15000ms exceeded.\nCall log:\n  - waiting for locator(\"input[aria-label*='Sold-to']\").or_(locator(\"input[id*='SoldToParty']\")).or_(locator(\"input[placeholder*='Sold-to']\")).first\n",
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261019_164050\\screenshots\\TC-01_step_8.png"
+        }
+      ],
+      "failure_message": "Step 8 (fill) failed: Locator.fill: Timeout 15000ms exceeded.\nCall log:\n  - waiting for locator(\"input[aria-label*='Sold-to']\").or_(locator(\"input[id*='SoldToParty']\")).or_(locator(\"input[placeholder*='Sold-to']\")).first\n",
+      "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261019_164050\\screenshots\\TC-01_step_8.png"
+    }
+  ]
+}

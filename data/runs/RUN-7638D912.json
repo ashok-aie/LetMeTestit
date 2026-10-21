@@ -1,0 +1,71 @@
+{
+  "run_id": "RUN-7638D912",
+  "suite_id": "SUITE-KAN-23",
+  "environment": "local",
+  "target_url": "https://s4srv25.nodomain.com:44325/sap/bc/ui2/flp?sap-client=100&sap-language=EN#Launchpad-openFLPPage?pageId=SAP_CRM_PG_SERVICE_PROCESSING&spaceId=SAP_CRM_SP_SERVICE",
+  "started_at": "2026-10-19T17:40:31.702839Z",
+  "finished_at": "2026-10-19T17:41:02.214579Z",
+  "total_tests": 1,
+  "passed_tests": 0,
+  "failed_tests": 1,
+  "blocked_tests": 0,
+  "error_tests": 0,
+  "trace_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261019_174031\\traces\\trace.zip",
+  "results": [
+    {
+      "test_case_id": "TC-01",
+      "outcome": "FAIL",
+      "classification": "application_defect",
+      "duration_seconds": 28.58,
+      "step_results": [
+        {
+          "step_number": 1,
+          "action": "navigate",
+          "duration_ms": 2010.95,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261019_174031\\screenshots\\TC-01_step_1.png"
+        },
+        {
+          "step_number": 2,
+          "action": "fill",
+          "duration_ms": 4472.51,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261019_174031\\screenshots\\TC-01_step_2.png"
+        },
+        {
+          "step_number": 3,
+          "action": "fill",
+          "duration_ms": 4296.07,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261019_174031\\screenshots\\TC-01_step_3.png"
+        },
+        {
+          "step_number": 4,
+          "action": "click",
+          "duration_ms": 1039.75,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261019_174031\\screenshots\\TC-01_step_4.png"
+        },
+        {
+          "step_number": 5,
+          "action": "assert_text",
+          "duration_ms": 15427.35,
+          "passed": false,
+          "actual_value": null,
+          "error_message": "Text assertion failed on 'body'. Expected 'Home' to be contained in 'Client, name, or password is not correct; log on again\nUser\nPassword\nLanguage\nDE - Deutsch\nEN - English\nLog On\nChange Password\nCopyright © 2026 SAP SE All Rights Reserved.'.",
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261019_174031\\screenshots\\TC-01_step_5.png"
+        }
+      ],
+      "failure_message": "Step 5 (assert_text) failed: Text assertion failed on 'body'. Expected 'Home' to be contained in 'Client, name, or password is not correct; log on again\nUser\nPassword\nLanguage\nDE - Deutsch\nEN - English\nLog On\nChange Password\nCopyright © 2026 SAP SE All Rights Reserved.'.",
+      "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261019_174031\\screenshots\\TC-01_step_5.png"
+    }
+  ]
+}

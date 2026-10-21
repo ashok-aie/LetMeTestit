@@ -1,0 +1,379 @@
+{
+  "suite_id": "SUITE-KAN-23",
+  "name": "SUITE-KAN-23",
+  "description": "Regression Suite for KAN-23",
+  "requirement_key": "KAN-23",
+  "version": 1,
+  "tags": [
+    "regression",
+    "sap"
+  ],
+  "total_cases": 1,
+  "total_steps": 34,
+  "last_saved_at": "2026-10-20T14:58:42.350360+00:00",
+  "last_run_status": "Not Executed",
+  "suite_data": {
+    "suite_id": "SUITE-KAN-23",
+    "requirement_key": "KAN-23",
+    "created_at": "2026-10-20T14:48:29.019196Z",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "TC-01",
+        "requirement_key": "KAN-23",
+        "source_ac_id": "AC-01",
+        "title": "Validate AC-01: End-to-End Business Flow (11 actions): |",
+        "objective": "Verify behavior for End-to-End Business Flow (11 actions): | 1 | Login to SAP using the Fiori web application | -> | 2 | Navigate to the Service Quotations application | -> | 3 | Click on create button to start a new quotation | -> | 6 | Give Sold-to Party: Brugmann Hospital and press enter | -> | 7 | Open the Dates tab in the quotation. | -> | 9 | Then Goto Items tab in the top | -> | 14 | In the go to price details tab | -> | 17 | Save the quotation | -> | 18 | Click on edit button and Change status to released and save again | -> | 19 | Click on accept button | -> | 20 | Logout of SAP |",
+        "category": "positive",
+        "preconditions": [],
+        "test_data": {},
+        "steps": [
+          {
+            "step_number": 1,
+            "action": "navigate",
+            "locator_strategy": null,
+            "selector_value": null,
+            "role_name": null,
+            "input_value": "https://s4srv25.nodomain.com:44325/sap/bc/ui2/flp?sap-client=100&sap-language=EN#Launchpad-openFLPPage?pageId=SAP_CRM_PG_SERVICE_PROCESSING&spaceId=SAP_CRM_SP_SERVICE",
+            "expected_value": null,
+            "description": "Open SAP Fiori Logon screen"
+          },
+          {
+            "step_number": 2,
+            "action": "fill",
+            "locator_strategy": "css",
+            "selector_value": "#USERNAME_FIELD-inner",
+            "role_name": null,
+            "input_value": "MYRAR1",
+            "expected_value": null,
+            "description": "Enter SAP username"
+          },
+          {
+            "step_number": 3,
+            "action": "fill",
+            "locator_strategy": "css",
+            "selector_value": "#PASSWORD_FIELD-inner",
+            "role_name": null,
+            "input_value": "Pass23#$",
+            "expected_value": null,
+            "description": "Enter SAP password"
+          },
+          {
+            "step_number": 4,
+            "action": "click",
+            "locator_strategy": "css",
+            "selector_value": "#LOGIN_LINK",
+            "role_name": null,
+            "input_value": null,
+            "expected_value": null,
+            "description": "Click Log On button"
+          },
+          {
+            "step_number": 5,
+            "action": "assert_text",
+            "locator_strategy": "css",
+            "selector_value": "body",
+            "role_name": null,
+            "input_value": null,
+            "expected_value": "Home",
+            "description": "Assert SAP Fiori Launchpad loaded"
+          },
+          {
+            "step_number": 6,
+            "action": "click",
+            "locator_strategy": "text",
+            "selector_value": "Manage Service Quotations",
+            "role_name": null,
+            "input_value": null,
+            "expected_value": null,
+            "description": "Click Manage Service Quotations tile"
+          },
+          {
+            "step_number": 7,
+            "action": "click",
+            "locator_strategy": "css",
+            "selector_value": "button:has-text('New Create'), button:has-text('Create'), [title*='Create'], #btnCreate",
+            "role_name": null,
+            "input_value": null,
+            "expected_value": null,
+            "description": "Click Create button on Service Quotations worklist"
+          },
+          {
+            "step_number": 8,
+            "action": "click",
+            "locator_strategy": "text",
+            "selector_value": "ZQDS",
+            "role_name": null,
+            "input_value": null,
+            "expected_value": null,
+            "description": "Select Transaction Type ZQDS from popup"
+          },
+          {
+            "step_number": 9,
+            "action": "fill",
+            "locator_strategy": "role",
+            "selector_value": "Description:",
+            "role_name": "textbox",
+            "input_value": "RAR Test",
+            "expected_value": null,
+            "description": "Enter Quotation Description 'RAR Test'"
+          },
+          {
+            "step_number": 10,
+            "action": "fill",
+            "locator_strategy": "role",
+            "selector_value": "Sold-To Party:",
+            "role_name": "textbox",
+            "input_value": "Brugmann Hospital",
+            "expected_value": null,
+            "description": "Enter Sold-to Party customer 'Brugmann Hospital'"
+          },
+          {
+            "step_number": 11,
+            "action": "fill",
+            "locator_strategy": "role",
+            "selector_value": "Sold-To Party:",
+            "role_name": "textbox",
+            "input_value": "Enter",
+            "expected_value": null,
+            "description": "Press Enter to commit Sold-to Party"
+          },
+          {
+            "step_number": 12,
+            "action": "click",
+            "locator_strategy": "role",
+            "selector_value": "Dates",
+            "role_name": "option",
+            "input_value": null,
+            "expected_value": null,
+            "description": "Open Dates tab"
+          },
+          {
+            "step_number": 13,
+            "action": "fill",
+            "locator_strategy": "css",
+            "selector_value": "#C16_W64_V65_DatesTable_bottom_div tr:has-text('Term of Quotation') input, #C16_W64_V65_DatesTable_bottom_div tr:has-text('Term of Quotation') [role='textbox']",
+            "role_name": null,
+            "input_value": "1",
+            "expected_value": null,
+            "description": "Enter Term of Quotation Duration as 1"
+          },
+          {
+            "step_number": 14,
+            "action": "click",
+            "locator_strategy": "css",
+            "selector_value": "[id='C16_W64_V65_btdate_table[4].time_unit-btn']",
+            "role_name": null,
+            "input_value": null,
+            "expected_value": null,
+            "description": "Open Time Unit dropdown"
+          },
+          {
+            "step_number": 15,
+            "action": "click",
+            "locator_strategy": "role",
+            "selector_value": "Year",
+            "role_name": "link",
+            "input_value": null,
+            "expected_value": null,
+            "description": "Select Time Unit Year"
+          },
+          {
+            "step_number": 16,
+            "action": "click",
+            "locator_strategy": "role",
+            "selector_value": "Items",
+            "role_name": "option",
+            "input_value": null,
+            "expected_value": null,
+            "description": "Open Items tab"
+          },
+          {
+            "step_number": 17,
+            "action": "fill",
+            "locator_strategy": "css",
+            "selector_value": "[id*='ordered_prod'], [id='C13_W49_V50_V54_btadmini_table[1].ordered_prod']",
+            "role_name": null,
+            "input_value": "45157510101",
+            "expected_value": null,
+            "description": "Enter Product ID 45157510101"
+          },
+          {
+            "step_number": 18,
+            "action": "fill",
+            "locator_strategy": "css",
+            "selector_value": "[id*='quantity'], [id='C13_W49_V50_V54_btadmini_table[1].quantity']",
+            "role_name": null,
+            "input_value": "2",
+            "expected_value": null,
+            "description": "Enter Quantity 2"
+          },
+          {
+            "step_number": 19,
+            "action": "fill",
+            "locator_strategy": "css",
+            "selector_value": "[id*='quantity'], [id='C13_W49_V50_V54_btadmini_table[1].quantity']",
+            "role_name": null,
+            "input_value": "Enter",
+            "expected_value": null,
+            "description": "Press Enter to commit line item"
+          },
+          {
+            "step_number": 20,
+            "action": "click",
+            "locator_strategy": "text",
+            "selector_value": "VELLYS SATELLITE STATION SKU1",
+            "role_name": null,
+            "input_value": null,
+            "expected_value": null,
+            "description": "Click Product Name to view item details"
+          },
+          {
+            "step_number": 21,
+            "action": "click",
+            "locator_strategy": "role",
+            "selector_value": "Price Details",
+            "role_name": "option",
+            "input_value": null,
+            "expected_value": null,
+            "description": "Open Price Details tab"
+          },
+          {
+            "step_number": 22,
+            "action": "click",
+            "locator_strategy": "role",
+            "selector_value": "Add",
+            "role_name": "button",
+            "input_value": null,
+            "expected_value": null,
+            "description": "Click Add Pricing Element button"
+          },
+          {
+            "step_number": 23,
+            "action": "click",
+            "locator_strategy": "text",
+            "selector_value": "ZTAF",
+            "role_name": null,
+            "input_value": null,
+            "expected_value": null,
+            "description": "Select condition type ZTAF from popup"
+          },
+          {
+            "step_number": 24,
+            "action": "click",
+            "locator_strategy": "role",
+            "selector_value": "Back",
+            "role_name": "button",
+            "input_value": null,
+            "expected_value": null,
+            "description": "Click Back to return to quotation"
+          },
+          {
+            "step_number": 25,
+            "action": "click",
+            "locator_strategy": "role",
+            "selector_value": "Save (Ctrl+S)",
+            "role_name": "button",
+            "input_value": null,
+            "expected_value": null,
+            "description": "Click Save button to persist quotation"
+          },
+          {
+            "step_number": 26,
+            "action": "click",
+            "locator_strategy": "css",
+            "selector_value": "button:has-text('Edit'), a:has-text('Edit'), [title*='Edit'], [aria-label*='Edit']",
+            "role_name": null,
+            "input_value": null,
+            "expected_value": null,
+            "description": "Click Edit button"
+          },
+          {
+            "step_number": 27,
+            "action": "click",
+            "locator_strategy": "css",
+            "selector_value": "#C9_W36_V39_V40_btadminh_lcstatus-btn, [id*='btadminh_lcstatus-btn']",
+            "role_name": null,
+            "input_value": null,
+            "expected_value": null,
+            "description": "Open Lifecycle Status dropdown"
+          },
+          {
+            "step_number": 28,
+            "action": "click",
+            "locator_strategy": "role",
+            "selector_value": "Released",
+            "role_name": "link",
+            "input_value": null,
+            "expected_value": null,
+            "description": "Change status to Released"
+          },
+          {
+            "step_number": 29,
+            "action": "click",
+            "locator_strategy": "role",
+            "selector_value": "Save (Ctrl+S)",
+            "role_name": "button",
+            "input_value": null,
+            "expected_value": null,
+            "description": "Click Save button to persist Released status"
+          },
+          {
+            "step_number": 30,
+            "action": "click",
+            "locator_strategy": "css",
+            "selector_value": "button:has-text('Accept'), [title*='Accept'], a:has-text('Accept'), [role='menuitem']:has-text('Accept')",
+            "role_name": null,
+            "input_value": null,
+            "expected_value": null,
+            "description": "Click Accept quotation button"
+          },
+          {
+            "step_number": 31,
+            "action": "click",
+            "locator_strategy": "css",
+            "selector_value": "#userActionsMenuHeaderButton, #meAreaHeaderButton",
+            "role_name": null,
+            "input_value": null,
+            "expected_value": null,
+            "description": "Click User Profile Avatar Menu"
+          },
+          {
+            "step_number": 32,
+            "action": "click",
+            "locator_strategy": "css",
+            "selector_value": "button:has-text('Sign Out'), #logoutBtn",
+            "role_name": null,
+            "input_value": null,
+            "expected_value": null,
+            "description": "Click Sign Out"
+          },
+          {
+            "step_number": 33,
+            "action": "click",
+            "locator_strategy": "css",
+            "selector_value": "button:has-text('OK'), #logoutConfirm",
+            "role_name": null,
+            "input_value": null,
+            "expected_value": null,
+            "description": "Confirm Sign Out dialog"
+          },
+          {
+            "step_number": 34,
+            "action": "assert_text",
+            "locator_strategy": "css",
+            "selector_value": "body",
+            "role_name": null,
+            "input_value": null,
+            "expected_value": "logged off",
+            "description": "Verify returned to Logoff screen"
+          }
+        ],
+        "expected_result": "System response matches criteria for [AC-01]",
+        "priority": "Medium",
+        "group": "General",
+        "tags": []
+      }
+    ]
+  }
+}

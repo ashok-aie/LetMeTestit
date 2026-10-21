@@ -10,6 +10,7 @@ from typing import Optional, List
 from app.models.test_suite import TestSuite
 from app.models.execution import ExecutionRun, ApprovalRecord, TestOutcome
 from app.models.requirements import JiraRequirement
+from app.config import settings
 
 
 class ExecutionReportGenerator:
@@ -98,7 +99,11 @@ class ExecutionReportGenerator:
 
             for s in res.step_results:
                 step_icon = "✅ PASS" if s.passed else "❌ FAIL"
-                md.append(f"| {s.step_number} | `{s.action.value.upper()}` | `{s.error_message or 'OK'}` | {s.duration_ms} ms | {step_icon} |")
+                safe_detail = s.error_message or 'OK'
+                for cred in [settings.sap_password, "Pass23#$", "Welcome@123", settings.sap_username, "MYRAR1"]:
+                    if cred and cred in safe_detail:
+                        safe_detail = safe_detail.replace(cred, "••••••••")
+                md.append(f"| {s.step_number} | `{s.action.value.upper()}` | `{safe_detail}` | {s.duration_ms} ms | {step_icon} |")
             md.append("")
 
         md.extend([
@@ -172,11 +177,15 @@ class ExecutionReportGenerator:
             step_rows = []
             for s in res.step_results:
                 s_status = '<span style="color:#107e3e;font-weight:600;">PASS</span>' if s.passed else '<span style="color:#bb0000;font-weight:600;">FAIL</span>'
+                safe_detail = s.error_message or 'OK'
+                for cred in [settings.sap_password, "Pass23#$", "Welcome@123", settings.sap_username, "MYRAR1"]:
+                    if cred and cred in safe_detail:
+                        safe_detail = safe_detail.replace(cred, "••••••••")
                 step_rows.append(f"""
                 <tr>
                     <td style="padding:6px 10px;border-bottom:1px solid #eee;">{s.step_number}</td>
                     <td style="padding:6px 10px;border-bottom:1px solid #eee;"><code>{s.action.value.upper()}</code></td>
-                    <td style="padding:6px 10px;border-bottom:1px solid #eee;color:#555;">{s.error_message or 'OK'}</td>
+                    <td style="padding:6px 10px;border-bottom:1px solid #eee;color:#555;">{safe_detail}</td>
                     <td style="padding:6px 10px;border-bottom:1px solid #eee;">{s.duration_ms} ms</td>
                     <td style="padding:6px 10px;border-bottom:1px solid #eee;">{s_status}</td>
                 </tr>

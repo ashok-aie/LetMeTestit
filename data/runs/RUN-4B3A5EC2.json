@@ -1,0 +1,188 @@
+{
+  "run_id": "RUN-4B3A5EC2",
+  "suite_id": "SUITE-KAN-25",
+  "environment": "local",
+  "target_url": "https://s4srv25.nodomain.com:44325/sap/bc/ui2/flp?sap-client=100&sap-language=EN#Launchpad-openFLPPage?pageId=SAP_CRM_PG_SERVICE_PROCESSING&spaceId=SAP_CRM_SP_SERVICE",
+  "started_at": "2026-10-20T22:58:34.818362Z",
+  "finished_at": "2026-10-20T23:00:09.091515Z",
+  "total_tests": 1,
+  "passed_tests": 0,
+  "failed_tests": 1,
+  "blocked_tests": 0,
+  "error_tests": 0,
+  "trace_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261020_225834\\traces\\trace.zip",
+  "results": [
+    {
+      "test_case_id": "TC-01",
+      "outcome": "FAIL",
+      "classification": "application_defect",
+      "duration_seconds": 90.71,
+      "step_results": [
+        {
+          "step_number": 1,
+          "action": "navigate",
+          "duration_ms": 1373.75,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261020_225834\\screenshots\\TC-01_step_1.png"
+        },
+        {
+          "step_number": 2,
+          "action": "fill",
+          "duration_ms": 1096.05,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261020_225834\\screenshots\\TC-01_step_2.png"
+        },
+        {
+          "step_number": 3,
+          "action": "fill",
+          "duration_ms": 1114.67,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261020_225834\\screenshots\\TC-01_step_3.png"
+        },
+        {
+          "step_number": 4,
+          "action": "click",
+          "duration_ms": 1667.13,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261020_225834\\screenshots\\TC-01_step_4.png"
+        },
+        {
+          "step_number": 5,
+          "action": "assert_text",
+          "duration_ms": 1051.36,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261020_225834\\screenshots\\TC-01_step_5.png"
+        },
+        {
+          "step_number": 6,
+          "action": "click",
+          "duration_ms": 458.95,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261020_225834\\screenshots\\TC-01_step_6.png"
+        },
+        {
+          "step_number": 7,
+          "action": "click",
+          "duration_ms": 4815.84,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261020_225834\\screenshots\\TC-01_step_7.png"
+        },
+        {
+          "step_number": 8,
+          "action": "click",
+          "duration_ms": 4045.22,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261020_225834\\screenshots\\TC-01_step_8.png"
+        },
+        {
+          "step_number": 9,
+          "action": "fill",
+          "duration_ms": 3476.22,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261020_225834\\screenshots\\TC-01_step_9.png"
+        },
+        {
+          "step_number": 10,
+          "action": "fill",
+          "duration_ms": 3735.72,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261020_225834\\screenshots\\TC-01_step_10.png"
+        },
+        {
+          "step_number": 11,
+          "action": "fill",
+          "duration_ms": 33324.98,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261020_225834\\screenshots\\TC-01_step_11.png"
+        },
+        {
+          "step_number": 12,
+          "action": "click",
+          "duration_ms": 4240.36,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261020_225834\\screenshots\\TC-01_step_12.png"
+        },
+        {
+          "step_number": 13,
+          "action": "fill",
+          "duration_ms": 2845.6,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261020_225834\\screenshots\\TC-01_step_13.png"
+        },
+        {
+          "step_number": 14,
+          "action": "click",
+          "duration_ms": 4147.83,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261020_225834\\screenshots\\TC-01_step_14.png"
+        },
+        {
+          "step_number": 15,
+          "action": "click",
+          "duration_ms": 4200.06,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261020_225834\\screenshots\\TC-01_step_15.png"
+        },
+        {
+          "step_number": 16,
+          "action": "click",
+          "duration_ms": 4217.05,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261020_225834\\screenshots\\TC-01_step_16.png"
+        },
+        {
+          "step_number": 17,
+          "action": "fill",
+          "duration_ms": 2662.28,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261020_225834\\screenshots\\TC-01_step_17.png"
+        },
+        {
+          "step_number": 18,
+          "action": "fill",
+          "duration_ms": 2848.52,
+          "passed": false,
+          "actual_value": null,
+          "error_message": "Locator.fill: Error: Element is not an <input>, <textarea>, <select> or [contenteditable] and does not have a role allowing [aria-readonly]\nCall log:\n  - waiting for locator(\"[id*='btadmini_table[1].quantity']\").or_(locator(\"[id*='quantity']\")).or_(locator(\"[id='C13_W49_V50_V54_btadmini_table[1].quantity']\")).first\n  -     - locator resolved to <span f2=\"P;10\" aria-hidden=\"true\" aria-label=\"Item Bundles Quantity\" class=\"th-tx th-tx-value th-tx-nowrap\" id=\"C13_W49_V50_V54_btadmini_table[1].itemquantity_bundle\" data-help-id=\"A_bt116qit_srvq:V_SCItemTree:T_textView:C_btadmini:I_itemquantity_bundle:R_1\"> </span>\n  -     - fill(\"1\")\n  -   - attempting fill action\n  -     - waiting for element to be visible, enabled and editable\n",
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261020_225834\\screenshots\\TC-01_step_18.png"
+        }
+      ],
+      "failure_message": "Step 18 (fill) failed: Locator.fill: Error: Element is not an <input>, <textarea>, <select> or [contenteditable] and does not have a role allowing [aria-readonly]\nCall log:\n  - waiting for locator(\"[id*='btadmini_table[1].quantity']\").or_(locator(\"[id*='quantity']\")).or_(locator(\"[id='C13_W49_V50_V54_btadmini_table[1].quantity']\")).first\n  -     - locator resolved to <span f2=\"P;10\" aria-hidden=\"true\" aria-label=\"Item Bundles Quantity\" class=\"th-tx th-tx-value th-tx-nowrap\" id=\"C13_W49_V50_V54_btadmini_table[1].itemquantity_bundle\" data-help-id=\"A_bt116qit_srvq:V_SCItemTree:T_textView:C_btadmini:I_itemquantity_bundle:R_1\"> </span>\n  -     - fill(\"1\")\n  -   - attempting fill action\n  -     - waiting for element to be visible, enabled and editable\n",
+      "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261020_225834\\screenshots\\TC-01_step_18.png"
+    }
+  ]
+}

@@ -222,3 +222,149 @@ def test_generator_synthesizes_negative_test_cases():
     assert any(s.action == ActionType.FILL and s.input_value == "999" for s in suite.test_cases[2].steps)
 
 
+def test_kan23_procedural_flow_generation():
+    """Verify that KAN-23 procedural flow synthesizes all atomic steps with dynamic parameters."""
+    from app.models.requirements import AcceptanceCriterion
+    from app.models.test_suite import ActionType
+
+    kan23_desc = """1
+Login to SAP using the Fiori web application
+2
+Navigate to the Service Quotations application
+3
+Click on create button to start a new quotation
+4
+Select Transaction Type ZQDS — CE-Direct Sales
+5
+Give Description as RAR Test
+6
+Give Sold-to Party: Brugmann Hospital and press enter
+7
+Open the Dates tab in the quotation.
+8
+In “Date Type”, go to “Term of Quotation” and give its Duration as 1 and Time Unit as year
+9
+Then Goto Items tab in the top
+10
+In Product ID field, enter 45157510101
+11
+In Quantity field, enter 2 then click enter
+12
+After you click enter product name should appear
+13
+Then click on product name, the product's item details will appear
+14
+In the go to price details tab
+15
+click on Add button, then select a pricing element ZTAF by clicking on it
+16
+Click on back to return to the quotation
+17
+Save the quotation
+18
+Click on edit button and Change status to released and save again
+19
+Click on accept button
+20
+Logout of SAP"""
+
+    req = JiraRequirement(
+        key="KAN-23",
+        summary="Create and Accept ZQDS Service Quotation",
+        description_text=kan23_desc,
+        acceptance_criteria=[
+            AcceptanceCriterion(
+                id="AC-01",
+                text="End-to-End Procedural Flow (20 steps): Login -> Navigate -> Create -> ZQDS -> Description RAR Test -> Sold-To Brugmann Hospital -> Dates Duration 1 Year -> Items 45157510101 Qty 2 -> Price Details ZTAF -> Save -> Released -> Accept -> Logout",
+            )
+        ],
+    )
+
+    mock_llm = MagicMock()
+    mock_llm.generate.side_effect = Exception("LLM fallback trigger")
+
+    designer = TestDesigner(llm_client=mock_llm)
+    suite = designer.generate_suite(
+        requirement=req,
+        target_base_url="https://s4srv25.nodomain.com:44325/sap/bc/ui2/flp",
+        progress_callback=lambda c, t, m: None,
+    )
+
+    assert len(suite.test_cases) == 1
+    tc = suite.test_cases[0]
+
+    # Verify key dynamic parameters
+    step_descriptions = " ".join(s.description or "" for s in tc.steps)
+    step_inputs = [s.input_value for s in tc.steps if s.input_value]
+
+    assert "RAR Test" in step_inputs or "RAR Test" in step_descriptions
+    assert "Brugmann Hospital" in step_inputs or "Brugmann Hospital" in step_descriptions
+    assert "45157510101" in step_inputs
+    assert "2" in step_inputs
+    assert "1" in step_inputs  # Duration 1
+    assert any("Dates" in (s.selector_value or "") for s in tc.steps)
+    assert any("Items" in (s.selector_value or "") for s in tc.steps)
+    assert any("Price Details" in (s.selector_value or "") for s in tc.steps)
+    assert any("ZTAF" in (s.selector_value or "") for s in tc.steps)
+    assert any("Accept" in (s.selector_value or "") for s in tc.steps)
+    assert any("Sign Out" in (s.selector_value or "") for s in tc.steps)
+
+
+def test_kan25_rar_flow_generation():
+    """Verify that KAN-25 synthesizes quotation + SAP RAR revenue contract validation."""
+    from app.models.requirements import AcceptanceCriterion
+
+    kan25_desc = """Validate the SAP Fiori Solution Quotation bundle through RAR contract/obligation processing.
+Preconditions / Notes: Create quotation in SAP Fiori Service Quotations; transaction type ZQDS; sold-to Brugmann Hospital;
+In Service Quotation application, start new Quotation.
+Select Transaction Type ZQDS — CE-Direct Sales
+Give Description as 'RAR Test' and Sold-to Party as Brugmann Hospital
+In Dates tab, Duration as 24 and Time Unit as Months
+In Items tab, Product ID is 45157510101 and Quantity is 2 then click enter
+In Price details tab, click on Add button, then select a pricing element ZTAF
+Save Quotation, Edit to Change status to Released, save, Then Accept quotation.
+Take Transaction id from Transaction History
+Navigate to SAP Home screen
+In 'Manage Contracts revenue' search by Operational document
+validate Performance obligations
+logout of SAP"""
+
+    req = JiraRequirement(
+        key="KAN-25",
+        summary="Validate SAP Fiori Solution Quotation and RAR",
+        description_text=kan25_desc,
+        acceptance_criteria=[
+            AcceptanceCriterion(
+                id="AC-01",
+                text="End-to-End Business Flow: Quotation -> Line items -> Accept -> Transaction History -> Manage Contracts revenue -> Operational document -> Performance obligations -> logout",
+            )
+        ],
+    )
+
+    mock_llm = MagicMock()
+    mock_llm.generate.side_effect = Exception("LLM fallback trigger")
+
+    designer = TestDesigner(llm_client=mock_llm)
+    suite = designer.generate_suite(
+        requirement=req,
+        target_base_url="https://s4srv25.nodomain.com:44325/sap/bc/ui2/flp",
+        progress_callback=lambda c, t, m: None,
+    )
+
+    assert len(suite.test_cases) == 1
+    tc = suite.test_cases[0]
+
+    step_selectors = [s.selector_value or "" for s in tc.steps]
+    step_inputs = [s.input_value for s in tc.steps if s.input_value]
+
+    # Verify duration 24 & Month
+    assert "24" in step_inputs
+    assert any("Month" in sel for sel in step_selectors) or any("Month" in (s.description or "") for s in tc.steps)
+    # Verify RAR navigation
+    assert any("Transaction History" in sel for sel in step_selectors)
+    assert any("Open Search" in sel or "Search" in sel for sel in step_selectors) or any("RevenueAccountingContract" in s for s in step_inputs)
+    assert any("Manage Revenue Contracts" in sel for sel in step_selectors) or any("RevenueAccountingContract" in s for s in step_inputs)
+    assert any("Operational Document" in sel for sel in step_selectors)
+
+
+

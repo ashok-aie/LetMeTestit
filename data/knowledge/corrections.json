@@ -18,7 +18,48 @@
     "bad_selector": "#sign-out",
     "recommended_selector": "#userActionsMenuHeaderButton, #meAreaHeaderButton -> button:has-text('Sign Out'), #logoutBtn",
     "strategy": "css",
-    "note": "User must first click user profile avatar (#userActionsMenuHeaderButton in Fiori 3/Horizon, #meAreaHeaderButton in older Fiori) before sign-out button is rendered"
+    "note": "SAP Fiori requires opening the Avatar Menu before clicking Sign Out"
+  },
+  {
+    "target_pattern": "Service Quotation Accept button",
+    "bad_selector": "button:has-text('More'), get_by_role('button', name='More')",
+    "recommended_selector": "button:has-text('Accept'), [title*='Accept'], a:has-text('Accept'), [role='menuitem']:has-text('Accept')",
+    "strategy": "css",
+    "note": "In S/4HANA WebGUI overview, the Accept button is directly exposed on the top header toolbar once status is Released; do not require a separate More menu click"
+  },
+  {
+    "target_pattern": "DatesTable Term of Quotation input",
+    "bad_selector": "#C16_W64_V65_DatesTable_bottom_div tr:has-text('Term of Quotation')",
+    "recommended_selector": "#C16_W64_V65_DatesTable_bottom_div tr:has-text('Term of Quotation') input, #C16_W64_V65_DatesTable_bottom_div tr:has-text('Term of Quotation') [role='textbox']",
+    "strategy": "css",
+    "note": "The row element is a <tr> container; always target the child <input> or [role='textbox'] inside the table row"
+  },
+  {
+    "target_pattern": "SAP Sign Out Confirmation Dialog OK",
+    "bad_selector": "button:has-text('OK'), text='OK'",
+    "recommended_selector": "[role='dialog'] button:has-text('OK'), .sapMDialog button:has-text('OK'), #logoutConfirm",
+    "strategy": "css",
+    "note": "Sign out prompts an SAP UI5 sap.m.Dialog modal; must scope the OK button inside the dialog container so it doesn't match background elements"
+  },
+  {
+    "target_pattern": "SAP Quotation Overview Edit button",
+    "bad_selector": "#thtmlbOverviewPageBox tr button[aria-label='Edit'], button:has-text('Edit')",
+    "recommended_selector": "button:has-text('Edit'), a:has-text('Edit'), [title*='Edit'], [aria-label*='Edit']",
+    "strategy": "css",
+    "note": "In SAP S/4HANA CRM WebClient UI (THTMLB), the overview toolbar Edit button is rendered as an <a> anchor tag or div with title/aria-label containing 'Edit' or 'Edit (Ctrl+E)', not a strict <button> tag."
+  },
+  {
+    "target_pattern": "Dates Table Time Unit Dropdown Option Month",
+    "bad_selector": "Months, get_by_role('link', name='Months')",
+    "recommended_selector": "Month",
+    "strategy": "role",
+    "note": "SAP S/4HANA CRM WebClient UI time unit dropdown options are singular English ('Month', 'Year', 'Day', 'Week'). Substring or exact match for 'Months' fails against 'Month'."
+  },
+  {
+    "target_pattern": "SAP RAR Operational Document vs Quotation ID",
+    "bad_selector": "[id*='btadminh_object_id' i] (Quotation header ID, e.g. 8000000653)",
+    "recommended_selector": "[id*='btdocflow'][id*='objectid'], tr:has-text('Sales Order') a, [id*='btdocflow'][id*='id_description']",
+    "strategy": "css",
+    "note": "In SAP Revenue Accounting and Reporting (RAR), the Operational Document is the Sales Order (Transaction ID) created when the Service Quotation is accepted, NOT the Quotation header number. Always extract from btdocflow in Transaction History."
   }
 ]
-

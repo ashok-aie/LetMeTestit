@@ -1,0 +1,134 @@
+{
+  "run_id": "RUN-9F68702B",
+  "suite_id": "SUITE-KAN-23",
+  "environment": "local",
+  "target_url": "https://s4srv25.nodomain.com:44325/sap/bc/ui2/flp?sap-client=100&sap-language=EN#Launchpad-openFLPPage?pageId=SAP_CRM_PG_SERVICE_PROCESSING&spaceId=SAP_CRM_SP_SERVICE",
+  "started_at": "2026-10-19T17:53:10.602914Z",
+  "finished_at": "2026-10-19T17:55:06.186900Z",
+  "total_tests": 1,
+  "passed_tests": 0,
+  "failed_tests": 1,
+  "blocked_tests": 0,
+  "error_tests": 0,
+  "trace_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261019_175310\\traces\\trace.zip",
+  "results": [
+    {
+      "test_case_id": "TC-01",
+      "outcome": "FAIL",
+      "classification": "application_defect",
+      "duration_seconds": 111.72,
+      "step_results": [
+        {
+          "step_number": 1,
+          "action": "navigate",
+          "duration_ms": 2029.99,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261019_175310\\screenshots\\TC-01_step_1.png"
+        },
+        {
+          "step_number": 2,
+          "action": "fill",
+          "duration_ms": 3666.89,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261019_175310\\screenshots\\TC-01_step_2.png"
+        },
+        {
+          "step_number": 3,
+          "action": "fill",
+          "duration_ms": 3871.76,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261019_175310\\screenshots\\TC-01_step_3.png"
+        },
+        {
+          "step_number": 4,
+          "action": "click",
+          "duration_ms": 5994.85,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261019_175310\\screenshots\\TC-01_step_4.png"
+        },
+        {
+          "step_number": 5,
+          "action": "click",
+          "duration_ms": 5896.58,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261019_175310\\screenshots\\TC-01_step_5.png"
+        },
+        {
+          "step_number": 6,
+          "action": "click",
+          "duration_ms": 15525.84,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261019_175310\\screenshots\\TC-01_step_6.png"
+        },
+        {
+          "step_number": 7,
+          "action": "click",
+          "duration_ms": 25502.34,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261019_175310\\screenshots\\TC-01_step_7.png"
+        },
+        {
+          "step_number": 8,
+          "action": "fill",
+          "duration_ms": 7724.86,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261019_175310\\screenshots\\TC-01_step_8.png"
+        },
+        {
+          "step_number": 9,
+          "action": "fill",
+          "duration_ms": 8095.04,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261019_175310\\screenshots\\TC-01_step_9.png"
+        },
+        {
+          "step_number": 10,
+          "action": "fill",
+          "duration_ms": 8047.15,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261019_175310\\screenshots\\TC-01_step_10.png"
+        },
+        {
+          "step_number": 11,
+          "action": "click",
+          "duration_ms": 12416.39,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261019_175310\\screenshots\\TC-01_step_11.png"
+        },
+        {
+          "step_number": 12,
+          "action": "fill",
+          "duration_ms": 6312.14,
+          "passed": false,
+          "actual_value": null,
+          "error_message": "Locator.fill: Error: Element is not an <input>, <textarea>, <select> or [contenteditable] and does not have a role allowing [aria-readonly]\nCall log:\n  - waiting for locator(\"#C16_W64_V65_DatesTable_bottom_div tr:has-text('Term of Quotation')\").first\n  -     - locator resolved to <tr id=\"C16_W64_V65_DatesTable__4__1\" class=\"th-clr-tr th-clr-row th-clr-row-nsel\">…</tr>\n  -     - fill(\"1\")\n  -   - attempting fill action\n  -     - waiting for element to be visible, enabled and editable\n",
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261019_175310\\screenshots\\TC-01_step_12.png"
+        }
+      ],
+      "failure_message": "Step 12 (fill) failed: Locator.fill: Error: Element is not an <input>, <textarea>, <select> or [contenteditable] and does not have a role allowing [aria-readonly]\nCall log:\n  - waiting for locator(\"#C16_W64_V65_DatesTable_bottom_div tr:has-text('Term of Quotation')\").first\n  -     - locator resolved to <tr id=\"C16_W64_V65_DatesTable__4__1\" class=\"th-clr-tr th-clr-row th-clr-row-nsel\">…</tr>\n  -     - fill(\"1\")\n  -   - attempting fill action\n  -     - waiting for element to be visible, enabled and editable\n",
+      "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261019_175310\\screenshots\\TC-01_step_12.png"
+    }
+  ]
+}

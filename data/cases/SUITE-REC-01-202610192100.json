@@ -1,0 +1,92 @@
+{
+  "suite_id": "SUITE-REC-01-202610192100",
+  "name": "SUITE-REC-01-202610192100",
+  "description": "Regression Suite for REC-01",
+  "requirement_key": "REC-01",
+  "version": 1,
+  "tags": [
+    "regression",
+    "sap"
+  ],
+  "total_cases": 1,
+  "total_steps": 5,
+  "last_saved_at": "2026-10-19T15:30:25.467478+00:00",
+  "last_run_status": "Recorded (Unexecuted)",
+  "suite_data": {
+    "suite_id": "SUITE-REC-01-202610192100",
+    "requirement_key": "REC-01",
+    "created_at": "2026-10-19T15:30:25.384464Z",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "TC-01",
+        "requirement_key": "REC-01",
+        "source_ac_id": "REC-TC-01",
+        "title": "Create Service Quotation",
+        "objective": "User-recorded exploratory scenario via Playwright Codegen",
+        "category": "positive",
+        "preconditions": [],
+        "test_data": {},
+        "steps": [
+          {
+            "step_number": 1,
+            "action": "navigate",
+            "locator_strategy": null,
+            "selector_value": null,
+            "role_name": null,
+            "input_value": "https://s4srv25.nodomain.com:44325/sap/bc/ui2/flp?sap-client=100&sap-language=EN#Launchpad-openFLPPage?pageId=SAP_CRM_PG_SERVICE_PROCESSING&spaceId=SAP_CRM_SP_SERVICE",
+            "expected_value": null,
+            "description": "Navigate to https://s4srv25.nodomain.com:44325/sap/bc/ui2/flp?sap-client=100&sap-language=EN#Launchpad-openFLPPage?pageId=SAP_CRM_PG_SERVICE_PROCESSING&spaceId=SAP_CRM_SP_SERVICE"
+          },
+          {
+            "step_number": 2,
+            "action": "click",
+            "locator_strategy": "role",
+            "selector_value": "User",
+            "role_name": "textbox",
+            "input_value": null,
+            "expected_value": null,
+            "description": "Click textbox (User)"
+          },
+          {
+            "step_number": 3,
+            "action": "click",
+            "locator_strategy": "role",
+            "selector_value": "Password",
+            "role_name": "textbox",
+            "input_value": null,
+            "expected_value": null,
+            "description": "Click textbox (Password)"
+          },
+          {
+            "step_number": 4,
+            "action": "click",
+            "locator_strategy": "role",
+            "selector_value": "Log On",
+            "role_name": "button",
+            "input_value": null,
+            "expected_value": null,
+            "description": "Click button (Log On)"
+          },
+          {
+            "step_number": 5,
+            "action": "click",
+            "locator_strategy": "role",
+            "selector_value": "Manage Service Quotations Tile",
+            "role_name": "link",
+            "input_value": null,
+            "expected_value": null,
+            "description": "Click link (Manage Service Quotations Tile)"
+          }
+        ],
+        "expected_result": "Recorded sequence completes without browser error",
+        "priority": "Medium",
+        "group": "Recorded",
+        "tags": [
+          "recorded",
+          "browser"
+        ]
+      }
+    ]
+  }
+}

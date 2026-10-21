@@ -56,6 +56,13 @@ def save_regression_suite(
     clean_id = suite.suite_id.strip()
     target_file = CASES_DIR / f"{clean_id}.json"
 
+    # Ensure strictly unique sequential test case IDs
+    seen_ids = set()
+    for i, tc in enumerate(suite.test_cases, start=1):
+        if not tc.id or tc.id in seen_ids:
+            tc.id = f"TC-{i:02d}"
+        seen_ids.add(tc.id)
+
     meta = {
         "suite_id": clean_id,
         "name": suite_name or clean_id,
@@ -120,7 +127,13 @@ def load_regression_suite(suite_id: str) -> Optional[TestSuite]:
     try:
         data = json.loads(target_file.read_text(encoding="utf-8"))
         suite_dict = data.get("suite_data", data)
-        return TestSuite.model_validate(suite_dict)
+        loaded_suite = TestSuite.model_validate(suite_dict)
+        seen_ids = set()
+        for i, tc in enumerate(loaded_suite.test_cases, start=1):
+            if not tc.id or tc.id in seen_ids:
+                tc.id = f"TC-{i:02d}"
+            seen_ids.add(tc.id)
+        return loaded_suite
     except Exception as e:
         logger.error(f"Failed to load suite {suite_id}: {e}")
         return None
@@ -597,14 +610,23 @@ def save_golden_example(
     GOLDEN_FILE.write_text(json.dumps(examples, indent=2, ensure_ascii=False), encoding="utf-8")
 
 
-def get_golden_examples_prompt_context(limit: int = 2) -> str:
+def get_golden_examples_prompt_context(limit: int = 4) -> str:
     """Formats golden examples into few-shot demonstration context for LLM test design."""
     examples = list_golden_examples()
     if not examples:
         return ""
 
+    # Prioritize rich end-to-end business process flows (e.g. Service / Sales Quotation)
+    sorted_examples = sorted(
+        examples,
+        key=lambda ex: (
+            1 if any(k in (ex.get("pattern", "") + ex.get("description", "")).lower() for k in ["quotation", "service quotation", "e2e", "sales"]) else 0
+        ),
+        reverse=True,
+    )
+
     lines = ["EXEMPLAR ENTERPRISE TEST CASES (FOLLOW THIS STRUCTURE AND FIDELITY):"]
-    for ex in examples[:limit]:
+    for ex in sorted_examples[:limit]:
         pattern = ex.get("pattern", "Standard Flow")
         desc = ex.get("description", "")
         tc = ex.get("test_case", {})
@@ -613,7 +635,8 @@ def get_golden_examples_prompt_context(limit: int = 2) -> str:
             strat = s.get("locator_strategy") or "—"
             sel = s.get("selector_value") or "—"
             act = s.get("action", "")
-            steps_summary.append(f"  Step {s.get('step_number')}: {act.upper()} {sel} ({strat}) -> {s.get('description')}")
+            in_val = f" [val: '{s.get('input_value')}']" if s.get("input_value") else ""
+            steps_summary.append(f"  Step {s.get('step_number')}: {act.upper()} {sel} ({strat}){in_val} -> {s.get('description')}")
         lines.append(f"\nPattern: {pattern} ({desc})\n" + "\n".join(steps_summary))
 
     return "\n".join(lines)
@@ -689,7 +712,7 @@ def get_full_knowledge_base_context() -> str:
     if corr_ctx:
         parts.append(corr_ctx)
 
-    gold_ctx = get_golden_examples_prompt_context(limit=2)
+    gold_ctx = get_golden_examples_prompt_context(limit=4)
     if gold_ctx:
         parts.append(gold_ctx)
 

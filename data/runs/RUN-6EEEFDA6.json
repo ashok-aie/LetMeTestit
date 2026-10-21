@@ -1,0 +1,80 @@
+{
+  "run_id": "RUN-6EEEFDA6",
+  "suite_id": "SUITE-KAN-23",
+  "environment": "local",
+  "target_url": "https://s4srv25.nodomain.com:44325/sap/bc/ui2/flp?sap-client=100&sap-language=EN#Launchpad-openFLPPage?pageId=SAP_CRM_PG_SERVICE_PROCESSING&spaceId=SAP_CRM_SP_SERVICE",
+  "started_at": "2026-10-19T17:50:54.190659Z",
+  "finished_at": "2026-10-19T17:51:50.219362Z",
+  "total_tests": 1,
+  "passed_tests": 0,
+  "failed_tests": 1,
+  "blocked_tests": 0,
+  "error_tests": 0,
+  "trace_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261019_175054\\traces\\trace.zip",
+  "results": [
+    {
+      "test_case_id": "TC-36",
+      "outcome": "FAIL",
+      "classification": "timeout_error",
+      "duration_seconds": 53.08,
+      "step_results": [
+        {
+          "step_number": 1,
+          "action": "navigate",
+          "duration_ms": 2017.43,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261019_175054\\screenshots\\TC-36_step_1.png"
+        },
+        {
+          "step_number": 2,
+          "action": "fill",
+          "duration_ms": 3650.88,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261019_175054\\screenshots\\TC-36_step_2.png"
+        },
+        {
+          "step_number": 3,
+          "action": "fill",
+          "duration_ms": 3876.42,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261019_175054\\screenshots\\TC-36_step_3.png"
+        },
+        {
+          "step_number": 4,
+          "action": "click",
+          "duration_ms": 5641.12,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261019_175054\\screenshots\\TC-36_step_4.png"
+        },
+        {
+          "step_number": 5,
+          "action": "assert_text",
+          "duration_ms": 72.03,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261019_175054\\screenshots\\TC-36_step_5.png"
+        },
+        {
+          "step_number": 6,
+          "action": "fill",
+          "duration_ms": 35795.93,
+          "passed": false,
+          "actual_value": null,
+          "error_message": "Locator.press_sequentially: Timeout 15000ms exceeded.\nCall log:\n  - waiting for get_by_role(\"textbox\", name=\"User\").first\n",
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261019_175054\\screenshots\\TC-36_step_6.png"
+        }
+      ],
+      "failure_message": "Step 6 (fill) failed: Locator.press_sequentially: Timeout 15000ms exceeded.\nCall log:\n  - waiting for get_by_role(\"textbox\", name=\"User\").first\n",
+      "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261019_175054\\screenshots\\TC-36_step_6.png"
+    }
+  ]
+}

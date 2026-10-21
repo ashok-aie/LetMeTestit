@@ -31,14 +31,20 @@ RULES & CONSTRAINTS:
    - "text": For visible text matches
 5. TEST DESIGN & DOMAIN GUIDELINES:
    - Synthesize test cases strictly aligned with the provided Acceptance Criteria without hallucinating unrelated fields or workflows.
-   - For SAP S/4HANA Login / Session / Logout workflows:
-     * Navigate to the target SAP URL
-     * Fill SAP username into selector_value="#USERNAME_FIELD-inner"
-     * Fill SAP password into selector_value="#PASSWORD_FIELD-inner"
-     * Click selector_value="#LOGIN_LINK" (Log On button)
-     * Assert text: verify landing page or header indicates successful login
-     * If wait/pause is specified (e.g. wait 20 sec): action="wait_for", input_value="20s", description="Wait for 20 seconds on Launchpad"
-     * Logout: click user profile actions menu selector_value="#meAreaHeaderButton", click selector_value="button:has-text('Sign Out'), #logoutBtn", confirm dialog, assert returned to logon screen
+   - MANDATORY SAP S/4HANA LIFECYCLE RULE:
+     Whenever testing an SAP application or whenever there is a step for login to SAP:
+     * ALWAYS start with complete logon steps:
+       1. action="navigate", input_value=target SAP URL
+       2. action="fill", locator_strategy="css", selector_value="#USERNAME_FIELD-inner", input_value=SAP username
+       3. action="fill", locator_strategy="css", selector_value="#PASSWORD_FIELD-inner", input_value=SAP password
+       4. action="click", locator_strategy="css", selector_value="#LOGIN_LINK", description="Click Log On button"
+       5. action="assert_text", locator_strategy="css", selector_value="body", expected_value="Home", description="Assert SAP Fiori Launchpad loaded"
+     * Then proceed with the core business functionality (tiles, creation, items, pricing, save, etc.).
+     * ALWAYS terminate with complete logoff steps at the end, EVEN IF NOT SPECIFIED in the user story:
+       1. action="click", locator_strategy="css", selector_value="#userActionsMenuHeaderButton, #meAreaHeaderButton", description="Click User Profile Avatar Menu"
+       2. action="click", locator_strategy="css", selector_value="button:has-text('Sign Out'), text='Sign Out'", description="Click Sign Out"
+       3. action="click", locator_strategy="css", selector_value="button:has-text('OK'), text='OK'", description="Confirm Sign Out dialog"
+       4. action="assert_text", locator_strategy="css", selector_value="body", expected_value="logged off", description="Verify returned to Logoff screen"
    - For ERP / Form transactional workflows (e.g. Sales/Material Orders):
      * Populate relevant form inputs
      * Click submit button
@@ -476,20 +482,21 @@ def format_single_ac_prompt(
 
         # Branch 2: Line Items & Products
         elif any(k in ac_lower for k in ["item", "product", "quantity", "45157510101"]):
-            guidance = "- For SAP Quotation Line Items: From quotation screen, click 'Items' tab or 'Add Item' button (button:has-text('Add Item'), text='Items'), enter Product ID '45157510101' into product input (input[aria-label*='Product'], input[id*='ProductID']), enter Quantity '1' into quantity input (input[aria-label*='Quantity'], input[id*='Quantity']), and assert item row appears with Product '45157510101' and Quantity '1'."
+            guidance = "- For SAP Quotation Line Items: From quotation screen, click 'Items' tab (role: option 'Items'), enter Product ID '45157510101' into product input ([id*='ordered_prod'], input[id*='ordered_prod']), enter Quantity '1' into quantity input ([id*='quantity'], input[id*='quantity']), and assert item row appears with Product '45157510101' and Quantity '1'."
             sample_steps_json = f"""[
     {{
       "step_number": 1,
       "action": "click",
-      "locator_strategy": "css",
-      "selector_value": "button:has-text('Add Item'), text='Items'",
-      "description": "Open Items tab and click Add Item"
+      "locator_strategy": "role",
+      "role_name": "option",
+      "selector_value": "Items",
+      "description": "Open Items tab"
     }},
     {{
       "step_number": 2,
       "action": "fill",
       "locator_strategy": "css",
-      "selector_value": "input[aria-label*='Product'], input[id*='ProductID']",
+      "selector_value": "[id*='ordered_prod'], input[id*='ordered_prod']",
       "input_value": "45157510101",
       "description": "Enter Product ID 45157510101"
     }},
@@ -497,7 +504,7 @@ def format_single_ac_prompt(
       "step_number": 3,
       "action": "fill",
       "locator_strategy": "css",
-      "selector_value": "input[aria-label*='Quantity'], input[id*='Quantity']",
+      "selector_value": "[id*='quantity'], input[id*='quantity']",
       "input_value": "1",
       "description": "Enter Quantity 1"
     }},

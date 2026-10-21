@@ -1,0 +1,350 @@
+{
+  "run_id": "RUN-D3E29141",
+  "suite_id": "SUITE-KAN-23",
+  "environment": "local",
+  "target_url": "https://s4srv25.nodomain.com:44325/sap/bc/ui2/flp?sap-client=100&sap-language=EN#Launchpad-openFLPPage?pageId=SAP_CRM_PG_SERVICE_PROCESSING&spaceId=SAP_CRM_SP_SERVICE",
+  "started_at": "2026-10-19T20:06:53.959469Z",
+  "finished_at": "2026-10-19T20:09:17.552872Z",
+  "total_tests": 1,
+  "passed_tests": 1,
+  "failed_tests": 0,
+  "blocked_tests": 0,
+  "error_tests": 0,
+  "trace_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261019_200653\\traces\\trace.zip",
+  "results": [
+    {
+      "test_case_id": "TC-36",
+      "outcome": "PASS",
+      "classification": "none",
+      "duration_seconds": 138.91,
+      "step_results": [
+        {
+          "step_number": 1,
+          "action": "navigate",
+          "duration_ms": 2031.27,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261019_200653\\screenshots\\TC-36_step_1.png"
+        },
+        {
+          "step_number": 2,
+          "action": "fill",
+          "duration_ms": 3070.6,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261019_200653\\screenshots\\TC-36_step_2.png"
+        },
+        {
+          "step_number": 3,
+          "action": "fill",
+          "duration_ms": 3082.61,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261019_200653\\screenshots\\TC-36_step_3.png"
+        },
+        {
+          "step_number": 4,
+          "action": "click",
+          "duration_ms": 2765.86,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261019_200653\\screenshots\\TC-36_step_4.png"
+        },
+        {
+          "step_number": 5,
+          "action": "assert_text",
+          "duration_ms": 778.94,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261019_200653\\screenshots\\TC-36_step_5.png"
+        },
+        {
+          "step_number": 6,
+          "action": "click",
+          "duration_ms": 4635.21,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261019_200653\\screenshots\\TC-36_step_6.png"
+        },
+        {
+          "step_number": 7,
+          "action": "click",
+          "duration_ms": 3936.12,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261019_200653\\screenshots\\TC-36_step_7.png"
+        },
+        {
+          "step_number": 8,
+          "action": "click",
+          "duration_ms": 1897.34,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261019_200653\\screenshots\\TC-36_step_8.png"
+        },
+        {
+          "step_number": 9,
+          "action": "fill",
+          "duration_ms": 6191.27,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261019_200653\\screenshots\\TC-36_step_9.png"
+        },
+        {
+          "step_number": 10,
+          "action": "fill",
+          "duration_ms": 5642.58,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261019_200653\\screenshots\\TC-36_step_10.png"
+        },
+        {
+          "step_number": 11,
+          "action": "fill",
+          "duration_ms": 6315.67,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261019_200653\\screenshots\\TC-36_step_11.png"
+        },
+        {
+          "step_number": 12,
+          "action": "click",
+          "duration_ms": 2092.05,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261019_200653\\screenshots\\TC-36_step_12.png"
+        },
+        {
+          "step_number": 13,
+          "action": "fill",
+          "duration_ms": 5713.77,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261019_200653\\screenshots\\TC-36_step_13.png"
+        },
+        {
+          "step_number": 14,
+          "action": "click",
+          "duration_ms": 2019.13,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261019_200653\\screenshots\\TC-36_step_14.png"
+        },
+        {
+          "step_number": 15,
+          "action": "click",
+          "duration_ms": 1890.61,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261019_200653\\screenshots\\TC-36_step_15.png"
+        },
+        {
+          "step_number": 16,
+          "action": "click",
+          "duration_ms": 1765.8,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261019_200653\\screenshots\\TC-36_step_16.png"
+        },
+        {
+          "step_number": 17,
+          "action": "click",
+          "duration_ms": 1888.84,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261019_200653\\screenshots\\TC-36_step_17.png"
+        },
+        {
+          "step_number": 18,
+          "action": "click",
+          "duration_ms": 1911.13,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261019_200653\\screenshots\\TC-36_step_18.png"
+        },
+        {
+          "step_number": 19,
+          "action": "fill",
+          "duration_ms": 5104.55,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261019_200653\\screenshots\\TC-36_step_19.png"
+        },
+        {
+          "step_number": 20,
+          "action": "fill",
+          "duration_ms": 6076.6,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261019_200653\\screenshots\\TC-36_step_20.png"
+        },
+        {
+          "step_number": 21,
+          "action": "fill",
+          "duration_ms": 2329.32,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261019_200653\\screenshots\\TC-36_step_21.png"
+        },
+        {
+          "step_number": 22,
+          "action": "click",
+          "duration_ms": 1467.7,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261019_200653\\screenshots\\TC-36_step_22.png"
+        },
+        {
+          "step_number": 23,
+          "action": "click",
+          "duration_ms": 1445.97,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261019_200653\\screenshots\\TC-36_step_23.png"
+        },
+        {
+          "step_number": 24,
+          "action": "click",
+          "duration_ms": 3968.12,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261019_200653\\screenshots\\TC-36_step_24.png"
+        },
+        {
+          "step_number": 25,
+          "action": "click",
+          "duration_ms": 5431.29,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261019_200653\\screenshots\\TC-36_step_25.png"
+        },
+        {
+          "step_number": 26,
+          "action": "click",
+          "duration_ms": 2030.63,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261019_200653\\screenshots\\TC-36_step_26.png"
+        },
+        {
+          "step_number": 27,
+          "action": "click",
+          "duration_ms": 2126.55,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261019_200653\\screenshots\\TC-36_step_27.png"
+        },
+        {
+          "step_number": 28,
+          "action": "click",
+          "duration_ms": 2167.83,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261019_200653\\screenshots\\TC-36_step_28.png"
+        },
+        {
+          "step_number": 29,
+          "action": "click",
+          "duration_ms": 1975.83,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261019_200653\\screenshots\\TC-36_step_29.png"
+        },
+        {
+          "step_number": 30,
+          "action": "click",
+          "duration_ms": 1733.7,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261019_200653\\screenshots\\TC-36_step_30.png"
+        },
+        {
+          "step_number": 31,
+          "action": "click",
+          "duration_ms": 2170.13,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261019_200653\\screenshots\\TC-36_step_31.png"
+        },
+        {
+          "step_number": 32,
+          "action": "click",
+          "duration_ms": 1611.33,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261019_200653\\screenshots\\TC-36_step_32.png"
+        },
+        {
+          "step_number": 33,
+          "action": "click",
+          "duration_ms": 11358.15,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261019_200653\\screenshots\\TC-36_step_33.png"
+        },
+        {
+          "step_number": 34,
+          "action": "click",
+          "duration_ms": 3168.26,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261019_200653\\screenshots\\TC-36_step_34.png"
+        },
+        {
+          "step_number": 35,
+          "action": "click",
+          "duration_ms": 3415.18,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261019_200653\\screenshots\\TC-36_step_35.png"
+        },
+        {
+          "step_number": 36,
+          "action": "assert_text",
+          "duration_ms": 298.24,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261019_200653\\screenshots\\TC-36_step_36.png"
+        }
+      ],
+      "failure_message": null,
+      "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261019_200653\\screenshots\\TC-36_step_36.png"
+    }
+  ]
+}

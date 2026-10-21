@@ -89,9 +89,16 @@ class ADFNormalizer:
         elif node_type == "rule":
             return "---"
 
-        elif node_type in ("table", "tableRow", "tableCell", "tableHeader"):
-            # Simple text concatenation for tables
-            return " | ".join(cls._render_node(c) for c in content)
+        elif node_type == "table":
+            rows = [cls._render_node(c) for c in content]
+            return "\n".join(r for r in rows if r.strip())
+
+        elif node_type == "tableRow":
+            cells = [cls._render_node(c) for c in content]
+            return "| " + " | ".join(c.strip() for c in cells) + " |"
+
+        elif node_type in ("tableCell", "tableHeader"):
+            return "".join(cls._render_node(c) for c in content).strip()
 
         else:
             # Fallback: render any nested children

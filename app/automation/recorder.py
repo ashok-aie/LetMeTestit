@@ -22,6 +22,126 @@ from app.models.test_suite import (
 logger = logging.getLogger(__name__)
 
 
+def run_process_on_interactive_desktop(
+    cmd_args: List[str],
+    timeout_seconds: int = 300,
+) -> int:
+    """
+    Launches a process explicitly on the user's interactive desktop ('WinSta0\\Default')
+    using Win32 CreateProcessW, ensuring GUI windows (e.g. Playwright Chromium and Inspector)
+    appear on the user's visible display rather than a hidden background desktop.
+    """
+    if sys.platform != "win32":
+        proc = subprocess.run(
+            cmd_args,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.PIPE,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=timeout_seconds,
+        )
+        return proc.returncode
+
+    try:
+        import ctypes
+        from ctypes import wintypes
+
+        kernel32 = ctypes.windll.kernel32
+
+        class STARTUPINFO(ctypes.Structure):
+            _fields_ = [
+                ("cb", wintypes.DWORD),
+                ("lpReserved", wintypes.LPWSTR),
+                ("lpDesktop", wintypes.LPWSTR),
+                ("lpTitle", wintypes.LPWSTR),
+                ("dwX", wintypes.DWORD),
+                ("dwY", wintypes.DWORD),
+                ("dwXSize", wintypes.DWORD),
+                ("dwYSize", wintypes.DWORD),
+                ("dwXCountChars", wintypes.DWORD),
+                ("dwYCountChars", wintypes.DWORD),
+                ("dwFillAttribute", wintypes.DWORD),
+                ("dwFlags", wintypes.DWORD),
+                ("wShowWindow", wintypes.WORD),
+                ("cbReserved2", wintypes.WORD),
+                ("lpReserved2", ctypes.c_char_p),
+                ("hStdInput", wintypes.HANDLE),
+                ("hStdOutput", wintypes.HANDLE),
+                ("hStdError", wintypes.HANDLE),
+            ]
+
+        class PROCESS_INFORMATION(ctypes.Structure):
+            _fields_ = [
+                ("hProcess", wintypes.HANDLE),
+                ("hThread", wintypes.HANDLE),
+                ("dwProcessId", wintypes.DWORD),
+                ("dwThreadId", wintypes.DWORD),
+            ]
+
+        si = STARTUPINFO()
+        si.cb = ctypes.sizeof(STARTUPINFO)
+        si.lpDesktop = "WinSta0\\Default"
+
+        pi = PROCESS_INFORMATION()
+        cmd_str = subprocess.list2cmdline(cmd_args)
+        logger.info("Launching on WinSta0\\Default: %s", cmd_str)
+
+        success = kernel32.CreateProcessW(
+            None,
+            cmd_str,
+            None,
+            None,
+            False,
+            0,
+            None,
+            None,
+            ctypes.byref(si),
+            ctypes.byref(pi),
+        )
+
+        if not success:
+            err = kernel32.GetLastError()
+            logger.warning("CreateProcessW to WinSta0\\Default failed with code %d; falling back to subprocess.run", err)
+            proc = subprocess.run(
+                cmd_args,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.PIPE,
+                text=True,
+                encoding="utf-8",
+                errors="replace",
+                timeout=timeout_seconds,
+            )
+            return proc.returncode
+
+        wait_ms = timeout_seconds * 1000 if timeout_seconds else 0xFFFFFFFF
+        wait_res = kernel32.WaitForSingleObject(pi.hProcess, wait_ms)
+
+        exit_code = wintypes.DWORD()
+        kernel32.GetExitCodeProcess(pi.hProcess, ctypes.byref(exit_code))
+
+        kernel32.CloseHandle(pi.hProcess)
+        kernel32.CloseHandle(pi.hThread)
+
+        if wait_res == 0x00000102:  # WAIT_TIMEOUT
+            logger.warning("Interactive codegen session timed out")
+            return -1
+
+        return int(exit_code.value)
+    except Exception as e:
+        logger.warning("Failed to launch on WinSta0\\Default (%s); falling back to subprocess.run", e)
+        proc = subprocess.run(
+            cmd_args,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.PIPE,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=timeout_seconds,
+        )
+        return proc.returncode
+
+
 def record_playwright_session(
     target_url: str = "http://127.0.0.1:8000/",
     output_file: Optional[Path] = None,
@@ -40,48 +160,47 @@ def record_playwright_session(
     if output_file.exists():
         output_file.unlink()
 
-    import shutil
-    npx_bin = shutil.which("npx")
-    if npx_bin:
-        cmd = [
-            npx_bin,
-            "playwright",
-            "codegen",
-            target_url,
-            "--target",
-            "python",
-            "-o",
-            str(output_file),
-            "--test-id-attribute",
-            "data-testid",
-        ]
-    else:
-        cmd = [
-            sys.executable,
-            "-m",
-            "playwright",
-            "codegen",
-            target_url,
-            "--target",
-            "python",
-            "-o",
-            str(output_file),
-            "--test-id-attribute",
-            "data-testid",
-        ]
+    cmd = [
+        sys.executable,
+        "-m",
+        "playwright",
+        "codegen",
+        "--ignore-https-errors",
+        "--target",
+        "python",
+        "-o",
+        str(output_file),
+        "--test-id-attribute",
+        "data-testid",
+    ]
+
+    clean_url = target_url.strip() if target_url else ""
+    if clean_url:
+        cmd.append(clean_url)
 
     logger.info("Launching Playwright Codegen: %s", " ".join(cmd))
     try:
-        proc = subprocess.run(
-            cmd,
-            capture_output=True,
-            text=True,
-            timeout=timeout_seconds,
-        )
-        if proc.returncode != 0 and proc.stderr:
-            logger.warning("Playwright codegen returned code %d: %s", proc.returncode, proc.stderr)
-    except subprocess.TimeoutExpired:
-        logger.warning("Playwright codegen timed out after %ds", timeout_seconds)
+        rc = run_process_on_interactive_desktop(cmd, timeout_seconds=timeout_seconds)
+        if rc != 0 and not output_file.exists() and clean_url:
+            logger.info("Retrying codegen with 'about:blank' fallback on desktop...")
+            fallback_cmd = [
+                sys.executable,
+                "-m",
+                "playwright",
+                "codegen",
+                "--ignore-https-errors",
+                "--target",
+                "python",
+                "-o",
+                str(output_file),
+                "--test-id-attribute",
+                "data-testid",
+                "about:blank",
+            ]
+            run_process_on_interactive_desktop(fallback_cmd, timeout_seconds=timeout_seconds)
+    except Exception as e:
+        logger.error("Failed to run Playwright codegen: %s", e)
+        raise
 
     if output_file.exists():
         return output_file.read_text(encoding="utf-8")
@@ -282,4 +401,27 @@ def create_test_case_from_recording(
         tags=tags or ["recorded", "browser"],
         expected_result="Recorded sequence completes without browser error",
     )
+
+
+class SessionRecorder:
+    """Convenience wrapper for interactive Playwright recording sessions."""
+
+    @staticmethod
+    def record(
+        target_url: str = "http://127.0.0.1:8000/",
+        output_file: Optional[Path] = None,
+        timeout_seconds: int = 300,
+    ) -> str:
+        return record_playwright_session(
+            target_url=target_url,
+            output_file=output_file,
+            timeout_seconds=timeout_seconds,
+        )
+
+    @staticmethod
+    def parse(
+        script_content: str,
+        default_url: str = "http://127.0.0.1:8000/",
+    ) -> List[TestStep]:
+        return parse_recorded_script(script_content, default_url=default_url)
 

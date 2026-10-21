@@ -81,3 +81,40 @@ def test_parse_recorded_script_missing_initial_goto():
     assert steps[1].action == ActionType.CLICK
     assert steps[1].selector_value == "#my-btn"
 
+
+def test_record_playwright_session_command_construction(monkeypatch, tmp_path):
+    from unittest.mock import MagicMock
+    import subprocess
+    import sys
+    from app.browser.recorder import record_playwright_session
+    from app.automation.recorder import SessionRecorder
+
+    dummy_out = tmp_path / "test_out.py"
+
+    def side_effect(cmd, **kwargs):
+        dummy_out.write_text("page.goto('https://example.com')\n", encoding="utf-8")
+        return 0
+
+    mock_run = MagicMock(side_effect=side_effect)
+    monkeypatch.setattr("app.browser.recorder.run_process_on_interactive_desktop", mock_run)
+
+    result = record_playwright_session(
+        target_url="https://sap-server:44300/ui?a=1&b=2",
+        output_file=dummy_out,
+    )
+
+    assert result == "page.goto('https://example.com')\n"
+    assert mock_run.called
+    call_args, call_kwargs = mock_run.call_args
+    cmd = call_args[0]
+    # Asserts that sys.executable is used directly instead of npx
+    assert cmd[0] == sys.executable
+    assert cmd[1:4] == ["-m", "playwright", "codegen"]
+    assert "--ignore-https-errors" in cmd
+    assert cmd[-1] == "https://sap-server:44300/ui?a=1&b=2"
+
+    # Test SessionRecorder wrapper
+    steps = SessionRecorder.parse("page.locator('#btn').click()")
+    assert len(steps) >= 1
+
+

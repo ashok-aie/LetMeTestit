@@ -263,13 +263,46 @@ class AntigravityClient:
 
         start_time = time.perf_counter()
         url = f"{self.base_url}/models/{self.model}:generateContent?key={self.api_key}"
-        try:
-            with httpx.Client(timeout=float(self.timeout)) as client:
-                res = client.post(url, json=payload)
-                res.raise_for_status()
-                data = res.json()
-        except Exception as exc:
-            raise LLMClientError(f"Antigravity/Gemini API generation failed: {exc}") from exc
+        data = None
+        max_attempts = 4
+        last_exc = None
+        for attempt in range(max_attempts):
+            try:
+                with httpx.Client(timeout=float(self.timeout)) as client:
+                    res = client.post(url, json=payload)
+                    if res.status_code in (429, 503, 500, 502):
+                        wait_sec = (attempt + 1) * 2.5
+                        logger.warning(
+                            "Gemini API returned HTTP %s on attempt %d/%d; retrying in %.1fs...",
+                            res.status_code,
+                            attempt + 1,
+                            max_attempts,
+                            wait_sec,
+                        )
+                        time.sleep(wait_sec)
+                        continue
+                    res.raise_for_status()
+                    data = res.json()
+                    break
+            except (httpx.TimeoutException, httpx.NetworkError) as exc:
+                last_exc = exc
+                if attempt < max_attempts - 1:
+                    wait_sec = (attempt + 1) * 2.0
+                    logger.warning("Gemini network error on attempt %d: %s. Retrying in %.1fs...", attempt + 1, exc, wait_sec)
+                    time.sleep(wait_sec)
+                else:
+                    raise LLMClientError(f"Antigravity/Gemini API request failed after {max_attempts} attempts: {exc}") from exc
+            except Exception as exc:
+                last_exc = exc
+                if attempt < max_attempts - 1 and any(code in str(exc) for code in ["429", "503", "500", "502"]):
+                    wait_sec = (attempt + 1) * 2.5
+                    logger.warning("Gemini error %s on attempt %d. Retrying in %.1fs...", exc, attempt + 1, wait_sec)
+                    time.sleep(wait_sec)
+                else:
+                    raise LLMClientError(f"Antigravity/Gemini API generation failed: {exc}") from exc
+
+        if data is None:
+            raise LLMClientError(f"Antigravity/Gemini API failed after {max_attempts} attempts: {last_exc}")
 
         latency = time.perf_counter() - start_time
         candidates = data.get("candidates", [{}])

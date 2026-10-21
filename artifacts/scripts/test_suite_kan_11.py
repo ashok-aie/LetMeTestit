@@ -8,8 +8,8 @@ from playwright.sync_api import Page, expect
 
 def test_tc_01_positive(page: Page):
     """
-    [Category: POSITIVE] Validate AC-01: Login in to SAP, then click on "Manage S
-    Objective: Verify behavior for Login in to SAP, then click on "Manage Service Quotations", to go to service quotations page, wait for 20 sec and then log out
+    [Category: POSITIVE] Validation of AC-01 - Manage Service Quotations Navigation and Creation
+    Objective: Verify SAP login, navigation to Manage Service Quotations tile, quotation creation dialog triggering, entering required details, 20-second wait, and standard logoff process.
     """
     # Step 1: navigate
     page.goto("https://s4srv25.nodomain.com:44325/sap/bc/ui2/flp?sap-client=100&sap-language=EN#Launchpad-openFLPPage?pageId=SAP_CRM_PG_SERVICE_PROCESSING&spaceId=SAP_CRM_SP_SERVICE")
@@ -30,21 +30,30 @@ def test_tc_01_positive(page: Page):
     # Step 6: click
     page.locator("Manage Service Quotations").click()
 
-    # Step 7: assert_text
-    expect(page.locator("body")).to_contain_text("Service Quotations")
+    # Step 7: click
+    page.locator("button:has-text('Create'), #btnCreate, :has-text('Create')").first.click()
 
-    # Step 8: wait_for
+    # Step 8: fill
+    page.locator("input[aria-label*='Sold-to'], input[id*='SoldToParty'], input[placeholder*='Sold-to']").fill("Brugmann Hospital")
+
+    # Step 9: fill
+    page.locator("input[aria-label*='Description'], input[id*='Description']").fill("RAR")
+
+    # Step 10: assert_text
+    expect(page.locator("body")).to_contain_text("Brugmann Hospital")
+
+    # Step 11: wait_for
     page.get_by_test_id("").wait_for(state="visible", timeout=10000)
 
-    # Step 9: click
+    # Step 12: click
     page.locator("#userActionsMenuHeaderButton, #meAreaHeaderButton").click()
 
-    # Step 10: click
-    page.locator("Sign Out").click()
+    # Step 13: click
+    page.locator("button:has-text('Sign Out'), :has-text('Sign Out')").first.click()
 
-    # Step 11: click
-    page.locator("OK").click()
+    # Step 14: click
+    page.locator("button:has-text('OK'), :has-text('OK')").first.click()
 
-    # Step 12: assert_text
-    expect(page.locator("body")).to_contain_text("signed out")
+    # Step 15: assert_text
+    expect(page.locator("body")).to_contain_text("logged off")
 
