@@ -35,6 +35,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from app.config import settings
 from app.jira.client import JiraClient, JiraClientError
 from app.jira.normalizer import ADFNormalizer
+from app.graph.nodes import WorkflowNodes
 from app.agents.llm_client import get_llm_client, OllamaClient, GroqClient, AntigravityClient
 from app.test_design.generator import TestDesigner
 from app.models.requirements import JiraRequirement, AcceptanceCriterion
@@ -643,8 +644,8 @@ if selected_nav == "1. Ingest & Design":
                             # 3. Save as Reusable Flow Template in data/library/flows.json
                             try:
                                 save_reusable_flow(
-                                    flow_name=f"Recorded: {clean_title}",
-                                    description=f"Recorded workflow from Playwright Codegen for {suite.requirement_key}",
+                                    flow_name=f"Recorded: [{new_tc.id}] {clean_title} ({len(parsed_steps)} steps)",
+                                    description=f"Recorded workflow from Playwright Codegen for {suite.requirement_key} ({new_tc.id} — {len(parsed_steps)} steps)",
                                     category="Recorded Flow",
                                     steps=parsed_steps,
                                 )
@@ -698,80 +699,25 @@ if selected_nav == "1. Ingest & Design":
             st.error(f"Could not fetch issue '{issue_key_input}': {e}")
             st.stop()
 
-        # Step 2: Extracting Acceptance Criteria dynamically
+        # Step 2: Extracting Acceptance Criteria dynamically via Centralized Workflow Nodes
         st.markdown("**Step 2:** Extracting Acceptance Criteria from User Story...")
-        raw_lines = [l.strip() for l in requirement.description_text.splitlines() if l.strip()]
-        
-        # 1. Normalize two-line numbered lists (e.g., line 1 is "1", line 2 is "Login...")
-        merged_lines = []
-        i = 0
-        while i < len(raw_lines):
-            line = raw_lines[i]
-            if line.isdigit() and i + 1 < len(raw_lines):
-                merged_lines.append(f"{line}. {raw_lines[i + 1]}")
-                i += 2
-            else:
-                merged_lines.append(line)
-                i += 1
+        import importlib
+        import app.graph.nodes
+        import app.flows.sap_flows
+        import app.test_design.prompts
+        importlib.reload(app.flows.sap_flows)
+        importlib.reload(app.test_design.prompts)
+        importlib.reload(app.graph.nodes)
+        from app.graph.nodes import WorkflowNodes
 
-        ac_list = []
+        nodes = WorkflowNodes(jira_client=jira_client)
+        state = {"jira_requirement": requirement}
+        state.update(nodes.normalize_requirement(state))
+        state.update(nodes.assess_completeness(state))
+        requirement = state["jira_requirement"]
+        ac_list = requirement.acceptance_criteria
 
-        # 2. Check for an explicit "Acceptance Criteria" header block
-        ac_header_idx = -1
-        for idx, l in enumerate(merged_lines):
-            if re.match(r"^(acceptance\s*criteria|ac:?|scenarios?):?", l, re.IGNORECASE):
-                ac_header_idx = idx
-                break
-
-        if ac_header_idx != -1:
-            for l in merged_lines[ac_header_idx + 1:]:
-                if re.match(r"^(preconditions?|notes?|test\s*steps?|procedure):?", l, re.IGNORECASE):
-                    break
-                clean_l = l.strip()
-                if len(clean_l) > 4:
-                    bullet_text = re.sub(r"^(\d+[\.\)]|[-*•#]|ac[:\-\d]*)\s*", "", clean_l, flags=re.IGNORECASE).strip()
-                    if bullet_text:
-                        ac_list.append(AcceptanceCriterion(id=f"AC-{len(ac_list)+1:02d}", text=bullet_text))
-
-        # 3. Check if input is a sequential numbered procedural script (e.g. >= 4 steps, like KAN-23 or KAN-25)
-        if not ac_list:
-            numbered_steps = [
-                re.sub(r"^(\d+[\.\)]|step\s*\d+[:\.]?)\s*", "", l, flags=re.IGNORECASE).strip()
-                for l in merged_lines
-                if re.match(r"^(\d+[\.\)]|step\s*\d+[:\.]?)\s+", l, re.IGNORECASE)
-            ]
-            if len(numbered_steps) >= 4:
-                # Group into a single cohesive End-to-End Procedural Flow test scenario
-                e2e_text = f"End-to-End Procedural Flow ({len(numbered_steps)} steps): " + " -> ".join(numbered_steps)
-                ac_list.append(AcceptanceCriterion(id="AC-01", text=e2e_text))
-
-        # 4. Check if input has sequential procedural action keywords even without strict numbering
-        if not ac_list:
-            procedural_keywords = ["login", "navigate", "create", "sold-to", "items", "dates", "price", "save", "released", "accept", "logout", "revenue", "contract"]
-            procedural_matches = [l for l in merged_lines if any(k in l.lower() for k in procedural_keywords)]
-            if len(procedural_matches) >= 5 and len(merged_lines) <= 30:
-                e2e_text = f"End-to-End Business Flow ({len(procedural_matches)} actions): " + " -> ".join(procedural_matches)
-                ac_list.append(AcceptanceCriterion(id="AC-01", text=e2e_text))
-
-        # 5. Standard bullet / line parsing fallback
-        if not ac_list:
-            for line in merged_lines:
-                clean_l = line.strip()
-                lower = clean_l.lower()
-                is_ac = (
-                    "ac-" in lower or "ac:" in lower or
-                    lower.startswith(("-", "*", "given", "when", "then", "scenario")) or
-                    re.match(r"^(\d+[\.\)]|#|•)\s+", clean_l)
-                )
-                if is_ac and len(clean_l) > 6:
-                    ac_text = re.sub(r"^(\d+[\.\)]|[-*•#]|ac[:\-\d]*)\s*", "", clean_l, flags=re.IGNORECASE).strip()
-                    if ac_text:
-                        ac_list.append(AcceptanceCriterion(id=f"AC-{len(ac_list)+1:02d}", text=ac_text))
-
-        if not ac_list:
-            ac_list.append(AcceptanceCriterion(id="AC-01", text=requirement.summary.strip() or "Standard Functional Verification"))
-
-        requirement.acceptance_criteria = ac_list
+        st.session_state.jira_requirement = requirement
         st.session_state.acceptance_criteria = ac_list
         st.write(f"Extracted **{len(ac_list)}** Acceptance Criteria dynamically from `{requirement.key}`.")
 
@@ -1396,21 +1342,18 @@ elif selected_nav == "2. Review Center":
                                 stp.selector_value = re.sub(r",\s*text=['\"][^'\"]*['\"]", "", stp.selector_value)
                             if stp.selector_value and "btnCreate" in stp.selector_value and "New Create" not in stp.selector_value:
                                 stp.selector_value = "button:has-text('New Create'), button:has-text('Create'), [title*='Create'], #btnCreate"
-                            if stp.selector_value and ("quantity" in stp.selector_value.lower() or (stp.description and "quantity" in stp.description.lower())):
-                                if stp.action == ActionType.FILL and not stp.selector_value.startswith("input"):
-                                    stp.selector_value = "input[id*='btadmini_table[1].quantity'], input[name*='btadmini_table[1].quantity'], input[data-help-id*='I_quantity:R_1'], input[id*='btadmini_table'][id*='quantity'], input[id*='quantity']:not([readonly]), input[aria-label*='Quantity' i]"
-                                    stp.locator_strategy = LocatorStrategy.CSS
-                            if stp.step_number == 35 and stp.action == ActionType.FILL and stp.input_value == "962":
-                                stp.input_value = "${OPERATIONAL_DOCUMENT}"
 
-                        # Guard: If Service Quotation flow has Create but missed ZQDS popup selection
+                        # Guard: If Service Quotation flow has Create but missed Transaction Type popup selection
                         has_create = any("Create" in (s.description or "") and s.action == ActionType.CLICK for s in tc.steps)
-                        has_zqds = any("ZQDS" in (s.selector_value or "") for s in tc.steps)
-                        if has_create and not has_zqds:
+                        has_ttype = any(
+                            ("transaction type" in (s.description or "").lower() or any(t in (s.selector_value or "") for t in ["ZQDS", "ZQDV", "ZSVO", "ZSO"]))
+                            for s in tc.steps
+                        )
+                        if has_create and not has_ttype:
                             new_steps = []
                             for s in tc.steps:
                                 new_steps.append(s)
-                                if "Create" in (s.description or "") and s.action == ActionType.CLICK and not has_zqds:
+                                if "Create" in (s.description or "") and s.action == ActionType.CLICK and not has_ttype:
                                     zqds_step = TestStep(
                                         step_number=len(new_steps) + 1,
                                         action=ActionType.CLICK,
@@ -1419,7 +1362,7 @@ elif selected_nav == "2. Review Center":
                                         description="Select Transaction Type ZQDS — CE-Direct Sales from popup",
                                     )
                                     new_steps.append(zqds_step)
-                                    has_zqds = True
+                                    has_ttype = True
                             for i, s in enumerate(new_steps, 1):
                                 s.step_number = i
                             tc.steps = new_steps
@@ -1493,6 +1436,51 @@ elif selected_nav == "2. Review Center":
 
             # Navigation Button to Evidence & Jira Defects (Item 8)
             if st.session_state.execution_run:
+                run_bug_check = st.session_state.execution_run
+                if run_bug_check.failed_tests > 0 or run_bug_check.error_tests > 0:
+                    st.markdown("---")
+                    st.error("🚨 **Execution Halted due to Application Error / Defect — Auto-Generated Bug Report:**")
+                    for res_f in run_bug_check.results:
+                        if res_f.outcome in (TestOutcome.FAIL, TestOutcome.ERROR):
+                            tc_match = next(
+                                (t for t in (suite.test_cases if suite else []) if t.id == res_f.test_case_id),
+                                None,
+                            )
+                            fail_shots = [
+                                str(Path(s.screenshot_path).resolve())
+                                for s in res_f.step_results
+                                if getattr(s, "screenshot_path", None) and Path(s.screenshot_path).resolve().exists()
+                            ]
+                            if res_f.screenshot_path and Path(res_f.screenshot_path).resolve().exists():
+                                primary_fail_shot = str(Path(res_f.screenshot_path).resolve())
+                                if primary_fail_shot not in fail_shots:
+                                    fail_shots.append(primary_fail_shot)
+                            raw_err = (res_f.failure_message or "SAP Error detected").splitlines()[0].strip()
+                            tc_label = tc_match.title if tc_match else res_f.test_case_id
+                            repro_list = []
+                            if tc_match:
+                                for s_item in tc_match.steps:
+                                    s_val, s_desc = mask_step_credential_display(
+                                        s_item.action.value, s_item.selector_value, s_item.input_value, s_item.description
+                                    )
+                                    repro_list.append(f"{s_item.action.value.upper()} ({s_item.selector_value or s_val or ''}): {s_desc}")
+                            inline_defect = DefectDraft(
+                                draft_id=f"DRAFT-{res_f.test_case_id}",
+                                parent_issue_key=(st.session_state.jira_requirement.key if st.session_state.jira_requirement else suite.requirement_key),
+                                test_case_id=res_f.test_case_id,
+                                summary=f"[SAP Defect] {tc_label}: {raw_err[:155]}",
+                                steps_to_reproduce=repro_list,
+                                expected_result=(tc_match.expected_result if tc_match else "SAP operation should succeed without red status bar errors."),
+                                actual_result=res_f.failure_message or "SAP Red Error message displayed.",
+                                evidence_paths=fail_shots[-2:] if fail_shots else [],
+                            )
+                            st.code(inline_defect.to_markdown_description(), language="markdown")
+                            if res_f.screenshot_path and Path(res_f.screenshot_path).resolve().exists():
+                                st.image(
+                                    str(Path(res_f.screenshot_path).resolve()),
+                                    caption=f"Failure Screenshot ({res_f.test_case_id}): {raw_err}",
+                                    use_container_width=True,
+                                )
                 st.markdown("---")
                 st.button(
                     "Proceed to Evidence & Jira Defects →",
@@ -1621,11 +1609,15 @@ elif selected_nav == "3. Evidence & Jira Defects":
                     pass
 
         # Defect Assistant (If there are failures)
-        if exec_run.failed_tests > 0:
+        if exec_run.failed_tests > 0 or exec_run.error_tests > 0:
             st.markdown("---")
             st.markdown("### Jira Defect Assistant")
             for res in exec_run.results:
-                if res.outcome == TestOutcome.FAIL:
+                if res.outcome in (TestOutcome.FAIL, TestOutcome.ERROR):
+                    matching_tc = next(
+                        (t for t in (st.session_state.test_suite.test_cases if st.session_state.test_suite else []) if t.id == res.test_case_id),
+                        None,
+                    )
                     evidence_shots = [
                         str(Path(s.screenshot_path).resolve()) for s in res.step_results
                         if getattr(s, "screenshot_path", None) and Path(s.screenshot_path).resolve().exists()
@@ -1841,14 +1833,17 @@ elif selected_nav == "4. Regression Repository":
                                     if stp.selector_value and "btnCreate" in stp.selector_value and "New Create" not in stp.selector_value:
                                         stp.selector_value = "button:has-text('New Create'), button:has-text('Create'), [title*='Create'], #btnCreate"
 
-                                # Guard: If Service Quotation flow has Create but missed ZQDS popup selection
+                                # Guard: If Service Quotation flow has Create but missed Transaction Type popup selection
                                 has_create = any("Create" in (s.description or "") and s.action == ActionType.CLICK for s in tc.steps)
-                                has_zqds = any("ZQDS" in (s.selector_value or "") for s in tc.steps)
-                                if has_create and not has_zqds:
+                                has_ttype = any(
+                                    ("transaction type" in (s.description or "").lower() or any(t in (s.selector_value or "") for t in ["ZQDS", "ZQDV", "ZSVO", "ZSO"]))
+                                    for s in tc.steps
+                                )
+                                if has_create and not has_ttype:
                                     new_steps = []
                                     for s in tc.steps:
                                         new_steps.append(s)
-                                        if "Create" in (s.description or "") and s.action == ActionType.CLICK and not has_zqds:
+                                        if "Create" in (s.description or "") and s.action == ActionType.CLICK and not has_ttype:
                                             zqds_step = TestStep(
                                                 step_number=len(new_steps) + 1,
                                                 action=ActionType.CLICK,
@@ -1857,7 +1852,7 @@ elif selected_nav == "4. Regression Repository":
                                                 description="Select Transaction Type ZQDS — CE-Direct Sales from popup",
                                             )
                                             new_steps.append(zqds_step)
-                                            has_zqds = True
+                                            has_ttype = True
                                     for i, s in enumerate(new_steps, 1):
                                         s.step_number = i
                                     tc.steps = new_steps

@@ -1,0 +1,80 @@
+{
+  "run_id": "RUN-420EB600",
+  "suite_id": "SUITE-SAP-200-NEG",
+  "environment": "local",
+  "target_url": "http://127.0.0.1:8000/",
+  "started_at": "2026-10-21T03:27:32.942241Z",
+  "finished_at": "2026-10-21T03:27:45.156987Z",
+  "total_tests": 1,
+  "passed_tests": 1,
+  "failed_tests": 0,
+  "blocked_tests": 0,
+  "error_tests": 0,
+  "trace_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261021_032732\\traces\\trace.zip",
+  "results": [
+    {
+      "test_case_id": "TC-SAP-NEG-01",
+      "outcome": "PASS",
+      "classification": "none",
+      "duration_seconds": 10.37,
+      "step_results": [
+        {
+          "step_number": 1,
+          "action": "navigate",
+          "duration_ms": 4620.84,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261021_032732\\screenshots\\TC-SAP-NEG-01_step_1.png"
+        },
+        {
+          "step_number": 2,
+          "action": "fill",
+          "duration_ms": 1769.11,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261021_032732\\screenshots\\TC-SAP-NEG-01_step_2.png"
+        },
+        {
+          "step_number": 3,
+          "action": "select_option",
+          "duration_ms": 551.64,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261021_032732\\screenshots\\TC-SAP-NEG-01_step_3.png"
+        },
+        {
+          "step_number": 4,
+          "action": "fill",
+          "duration_ms": 1725.15,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261021_032732\\screenshots\\TC-SAP-NEG-01_step_4.png"
+        },
+        {
+          "step_number": 5,
+          "action": "click",
+          "duration_ms": 715.18,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261021_032732\\screenshots\\TC-SAP-NEG-01_step_5.png"
+        },
+        {
+          "step_number": 6,
+          "action": "assert_text",
+          "duration_ms": 101.8,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261021_032732\\screenshots\\TC-SAP-NEG-01_step_6.png"
+        }
+      ],
+      "failure_message": null,
+      "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261021_032732\\screenshots\\TC-SAP-NEG-01_step_6.png"
+    }
+  ]
+}

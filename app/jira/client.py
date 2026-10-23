@@ -47,7 +47,7 @@ class JiraClient:
         base_url: Optional[str] = None,
         user_email: Optional[str] = None,
         api_token: Optional[str] = None,
-        timeout: float = 10.0,
+        timeout: float = 25.0,
     ):
         self.base_url = (base_url or settings.jira_base_url).rstrip("/")
         self.user_email = user_email or settings.jira_user_email

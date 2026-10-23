@@ -254,11 +254,11 @@
             "step_number": 23,
             "action": "click",
             "locator_strategy": "text",
-            "selector_value": "values",
+            "selector_value": "ZTAF",
             "role_name": null,
             "input_value": null,
             "expected_value": null,
-            "description": "Select condition type values from popup"
+            "description": "Select condition type ZTAF from popup"
           },
           {
             "step_number": 24,

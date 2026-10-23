@@ -1,0 +1,98 @@
+{
+  "run_id": "RUN-934B0FD8",
+  "suite_id": "SUITE-SAP-200-V1",
+  "environment": "local",
+  "target_url": "http://127.0.0.1:8000/",
+  "started_at": "2026-10-21T01:20:13.368278Z",
+  "finished_at": "2026-10-21T01:20:32.209698Z",
+  "total_tests": 1,
+  "passed_tests": 0,
+  "failed_tests": 1,
+  "blocked_tests": 0,
+  "error_tests": 0,
+  "trace_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261021_012013\\traces\\trace.zip",
+  "results": [
+    {
+      "test_case_id": "TC-SAP-EXEC-01",
+      "outcome": "FAIL",
+      "classification": "application_defect",
+      "duration_seconds": 16.83,
+      "step_results": [
+        {
+          "step_number": 1,
+          "action": "navigate",
+          "duration_ms": 4697.53,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261021_012013\\screenshots\\TC-SAP-EXEC-01_step_1.png"
+        },
+        {
+          "step_number": 2,
+          "action": "click",
+          "duration_ms": 734.13,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261021_012013\\screenshots\\TC-SAP-EXEC-01_step_2.png"
+        },
+        {
+          "step_number": 3,
+          "action": "fill",
+          "duration_ms": 2704.8,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261021_012013\\screenshots\\TC-SAP-EXEC-01_step_3.png"
+        },
+        {
+          "step_number": 4,
+          "action": "fill",
+          "duration_ms": 2740.66,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261021_012013\\screenshots\\TC-SAP-EXEC-01_step_4.png"
+        },
+        {
+          "step_number": 5,
+          "action": "select_option",
+          "duration_ms": 581.33,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261021_012013\\screenshots\\TC-SAP-EXEC-01_step_5.png"
+        },
+        {
+          "step_number": 6,
+          "action": "fill",
+          "duration_ms": 2714.78,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261021_012013\\screenshots\\TC-SAP-EXEC-01_step_6.png"
+        },
+        {
+          "step_number": 7,
+          "action": "select_option",
+          "duration_ms": 559.38,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261021_012013\\screenshots\\TC-SAP-EXEC-01_step_7.png"
+        },
+        {
+          "step_number": 8,
+          "action": "click",
+          "duration_ms": 786.73,
+          "passed": false,
+          "actual_value": null,
+          "error_message": "Form submission failed with application error banner: '⚠️ Error: Validation Error: Customer ID (Sold-to Party) is mandatory.'",
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261021_012013\\screenshots\\TC-SAP-EXEC-01_step_8.png"
+        }
+      ],
+      "failure_message": "Step 8 (click) failed: Form submission failed with application error banner: '⚠️ Error: Validation Error: Customer ID (Sold-to Party) is mandatory.'",
+      "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261021_012013\\screenshots\\TC-SAP-EXEC-01_step_8.png"
+    }
+  ]
+}

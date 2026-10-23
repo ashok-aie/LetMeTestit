@@ -1,0 +1,705 @@
+{
+  "suite_id": "SUITE-KAN-31",
+  "name": "SUITE-KAN-31",
+  "description": "Regression Suite for TEST-31",
+  "requirement_key": "TEST-31",
+  "version": 1,
+  "tags": [
+    "regression",
+    "sap"
+  ],
+  "total_cases": 2,
+  "total_steps": 65,
+  "last_saved_at": "2026-10-22T00:00:23.169827+00:00",
+  "last_run_status": "Not Executed",
+  "suite_data": {
+    "suite_id": "SUITE-KAN-31",
+    "requirement_key": "TEST-31",
+    "created_at": "2026-10-22T00:00:23.169827Z",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "TC-01",
+        "requirement_key": "TEST-31",
+        "source_ac_id": "AC-01",
+        "title": "Validate AC-01: AC-01 (Multi-Item Service Quotation Crea",
+        "objective": "Verify behavior for AC-01 (Multi-Item Service Quotation Creation, Pricing, and Acceptance):\nVerify that a Service Quotation of Transaction Type 'ZQDS' can be successfully created with:\nDescription: 'RAR testing'\nSold-to Party: 'Brugmann Hospital'\nTerm of Quotation Duration: 24 (Time Unit: Months)\nItems Tab line items:\nLine Item 1: Product ID '45157510101' , go to product add Quantity 1 and add Price condition 'ZTAF' \nLine Item 2: Product ID '45157510707' , go to product add Quantity 1 and add Price condition 'ZTAF' \nSave the Quotation,  lifecycle status updated to 'Released', saved, and accepted\nTransaction ID copied from the 'Transaction History' tab as test evidence for downstream verification.",
+        "category": "positive",
+        "preconditions": [],
+        "test_data": {},
+        "steps": [
+          {
+            "step_number": 1,
+            "action": "navigate",
+            "locator_strategy": null,
+            "selector_value": null,
+            "role_name": null,
+            "input_value": "https://s4srv25.nodomain.com:44325/sap/bc/ui2/flp?sap-client=100&sap-language=EN#Launchpad-openFLPPage?pageId=SAP_CRM_PG_SERVICE_PROCESSING&spaceId=SAP_CRM_SP_SERVICE",
+            "expected_value": null,
+            "description": "Open SAP Fiori Logon screen"
+          },
+          {
+            "step_number": 2,
+            "action": "fill",
+            "locator_strategy": "css",
+            "selector_value": "#USERNAME_FIELD-inner",
+            "role_name": null,
+            "input_value": "MYRAR1",
+            "expected_value": null,
+            "description": "Enter SAP username"
+          },
+          {
+            "step_number": 3,
+            "action": "fill",
+            "locator_strategy": "css",
+            "selector_value": "#PASSWORD_FIELD-inner",
+            "role_name": null,
+            "input_value": "Pass23#$",
+            "expected_value": null,
+            "description": "Enter SAP password"
+          },
+          {
+            "step_number": 4,
+            "action": "click",
+            "locator_strategy": "css",
+            "selector_value": "#LOGIN_LINK",
+            "role_name": null,
+            "input_value": null,
+            "expected_value": null,
+            "description": "Click Log On button"
+          },
+          {
+            "step_number": 5,
+            "action": "assert_text",
+            "locator_strategy": "css",
+            "selector_value": "body",
+            "role_name": null,
+            "input_value": null,
+            "expected_value": "Home",
+            "description": "Assert SAP Fiori Launchpad loaded"
+          },
+          {
+            "step_number": 6,
+            "action": "click",
+            "locator_strategy": "text",
+            "selector_value": "Manage Service Quotations",
+            "role_name": null,
+            "input_value": null,
+            "expected_value": null,
+            "description": "Click Manage Service Quotations tile"
+          },
+          {
+            "step_number": 7,
+            "action": "click",
+            "locator_strategy": "css",
+            "selector_value": "button:has-text('New Create'), button:has-text('Create'), [title*='Create'], #btnCreate",
+            "role_name": null,
+            "input_value": null,
+            "expected_value": null,
+            "description": "Click Create button on Service Quotations worklist"
+          },
+          {
+            "step_number": 8,
+            "action": "click",
+            "locator_strategy": "text",
+            "selector_value": "ZQDS",
+            "role_name": null,
+            "input_value": null,
+            "expected_value": null,
+            "description": "Select Transaction Type ZQDS from popup"
+          },
+          {
+            "step_number": 9,
+            "action": "fill",
+            "locator_strategy": "role",
+            "selector_value": "Description:",
+            "role_name": "textbox",
+            "input_value": "RAR testing",
+            "expected_value": null,
+            "description": "Enter Quotation Description 'RAR testing'"
+          },
+          {
+            "step_number": 10,
+            "action": "fill",
+            "locator_strategy": "role",
+            "selector_value": "Sold-To Party:",
+            "role_name": "textbox",
+            "input_value": "Brugmann Hospital",
+            "expected_value": null,
+            "description": "Enter Sold-to Party customer 'Brugmann Hospital'"
+          },
+          {
+            "step_number": 11,
+            "action": "fill",
+            "locator_strategy": "role",
+            "selector_value": "Sold-To Party:",
+            "role_name": "textbox",
+            "input_value": "Enter",
+            "expected_value": null,
+            "description": "Press Enter to commit Sold-to Party"
+          },
+          {
+            "step_number": 12,
+            "action": "click",
+            "locator_strategy": "role",
+            "selector_value": "Dates",
+            "role_name": "option",
+            "input_value": null,
+            "expected_value": null,
+            "description": "Open Dates tab"
+          },
+          {
+            "step_number": 13,
+            "action": "fill",
+            "locator_strategy": "css",
+            "selector_value": "#C16_W64_V65_DatesTable_bottom_div tr:has-text('Term of Quotation') input, #C16_W64_V65_DatesTable_bottom_div tr:has-text('Term of Quotation') [role='textbox']",
+            "role_name": null,
+            "input_value": "24",
+            "expected_value": null,
+            "description": "Enter Term of Quotation Duration as 24"
+          },
+          {
+            "step_number": 14,
+            "action": "click",
+            "locator_strategy": "css",
+            "selector_value": "[id='C16_W64_V65_btdate_table[4].time_unit-btn']",
+            "role_name": null,
+            "input_value": null,
+            "expected_value": null,
+            "description": "Open Time Unit dropdown"
+          },
+          {
+            "step_number": 15,
+            "action": "click",
+            "locator_strategy": "role",
+            "selector_value": "Month",
+            "role_name": "link",
+            "input_value": null,
+            "expected_value": null,
+            "description": "Select Time Unit Month"
+          },
+          {
+            "step_number": 16,
+            "action": "click",
+            "locator_strategy": "role",
+            "selector_value": "Items",
+            "role_name": "option",
+            "input_value": null,
+            "expected_value": null,
+            "description": "Open Items tab"
+          },
+          {
+            "step_number": 17,
+            "action": "fill",
+            "locator_strategy": "css",
+            "selector_value": "[id*='btadmini_table[1].ordered_prod'], [id*='table[1]'][id*='ordered_prod'], input[name*='btadmini_table[1].ordered_prod'], [data-help-id*='I_ordered_prod:R_1'], [id*='ordered_prod'], [id='C13_W49_V50_V54_btadmini_table[1].ordered_prod']",
+            "role_name": null,
+            "input_value": "45157510101",
+            "expected_value": null,
+            "description": "Enter Product ID 45157510101 for item 1"
+          },
+          {
+            "step_number": 18,
+            "action": "fill",
+            "locator_strategy": "css",
+            "selector_value": "[id*='btadmini_table[1].ordered_prod'], [id*='table[1]'][id*='ordered_prod'], input[name*='btadmini_table[1].ordered_prod'], [data-help-id*='I_ordered_prod:R_1'], [id*='ordered_prod'], [id='C13_W49_V50_V54_btadmini_table[1].ordered_prod']",
+            "role_name": null,
+            "input_value": "Enter",
+            "expected_value": null,
+            "description": "Press Enter to commit Product ID 45157510101 for item 1"
+          },
+          {
+            "step_number": 19,
+            "action": "click",
+            "locator_strategy": "css",
+            "selector_value": "[id*='btadmini_table[1].description'] a, [id*='btadmini_table[1].ordered_prod'] a, text='45157510101', text='VELLYS SATELLITE STATION SKU1', [id*='btadmini_table[1]'] a",
+            "role_name": null,
+            "input_value": null,
+            "expected_value": null,
+            "description": "Click Product Name to view item 1 details"
+          },
+          {
+            "step_number": 20,
+            "action": "fill",
+            "locator_strategy": "css",
+            "selector_value": "input[id*='quantity']:not([readonly]), input[name*='quantity'], input[aria-label*='Quantity' i], [aria-label*='Quantity:' i], input[title*='Quantity' i]",
+            "role_name": null,
+            "input_value": "1",
+            "expected_value": null,
+            "description": "Enter Quantity 1 for item 1 in item details"
+          },
+          {
+            "step_number": 21,
+            "action": "click",
+            "locator_strategy": "role",
+            "selector_value": "Price Details",
+            "role_name": "option",
+            "input_value": null,
+            "expected_value": null,
+            "description": "Open Price Details tab for item 1"
+          },
+          {
+            "step_number": 22,
+            "action": "click",
+            "locator_strategy": "role",
+            "selector_value": "Add",
+            "role_name": "button",
+            "input_value": null,
+            "expected_value": null,
+            "description": "Click Add Pricing Element button for item 1"
+          },
+          {
+            "step_number": 23,
+            "action": "click",
+            "locator_strategy": "text",
+            "selector_value": "ZTAF",
+            "role_name": null,
+            "input_value": null,
+            "expected_value": null,
+            "description": "Select condition type ZTAF from popup for item 1"
+          },
+          {
+            "step_number": 24,
+            "action": "click",
+            "locator_strategy": "role",
+            "selector_value": "Back",
+            "role_name": "button",
+            "input_value": null,
+            "expected_value": null,
+            "description": "Click Back to return to quotation from item 1"
+          },
+          {
+            "step_number": 25,
+            "action": "click",
+            "locator_strategy": "role",
+            "selector_value": "Items",
+            "role_name": "option",
+            "input_value": null,
+            "expected_value": null,
+            "description": "Open Items tab after item 1"
+          },
+          {
+            "step_number": 26,
+            "action": "fill",
+            "locator_strategy": "css",
+            "selector_value": "[id*='btadmini_table[2].ordered_prod'], input[name*='btadmini_table[2].ordered_prod'], [data-help-id*='I_ordered_prod:R_2'], [id='C13_W49_V50_V54_btadmini_table[2].ordered_prod']",
+            "role_name": null,
+            "input_value": "45157510707",
+            "expected_value": null,
+            "description": "Enter Product ID 45157510707 for item 2"
+          },
+          {
+            "step_number": 27,
+            "action": "fill",
+            "locator_strategy": "css",
+            "selector_value": "[id*='btadmini_table[2].ordered_prod'], input[name*='btadmini_table[2].ordered_prod'], [data-help-id*='I_ordered_prod:R_2'], [id='C13_W49_V50_V54_btadmini_table[2].ordered_prod']",
+            "role_name": null,
+            "input_value": "Enter",
+            "expected_value": null,
+            "description": "Press Enter to commit Product ID 45157510707 for item 2"
+          },
+          {
+            "step_number": 28,
+            "action": "click",
+            "locator_strategy": "css",
+            "selector_value": "[id*='btadmini_table[2].description'] a, [id*='btadmini_table[2].ordered_prod'] a, text='45157510707', [id*='btadmini_table[2]'] a",
+            "role_name": null,
+            "input_value": null,
+            "expected_value": null,
+            "description": "Click Product Name to view item 2 details"
+          },
+          {
+            "step_number": 29,
+            "action": "fill",
+            "locator_strategy": "css",
+            "selector_value": "input[id*='quantity']:not([readonly]), input[name*='quantity'], input[aria-label*='Quantity' i], [aria-label*='Quantity:' i], input[title*='Quantity' i]",
+            "role_name": null,
+            "input_value": "1",
+            "expected_value": null,
+            "description": "Enter Quantity 1 for item 2 in item details"
+          },
+          {
+            "step_number": 30,
+            "action": "click",
+            "locator_strategy": "role",
+            "selector_value": "Price Details",
+            "role_name": "option",
+            "input_value": null,
+            "expected_value": null,
+            "description": "Open Price Details tab for item 2"
+          },
+          {
+            "step_number": 31,
+            "action": "click",
+            "locator_strategy": "role",
+            "selector_value": "Add",
+            "role_name": "button",
+            "input_value": null,
+            "expected_value": null,
+            "description": "Click Add Pricing Element button for item 2"
+          },
+          {
+            "step_number": 32,
+            "action": "click",
+            "locator_strategy": "text",
+            "selector_value": "ZTAF",
+            "role_name": null,
+            "input_value": null,
+            "expected_value": null,
+            "description": "Select condition type ZTAF from popup for item 2"
+          },
+          {
+            "step_number": 33,
+            "action": "click",
+            "locator_strategy": "role",
+            "selector_value": "Back",
+            "role_name": "button",
+            "input_value": null,
+            "expected_value": null,
+            "description": "Click Back to return to quotation from item 2"
+          },
+          {
+            "step_number": 34,
+            "action": "click",
+            "locator_strategy": "role",
+            "selector_value": "Items",
+            "role_name": "option",
+            "input_value": null,
+            "expected_value": null,
+            "description": "Open Items tab after item 2"
+          },
+          {
+            "step_number": 35,
+            "action": "click",
+            "locator_strategy": "role",
+            "selector_value": "Save (Ctrl+S)",
+            "role_name": "button",
+            "input_value": null,
+            "expected_value": null,
+            "description": "Click Save button to persist quotation"
+          },
+          {
+            "step_number": 36,
+            "action": "click",
+            "locator_strategy": "css",
+            "selector_value": "button:has-text('Edit'), a:has-text('Edit'), [title*='Edit'], [aria-label*='Edit']",
+            "role_name": null,
+            "input_value": null,
+            "expected_value": null,
+            "description": "Click Edit button"
+          },
+          {
+            "step_number": 37,
+            "action": "click",
+            "locator_strategy": "css",
+            "selector_value": "#C9_W36_V39_V40_btadminh_lcstatus-btn, [id*='btadminh_lcstatus-btn']",
+            "role_name": null,
+            "input_value": null,
+            "expected_value": null,
+            "description": "Open Lifecycle Status dropdown"
+          },
+          {
+            "step_number": 38,
+            "action": "click",
+            "locator_strategy": "role",
+            "selector_value": "Released",
+            "role_name": "link",
+            "input_value": null,
+            "expected_value": null,
+            "description": "Change status to Released"
+          },
+          {
+            "step_number": 39,
+            "action": "click",
+            "locator_strategy": "role",
+            "selector_value": "Save (Ctrl+S)",
+            "role_name": "button",
+            "input_value": null,
+            "expected_value": null,
+            "description": "Click Save button to persist Released status"
+          },
+          {
+            "step_number": 40,
+            "action": "click",
+            "locator_strategy": "css",
+            "selector_value": "button:has-text('Accept'), [title*='Accept'], a:has-text('Accept'), [role='menuitem']:has-text('Accept')",
+            "role_name": null,
+            "input_value": null,
+            "expected_value": null,
+            "description": "Click Accept quotation button"
+          },
+          {
+            "step_number": 41,
+            "action": "click",
+            "locator_strategy": "text",
+            "selector_value": "Transaction History",
+            "role_name": null,
+            "input_value": null,
+            "expected_value": null,
+            "description": "Click Transaction History tab"
+          },
+          {
+            "step_number": 42,
+            "action": "assert_text",
+            "locator_strategy": "css",
+            "selector_value": "body",
+            "role_name": null,
+            "input_value": null,
+            "expected_value": "Transaction",
+            "description": "Capture Operational Document / Transaction ID as test evidence"
+          },
+          {
+            "step_number": 43,
+            "action": "click",
+            "locator_strategy": "css",
+            "selector_value": "#userActionsMenuHeaderButton, #meAreaHeaderButton",
+            "role_name": null,
+            "input_value": null,
+            "expected_value": null,
+            "description": "Click User Profile Avatar Menu"
+          },
+          {
+            "step_number": 44,
+            "action": "click",
+            "locator_strategy": "css",
+            "selector_value": "button:has-text('Sign Out'), text='Sign Out'",
+            "role_name": null,
+            "input_value": null,
+            "expected_value": null,
+            "description": "Click Sign Out"
+          },
+          {
+            "step_number": 45,
+            "action": "click",
+            "locator_strategy": "css",
+            "selector_value": "button:has-text('OK'), text='OK'",
+            "role_name": null,
+            "input_value": null,
+            "expected_value": null,
+            "description": "Confirm Sign Out dialog"
+          },
+          {
+            "step_number": 46,
+            "action": "assert_text",
+            "locator_strategy": "css",
+            "selector_value": "body",
+            "role_name": null,
+            "input_value": null,
+            "expected_value": "logged off",
+            "description": "Verify returned to Logoff screen"
+          }
+        ],
+        "expected_result": "System response matches criteria for [AC-01]",
+        "priority": "Medium",
+        "group": "General",
+        "tags": []
+      },
+      {
+        "id": "TC-02",
+        "requirement_key": "TEST-31",
+        "source_ac_id": "AC-02",
+        "title": "Validate AC-02: AC-02 (Downstream Manage Revenue Contrac",
+        "objective": "Verify behavior for AC-02 (Downstream Manage Revenue Contracts Processing):\nVerify that the Operational Document generated from AC-01 successfully appears in Manage Revenue Contracts:\nNavigate to 'Manage Revenue Contracts'\nIn the Revenue Contract filter / Value Help popup, enter the Transaction ID captured from AC-01 into 'Operational Document:' and press Enter\nSelect the matching contract from the list and click OK\nClick Go and verify that the Revenue Contract details and accounting obligations load successfully.",
+        "category": "positive",
+        "preconditions": [],
+        "test_data": {},
+        "steps": [
+          {
+            "step_number": 1,
+            "action": "navigate",
+            "locator_strategy": null,
+            "selector_value": null,
+            "role_name": null,
+            "input_value": "https://s4srv25.nodomain.com:44325/sap/bc/ui2/flp?sap-client=100&sap-language=EN#Launchpad-openFLPPage?pageId=SAP_CRM_PG_SERVICE_PROCESSING&spaceId=SAP_CRM_SP_SERVICE",
+            "expected_value": null,
+            "description": "Open SAP Fiori Logon screen"
+          },
+          {
+            "step_number": 2,
+            "action": "fill",
+            "locator_strategy": "css",
+            "selector_value": "#USERNAME_FIELD-inner",
+            "role_name": null,
+            "input_value": "MYRAR1",
+            "expected_value": null,
+            "description": "Enter SAP username"
+          },
+          {
+            "step_number": 3,
+            "action": "fill",
+            "locator_strategy": "css",
+            "selector_value": "#PASSWORD_FIELD-inner",
+            "role_name": null,
+            "input_value": "Pass23#$",
+            "expected_value": null,
+            "description": "Enter SAP password"
+          },
+          {
+            "step_number": 4,
+            "action": "click",
+            "locator_strategy": "css",
+            "selector_value": "#LOGIN_LINK",
+            "role_name": null,
+            "input_value": null,
+            "expected_value": null,
+            "description": "Click Log On button"
+          },
+          {
+            "step_number": 5,
+            "action": "assert_text",
+            "locator_strategy": "css",
+            "selector_value": "body",
+            "role_name": null,
+            "input_value": null,
+            "expected_value": "Home",
+            "description": "Assert SAP Fiori Launchpad loaded"
+          },
+          {
+            "step_number": 6,
+            "action": "navigate",
+            "locator_strategy": null,
+            "selector_value": null,
+            "role_name": null,
+            "input_value": "https://s4srv25.nodomain.com:44325/sap/bc/ui2/flp?sap-client=100&sap-language=EN#RevenueAccountingContract-manageContract&/?sap-iapp-state--history=TAS60ZN0APGEXK9SB8U7CWP0998E9ZTQEZ7DBW9FR",
+            "expected_value": null,
+            "description": "Navigate directly to Manage Revenue Contracts application"
+          },
+          {
+            "step_number": 7,
+            "action": "click",
+            "locator_strategy": "css",
+            "selector_value": "[id*='RevenueAccountingContract-vhi'], [id*='RevenueContract-vhi'], div:has(> label:has-text('Revenue Contract')) .sapMInputValHelpInner, label:has-text('Revenue Contract') ~ div .sapMInputValHelpInner, [id='fin.rar.manage.contract::sap.suite.ui.generic.template.ListReport.view.ListReport::C_RAContrWithPostedBalanceTP--listReportFilter-filterItemControl_BASIC-RevenueAccountingContract-vhi']",
+            "role_name": null,
+            "input_value": null,
+            "expected_value": null,
+            "description": "Click Revenue Accounting Contract Value Help"
+          },
+          {
+            "step_number": 8,
+            "action": "fill",
+            "locator_strategy": "role",
+            "selector_value": "Operational Document:",
+            "role_name": "textbox",
+            "input_value": "${OPERATIONAL_DOCUMENT}",
+            "expected_value": null,
+            "description": "Enter captured Operational Document into Operational Document:"
+          },
+          {
+            "step_number": 9,
+            "action": "fill",
+            "locator_strategy": "role",
+            "selector_value": "Operational Document:",
+            "role_name": "textbox",
+            "input_value": "Enter",
+            "expected_value": null,
+            "description": "Press 'Enter' into Operational Document:"
+          },
+          {
+            "step_number": 10,
+            "action": "click",
+            "locator_strategy": "text",
+            "selector_value": "Selection column",
+            "role_name": null,
+            "input_value": null,
+            "expected_value": null,
+            "description": "Click Selection column"
+          },
+          {
+            "step_number": 11,
+            "action": "click",
+            "locator_strategy": "role",
+            "selector_value": "Revenue Contract",
+            "role_name": "dialog",
+            "input_value": null,
+            "expected_value": null,
+            "description": "Click Revenue Contract dialog"
+          },
+          {
+            "step_number": 12,
+            "action": "click",
+            "locator_strategy": "role",
+            "selector_value": "OK",
+            "role_name": "button",
+            "input_value": null,
+            "expected_value": null,
+            "description": "Click OK"
+          },
+          {
+            "step_number": 13,
+            "action": "click",
+            "locator_strategy": "role",
+            "selector_value": "Go",
+            "role_name": "button",
+            "input_value": null,
+            "expected_value": null,
+            "description": "Click Go"
+          },
+          {
+            "step_number": 14,
+            "action": "assert_text",
+            "locator_strategy": "css",
+            "selector_value": "body",
+            "role_name": null,
+            "input_value": null,
+            "expected_value": "Revenue Contract",
+            "description": "Verify Revenue Contract loaded"
+          },
+          {
+            "step_number": 15,
+            "action": "click",
+            "locator_strategy": "css",
+            "selector_value": "a:has-text('Revenue Contract'), tr[data-sap-ui-rowindex='0'] a, td a[id*='RevenueContract']",
+            "role_name": null,
+            "input_value": null,
+            "expected_value": null,
+            "description": "Click on Revenue Contract to view details"
+          },
+          {
+            "step_number": 16,
+            "action": "click",
+            "locator_strategy": "css",
+            "selector_value": "#userActionsMenuHeaderButton, #meAreaHeaderButton",
+            "role_name": null,
+            "input_value": null,
+            "expected_value": null,
+            "description": "Click User Profile Avatar Menu"
+          },
+          {
+            "step_number": 17,
+            "action": "click",
+            "locator_strategy": "css",
+            "selector_value": "button:has-text('Sign Out'), text='Sign Out'",
+            "role_name": null,
+            "input_value": null,
+            "expected_value": null,
+            "description": "Click Sign Out"
+          },
+          {
+            "step_number": 18,
+            "action": "click",
+            "locator_strategy": "css",
+            "selector_value": "button:has-text('OK'), text='OK'",
+            "role_name": null,
+            "input_value": null,
+            "expected_value": null,
+            "description": "Confirm Sign Out dialog"
+          },
+          {
+            "step_number": 19,
+            "action": "assert_text",
+            "locator_strategy": "css",
+            "selector_value": "body",
+            "role_name": null,
+            "input_value": null,
+            "expected_value": "logged off",
+            "description": "Verify returned to Logoff screen"
+          }
+        ],
+        "expected_result": "System response matches criteria for [AC-02]",
+        "priority": "Medium",
+        "group": "General",
+        "tags": []
+      }
+    ]
+  }
+}

@@ -1,0 +1,302 @@
+{
+  "suite_id": "SUITE-REC-01-202610221054",
+  "name": "SUITE-REC-01-202610221054",
+  "description": "Regression Suite for REC-01",
+  "requirement_key": "REC-01",
+  "version": 1,
+  "tags": [
+    "regression",
+    "sap"
+  ],
+  "total_cases": 1,
+  "total_steps": 26,
+  "last_saved_at": "2026-10-22T05:24:47.872725+00:00",
+  "last_run_status": "Recorded (Unexecuted)",
+  "suite_data": {
+    "suite_id": "SUITE-REC-01-202610221054",
+    "requirement_key": "REC-01",
+    "created_at": "2026-10-22T05:24:47.324328Z",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "TC-01",
+        "requirement_key": "REC-01",
+        "source_ac_id": "REC-TC-01",
+        "title": "SAP RAR Testing flow",
+        "objective": "User-recorded exploratory scenario via Playwright Codegen",
+        "category": "positive",
+        "preconditions": [],
+        "test_data": {},
+        "steps": [
+          {
+            "step_number": 1,
+            "action": "navigate",
+            "locator_strategy": null,
+            "selector_value": null,
+            "role_name": null,
+            "input_value": "https://s4srv25.nodomain.com:44325/sap/bc/ui2/flp?sap-client=100&sap-language=EN#Launchpad-openFLPPage?pageId=SAP_CRM_PG_SERVICE_PROCESSING&spaceId=SAP_CRM_SP_SERVICE",
+            "expected_value": null,
+            "description": "Navigate to https://s4srv25.nodomain.com:44325/sap/bc/ui2/flp?sap-client=100&sap-language=EN#Launchpad-openFLPPage?pageId=SAP_CRM_PG_SERVICE_PROCESSING&spaceId=SAP_CRM_SP_SERVICE"
+          },
+          {
+            "step_number": 2,
+            "action": "fill",
+            "locator_strategy": "role",
+            "selector_value": "User",
+            "role_name": "textbox",
+            "input_value": "myrar1",
+            "expected_value": null,
+            "description": "Enter 'myrar1' into User"
+          },
+          {
+            "step_number": 3,
+            "action": "fill",
+            "locator_strategy": "role",
+            "selector_value": "User",
+            "role_name": "textbox",
+            "input_value": "Tab",
+            "expected_value": null,
+            "description": "Press 'Tab' into User"
+          },
+          {
+            "step_number": 4,
+            "action": "fill",
+            "locator_strategy": "role",
+            "selector_value": "Password",
+            "role_name": "textbox",
+            "input_value": "Pass23#$",
+            "expected_value": null,
+            "description": "Enter 'Pass23#$' into Password"
+          },
+          {
+            "step_number": 5,
+            "action": "click",
+            "locator_strategy": "role",
+            "selector_value": "Log On",
+            "role_name": "button",
+            "input_value": null,
+            "expected_value": null,
+            "description": "Click Log On"
+          },
+          {
+            "step_number": 6,
+            "action": "navigate",
+            "locator_strategy": null,
+            "selector_value": null,
+            "role_name": null,
+            "input_value": "https://s4srv25.nodomain.com:44325/sap/bc/ui2/flp?sap-client=100&sap-language=EN#BusinessSolutionQuotation-manageV2",
+            "expected_value": null,
+            "description": "Navigate to https://s4srv25.nodomain.com:44325/sap/bc/ui2/flp?sap-client=100&sap-language=EN#BusinessSolutionQuotation-manageV2"
+          },
+          {
+            "step_number": 7,
+            "action": "click",
+            "locator_strategy": "role",
+            "selector_value": "Create",
+            "role_name": "button",
+            "input_value": null,
+            "expected_value": null,
+            "description": "Click Create"
+          },
+          {
+            "step_number": 8,
+            "action": "click",
+            "locator_strategy": "text",
+            "selector_value": "CE-Direct Sales",
+            "role_name": null,
+            "input_value": null,
+            "expected_value": null,
+            "description": "Click CE-Direct Sales"
+          },
+          {
+            "step_number": 9,
+            "action": "fill",
+            "locator_strategy": "role",
+            "selector_value": "Description:",
+            "role_name": "textbox",
+            "input_value": "RAR Test flow",
+            "expected_value": null,
+            "description": "Enter 'RAR Test flow' into Description:"
+          },
+          {
+            "step_number": 10,
+            "action": "click",
+            "locator_strategy": "role",
+            "selector_value": "Sold-To Party:",
+            "role_name": "textbox",
+            "input_value": null,
+            "expected_value": null,
+            "description": "Click Sold-To Party:"
+          },
+          {
+            "step_number": 11,
+            "action": "fill",
+            "locator_strategy": "role",
+            "selector_value": "Sold-To Party:",
+            "role_name": "textbox",
+            "input_value": "Brugmann Hospital",
+            "expected_value": null,
+            "description": "Enter 'Brugmann Hospital' into Sold-To Party:"
+          },
+          {
+            "step_number": 12,
+            "action": "fill",
+            "locator_strategy": "role",
+            "selector_value": "Sold-To Party:",
+            "role_name": "textbox",
+            "input_value": "Enter",
+            "expected_value": null,
+            "description": "Press 'Enter' into Sold-To Party:"
+          },
+          {
+            "step_number": 13,
+            "action": "click",
+            "locator_strategy": "role",
+            "selector_value": "Dates",
+            "role_name": "option",
+            "input_value": null,
+            "expected_value": null,
+            "description": "Click Dates"
+          },
+          {
+            "step_number": 14,
+            "action": "click",
+            "locator_strategy": "role",
+            "selector_value": "Duration",
+            "role_name": "cell",
+            "input_value": null,
+            "expected_value": null,
+            "description": "Click Duration"
+          },
+          {
+            "step_number": 15,
+            "action": "fill",
+            "locator_strategy": "css",
+            "selector_value": "#C16_W64_V65_DatesTable_bottom_div tr:has-text('Term of Quotation')",
+            "role_name": null,
+            "input_value": "12",
+            "expected_value": null,
+            "description": "Enter '12' into #C16_W64_V65_DatesTable_bottom_div tr:has-text('Term of Quotation')"
+          },
+          {
+            "step_number": 16,
+            "action": "click",
+            "locator_strategy": "css",
+            "selector_value": "[id=\"C16_W64_V65_btdate_table\\[4\\]\\.time_unit-btn\"]",
+            "role_name": null,
+            "input_value": null,
+            "expected_value": null,
+            "description": "Click [id=\"C16_W64_V65_btdate_table\\[4\\]\\.time_unit-btn\"]"
+          },
+          {
+            "step_number": 17,
+            "action": "click",
+            "locator_strategy": "role",
+            "selector_value": "Month",
+            "role_name": "link",
+            "input_value": null,
+            "expected_value": null,
+            "description": "Click Month"
+          },
+          {
+            "step_number": 18,
+            "action": "click",
+            "locator_strategy": "role",
+            "selector_value": "Items",
+            "role_name": "option",
+            "input_value": null,
+            "expected_value": null,
+            "description": "Click Items"
+          },
+          {
+            "step_number": 19,
+            "action": "fill",
+            "locator_strategy": "css",
+            "selector_value": "[id*='ordered_prod'], [id=\"C13_W49_V50_V54_btadmini_table\\[1\\]\\.ordered_prod\"]",
+            "role_name": null,
+            "input_value": "45157510101",
+            "expected_value": null,
+            "description": "Enter '45157510101' into [id*='ordered_prod'], [id=\"C13_W49_V50_V54_btadmini_table\\[1\\]\\.ordered_prod\"]"
+          },
+          {
+            "step_number": 20,
+            "action": "fill",
+            "locator_strategy": "css",
+            "selector_value": "[id*='ordered_prod'], [id=\"C13_W49_V50_V54_btadmini_table\\[1\\]\\.ordered_prod\"]",
+            "role_name": null,
+            "input_value": "Enter",
+            "expected_value": null,
+            "description": "Press 'Enter' into [id*='ordered_prod'], [id=\"C13_W49_V50_V54_btadmini_table\\[1\\]\\.ordered_prod\"]"
+          },
+          {
+            "step_number": 21,
+            "action": "fill",
+            "locator_strategy": "role",
+            "selector_value": "Select table row Product",
+            "role_name": "row",
+            "input_value": "1",
+            "expected_value": null,
+            "description": "Enter '1' into Select table row Product"
+          },
+          {
+            "step_number": 22,
+            "action": "click",
+            "locator_strategy": "role",
+            "selector_value": "Additional Options",
+            "role_name": "button",
+            "input_value": null,
+            "expected_value": null,
+            "description": "Click Additional Options"
+          },
+          {
+            "step_number": 23,
+            "action": "click",
+            "locator_strategy": "role",
+            "selector_value": "Back",
+            "role_name": "button",
+            "input_value": null,
+            "expected_value": null,
+            "description": "Click Back"
+          },
+          {
+            "step_number": 24,
+            "action": "fill",
+            "locator_strategy": "role",
+            "selector_value": "Quantity:",
+            "role_name": "textbox",
+            "input_value": "1",
+            "expected_value": null,
+            "description": "Enter '1' into Quantity:"
+          },
+          {
+            "step_number": 25,
+            "action": "fill",
+            "locator_strategy": "role",
+            "selector_value": "ATP Plant:",
+            "role_name": "textbox",
+            "input_value": "BEV8",
+            "expected_value": null,
+            "description": "Enter 'BEV8' into ATP Plant:"
+          },
+          {
+            "step_number": 26,
+            "action": "click",
+            "locator_strategy": "role",
+            "selector_value": "Price Details",
+            "role_name": "option",
+            "input_value": null,
+            "expected_value": null,
+            "description": "Click Price Details"
+          }
+        ],
+        "expected_result": "Recorded sequence completes without browser error",
+        "priority": "Medium",
+        "group": "Recorded",
+        "tags": [
+          "recorded",
+          "browser"
+        ]
+      }
+    ]
+  }
+}

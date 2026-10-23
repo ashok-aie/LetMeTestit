@@ -1,0 +1,162 @@
+{
+  "run_id": "RUN-77AE304E",
+  "suite_id": "SUITE-KAN-32",
+  "environment": "local",
+  "target_url": "https://s4srv25.nodomain.com:44325/sap/bc/ui2/flp?sap-client=100&sap-language=EN#Launchpad-openFLPPage?pageId=SAP_CRM_PG_SERVICE_PROCESSING&spaceId=SAP_CRM_SP_SERVICE",
+  "started_at": "2026-10-22T06:13:05.538265Z",
+  "finished_at": "2026-10-22T06:13:56.997692Z",
+  "total_tests": 2,
+  "passed_tests": 0,
+  "failed_tests": 2,
+  "blocked_tests": 0,
+  "error_tests": 0,
+  "trace_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261022_061305\\traces\\trace.zip",
+  "results": [
+    {
+      "test_case_id": "TC-01",
+      "outcome": "FAIL",
+      "classification": "application_defect",
+      "duration_seconds": 25.02,
+      "step_results": [
+        {
+          "step_number": 1,
+          "action": "navigate",
+          "duration_ms": 1361.58,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261022_061305\\screenshots\\TC-01_step_1.png"
+        },
+        {
+          "step_number": 2,
+          "action": "fill",
+          "duration_ms": 1283.17,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261022_061305\\screenshots\\TC-01_step_2.png"
+        },
+        {
+          "step_number": 3,
+          "action": "fill",
+          "duration_ms": 1337.69,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261022_061305\\screenshots\\TC-01_step_3.png"
+        },
+        {
+          "step_number": 4,
+          "action": "click",
+          "duration_ms": 1771.34,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261022_061305\\screenshots\\TC-01_step_4.png"
+        },
+        {
+          "step_number": 5,
+          "action": "assert_text",
+          "duration_ms": 361.98,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261022_061305\\screenshots\\TC-01_step_5.png"
+        },
+        {
+          "step_number": 6,
+          "action": "click",
+          "duration_ms": 5921.09,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261022_061305\\screenshots\\TC-01_step_6.png"
+        },
+        {
+          "step_number": 7,
+          "action": "click",
+          "duration_ms": 2905.79,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261022_061305\\screenshots\\TC-01_step_7.png"
+        },
+        {
+          "step_number": 8,
+          "action": "click",
+          "duration_ms": 4204.49,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261022_061305\\screenshots\\TC-01_step_8.png"
+        },
+        {
+          "step_number": 9,
+          "action": "fill",
+          "duration_ms": 2002.76,
+          "passed": false,
+          "actual_value": null,
+          "error_message": "Locator.fill: Error: Element is not an <input>, <textarea>, <select> or [contenteditable] and does not have a role allowing [aria-readonly]\nCall log:\n  - waiting for locator(\"[id*='btadminh_struct.description'], input[id*='description' i], textarea[id*='description' i], [aria-label*='Description' i], [title*='Description' i]\").or_(get_by_role(\"textbox\", name=re.compile(r\"description\", re.IGNORECASE))).or_(get_by_role(\"textbox\", name=\"Description\")).or_(get_by_role(\"textbox\", name=\"Description:\")).first\n  -     - locator resolved to <span id=\"__label11\" title=\"Description\" data-sap-ui-render=\"\" data-sap-ui=\"__label11\" class=\"sapMLabel sapUiSelectable\">…</span>\n  -     - fill(\"RAR testing\")\n  -   - attempting fill action\n  -     - waiting for element to be visible, enabled and editable\n",
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261022_061305\\screenshots\\TC-01_step_9.png"
+        }
+      ],
+      "failure_message": "Step 9 (fill) failed: Locator.fill: Error: Element is not an <input>, <textarea>, <select> or [contenteditable] and does not have a role allowing [aria-readonly]\nCall log:\n  - waiting for locator(\"[id*='btadminh_struct.description'], input[id*='description' i], textarea[id*='description' i], [aria-label*='Description' i], [title*='Description' i]\").or_(get_by_role(\"textbox\", name=re.compile(r\"description\", re.IGNORECASE))).or_(get_by_role(\"textbox\", name=\"Description\")).or_(get_by_role(\"textbox\", name=\"Description:\")).first\n  -     - locator resolved to <span id=\"__label11\" title=\"Description\" data-sap-ui-render=\"\" data-sap-ui=\"__label11\" class=\"sapMLabel sapUiSelectable\">…</span>\n  -     - fill(\"RAR testing\")\n  -   - attempting fill action\n  -     - waiting for element to be visible, enabled and editable\n",
+      "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261022_061305\\screenshots\\TC-01_step_9.png"
+    },
+    {
+      "test_case_id": "TC-02",
+      "outcome": "FAIL",
+      "classification": "application_defect",
+      "duration_seconds": 20.86,
+      "step_results": [
+        {
+          "step_number": 1,
+          "action": "navigate",
+          "duration_ms": 1407.64,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261022_061305\\screenshots\\TC-02_step_1.png"
+        },
+        {
+          "step_number": 2,
+          "action": "fill",
+          "duration_ms": 1424.27,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261022_061305\\screenshots\\TC-02_step_2.png"
+        },
+        {
+          "step_number": 3,
+          "action": "fill",
+          "duration_ms": 1360.94,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261022_061305\\screenshots\\TC-02_step_3.png"
+        },
+        {
+          "step_number": 4,
+          "action": "click",
+          "duration_ms": 381.11,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": null
+        },
+        {
+          "step_number": 5,
+          "action": "assert_text",
+          "duration_ms": 15341.96,
+          "passed": false,
+          "actual_value": null,
+          "error_message": "Text assertion failed on 'body'. Expected 'Home' to be contained in ''.",
+          "screenshot_path": null
+        }
+      ],
+      "failure_message": "Step 5 (assert_text) failed: Text assertion failed on 'body'. Expected 'Home' to be contained in ''.",
+      "screenshot_path": null
+    }
+  ]
+}

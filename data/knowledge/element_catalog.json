@@ -4,70 +4,70 @@
     "selector": "#USERNAME_FIELD-inner",
     "strategy": "css",
     "action": "fill",
-    "pass_count": 62,
+    "pass_count": 133,
     "app_domain": "SAP S/4HANA",
     "notes": "Step 2: Verified SAP Fiori/Launchpad username field",
-    "last_verified": "2026-10-21T00:01:02.609810+00:00"
+    "last_verified": "2026-10-22T17:05:02.645121+00:00"
   },
   {
     "element_label": "SAP Password Input",
     "selector": "#PASSWORD_FIELD-inner",
     "strategy": "css",
     "action": "fill",
-    "pass_count": 62,
+    "pass_count": 133,
     "app_domain": "SAP S/4HANA",
     "notes": "Step 3: Verified SAP Fiori/Launchpad password field",
-    "last_verified": "2026-10-21T00:01:04.039834+00:00"
+    "last_verified": "2026-10-22T17:05:04.221977+00:00"
   },
   {
     "element_label": "SAP Log On Button",
     "selector": "#LOGIN_LINK",
     "strategy": "css",
     "action": "click",
-    "pass_count": 62,
+    "pass_count": 133,
     "app_domain": "SAP S/4HANA",
     "notes": "Step 4: Verified SAP logon submit anchor styled as button",
-    "last_verified": "2026-10-21T00:01:06.768888+00:00"
+    "last_verified": "2026-10-22T17:05:06.898131+00:00"
   },
   {
     "element_label": "Manage Service Quotations Tile",
     "selector": "Manage Service Quotations",
     "strategy": "text",
     "action": "click",
-    "pass_count": 47,
+    "pass_count": 88,
     "app_domain": "SAP S/4HANA",
     "notes": "Step 6: Verified Launchpad tile navigation with soft-hyphen resilience",
-    "last_verified": "2026-10-21T00:01:09.459803+00:00"
+    "last_verified": "2026-10-22T17:05:14.660374+00:00"
   },
   {
     "element_label": "User Profile / Me Area Header Button",
     "selector": "#userActionsMenuHeaderButton, #meAreaHeaderButton",
     "strategy": "css",
     "action": "click",
-    "pass_count": 29,
+    "pass_count": 58,
     "app_domain": "SAP S/4HANA",
     "notes": "Fiori Launchpad user avatar menu button",
-    "last_verified": "2026-10-20T14:51:04.757342+00:00"
+    "last_verified": "2026-10-22T16:24:58.510192+00:00"
   },
   {
     "element_label": "SAP Sign Out Button",
     "selector": "button:has-text('Sign Out'), #logoutBtn",
     "strategy": "css",
     "action": "click",
-    "pass_count": 28,
+    "pass_count": 30,
     "app_domain": "SAP S/4HANA",
     "notes": "User menu Sign Out button",
-    "last_verified": "2026-10-20T14:51:08.422629+00:00"
+    "last_verified": "2026-10-22T09:58:57.877899+00:00"
   },
   {
     "element_label": "SAP Sign Out Confirm Dialog Button",
     "selector": "[role='dialog'] button:has-text('OK'), .sapMDialog button:has-text('OK'), #logoutConfirm",
     "strategy": "css",
     "action": "click",
-    "pass_count": 28,
+    "pass_count": 30,
     "app_domain": "SAP S/4HANA",
     "notes": "Confirmation dialog OK button when logging out",
-    "last_verified": "2026-10-19T20:09:13.711653+00:00"
+    "last_verified": "2026-10-22T09:58:58.029904+00:00"
   },
   {
     "element_label": "Test Order Submit Button",
@@ -75,9 +75,9 @@
     "strategy": "css",
     "action": "click",
     "role_type": null,
-    "pass_count": 168,
+    "pass_count": 240,
     "app_domain": "SAP S/4HANA",
-    "last_verified": "2026-10-21T00:24:21.711568+00:00",
+    "last_verified": "2026-10-22T10:53:19.736329+00:00",
     "notes": "Learned from execution"
   },
   {
@@ -86,9 +86,9 @@
     "strategy": "css",
     "action": "assert_text",
     "role_type": null,
-    "pass_count": 87,
+    "pass_count": 248,
     "app_domain": "SAP S/4HANA",
-    "last_verified": "2026-10-21T00:22:27.020994+00:00",
+    "last_verified": "2026-10-22T17:05:07.977191+00:00",
     "notes": "Step 45: Asserts returned to ICF logout screen"
   },
   {
@@ -97,9 +97,9 @@
     "strategy": "text",
     "action": "click",
     "role_type": null,
-    "pass_count": 10,
+    "pass_count": 11,
     "app_domain": "SAP S/4HANA",
-    "last_verified": "2026-10-21T00:22:26.986289+00:00",
+    "last_verified": "2026-10-21T01:51:50.971263+00:00",
     "notes": "Step 43: Initiates session logout"
   },
   {
@@ -108,9 +108,9 @@
     "strategy": "text",
     "action": "click",
     "role_type": null,
-    "pass_count": 20,
+    "pass_count": 34,
     "app_domain": "SAP S/4HANA",
-    "last_verified": "2026-10-21T00:22:27.003997+00:00",
+    "last_verified": "2026-10-22T14:46:33.100919+00:00",
     "notes": "Step 44: Confirms logout in sap.m.Dialog modal"
   },
   {
@@ -119,10 +119,10 @@
     "strategy": "role",
     "action": "fill",
     "role_type": "textbox",
-    "pass_count": 25,
+    "pass_count": 34,
     "app_domain": "SAP S/4HANA",
-    "last_verified": "2026-10-20T16:09:45.238863+00:00",
-    "notes": "Harvested from recording: Manage Revenue Contracts flow"
+    "last_verified": "2026-10-22T10:27:37.973293+00:00",
+    "notes": "Harvested from recording: Create Billing Document"
   },
   {
     "element_label": "Click textbox (Password)",
@@ -130,10 +130,10 @@
     "strategy": "role",
     "action": "fill",
     "role_type": "textbox",
-    "pass_count": 17,
+    "pass_count": 22,
     "app_domain": "SAP S/4HANA",
-    "last_verified": "2026-10-20T16:09:45.256066+00:00",
-    "notes": "Harvested from recording: Manage Revenue Contracts flow"
+    "last_verified": "2026-10-22T10:27:37.995296+00:00",
+    "notes": "Harvested from recording: Create Billing Document"
   },
   {
     "element_label": "Click button (Log On)",
@@ -141,10 +141,10 @@
     "strategy": "role",
     "action": "click",
     "role_type": "button",
-    "pass_count": 16,
+    "pass_count": 21,
     "app_domain": "SAP S/4HANA",
-    "last_verified": "2026-10-20T16:09:45.271064+00:00",
-    "notes": "Harvested from recording: Manage Revenue Contracts flow"
+    "last_verified": "2026-10-22T10:27:38.017296+00:00",
+    "notes": "Harvested from recording: Create Billing Document"
   },
   {
     "element_label": "Click link (Manage Service Quotations Tile)",
@@ -163,9 +163,9 @@
     "strategy": "css",
     "action": "click",
     "role_type": "button",
-    "pass_count": 42,
+    "pass_count": 85,
     "app_domain": "SAP S/4HANA",
-    "last_verified": "2026-10-21T00:01:14.313841+00:00",
+    "last_verified": "2026-10-22T17:05:22.183928+00:00",
     "notes": "Step 7: Verified Create button on Service Quotation worklist"
   },
   {
@@ -174,10 +174,10 @@
     "strategy": "text",
     "action": "click",
     "role_type": null,
-    "pass_count": 64,
+    "pass_count": 85,
     "app_domain": "SAP S/4HANA",
-    "last_verified": "2026-10-21T00:01:18.992978+00:00",
-    "notes": "Step 8: Verified modal transaction type selection for ZQDS — CE-Direct Sales"
+    "last_verified": "2026-10-22T07:34:27.568535+00:00",
+    "notes": "Harvested from recording: SAP RAR Testing flow"
   },
   {
     "element_label": "Quotation Description Field",
@@ -185,10 +185,10 @@
     "strategy": "role",
     "action": "fill",
     "role_type": "textbox",
-    "pass_count": 71,
+    "pass_count": 113,
     "app_domain": "SAP S/4HANA",
-    "last_verified": "2026-10-21T00:01:23.054772+00:00",
-    "notes": "Step 9: Verified CRM WebClient Description field [id*=btadminh_struct.description]"
+    "last_verified": "2026-10-22T17:05:29.742785+00:00",
+    "notes": "Harvested from recording: SAP RAR Testing flow"
   },
   {
     "element_label": "Quotation Sold-To Party Field",
@@ -196,10 +196,10 @@
     "strategy": "role",
     "action": "fill",
     "role_type": "textbox",
-    "pass_count": 103,
+    "pass_count": 186,
     "app_domain": "SAP S/4HANA",
-    "last_verified": "2026-10-21T00:01:31.154366+00:00",
-    "notes": "Step 11: Optimized instantaneous keyboard Enter submission"
+    "last_verified": "2026-10-22T17:05:38.967013+00:00",
+    "notes": "Harvested from recording: SAP RAR Testing flow"
   },
   {
     "element_label": "Quotation Dates Option",
@@ -207,10 +207,10 @@
     "strategy": "role",
     "action": "click",
     "role_type": "option",
-    "pass_count": 59,
+    "pass_count": 100,
     "app_domain": "SAP S/4HANA",
-    "last_verified": "2026-10-21T00:01:35.908562+00:00",
-    "notes": "Step 12: CRM WebClient view tab for Quotation Dates"
+    "last_verified": "2026-10-22T17:05:44.009243+00:00",
+    "notes": "Harvested from recording: SAP RAR Testing flow"
   },
   {
     "element_label": "Quotation Items Option",
@@ -218,10 +218,10 @@
     "strategy": "role",
     "action": "click",
     "role_type": "option",
-    "pass_count": 61,
+    "pass_count": 165,
     "app_domain": "SAP S/4HANA",
-    "last_verified": "2026-10-21T00:01:52.824272+00:00",
-    "notes": "Step 16: CRM WebClient view tab for Quotation Line Items"
+    "last_verified": "2026-10-22T17:06:02.702211+00:00",
+    "notes": "Harvested from recording: SAP RAR Testing flow"
   },
   {
     "element_label": "Quotation Price Details Option",
@@ -229,10 +229,10 @@
     "strategy": "role",
     "action": "click",
     "role_type": "option",
-    "pass_count": 52,
+    "pass_count": 134,
     "app_domain": "SAP S/4HANA",
-    "last_verified": "2026-10-21T00:02:12.313721+00:00",
-    "notes": "Step 21: Item-level pricing view tab"
+    "last_verified": "2026-10-22T17:06:29.953929+00:00",
+    "notes": "Harvested from recording: SAP RAR Testing flow"
   },
   {
     "element_label": "Quotation Add Pricing Button",
@@ -240,9 +240,9 @@
     "strategy": "role",
     "action": "click",
     "role_type": "button",
-    "pass_count": 52,
+    "pass_count": 200,
     "app_domain": "SAP S/4HANA",
-    "last_verified": "2026-10-21T00:02:17.063001+00:00",
+    "last_verified": "2026-10-22T17:06:33.740131+00:00",
     "notes": "Step 22: Add condition button in Price Details"
   },
   {
@@ -251,9 +251,9 @@
     "strategy": "text",
     "action": "click",
     "role_type": null,
-    "pass_count": 49,
+    "pass_count": 67,
     "app_domain": "SAP S/4HANA",
-    "last_verified": "2026-10-21T00:02:24.776946+00:00",
+    "last_verified": "2026-10-22T07:35:38.192722+00:00",
     "notes": "Pricing condition element ZTAF selection in condition list"
   },
   {
@@ -262,9 +262,9 @@
     "strategy": "role",
     "action": "click",
     "role_type": "button",
-    "pass_count": 79,
+    "pass_count": 119,
     "app_domain": "SAP S/4HANA",
-    "last_verified": "2026-10-21T00:03:24.604739+00:00",
+    "last_verified": "2026-10-22T16:24:38.240757+00:00",
     "notes": "Step 29: Save button to commit Released status"
   },
   {
@@ -273,9 +273,9 @@
     "strategy": "role",
     "action": "click",
     "role_type": "link",
-    "pass_count": 49,
+    "pass_count": 64,
     "app_domain": "SAP S/4HANA",
-    "last_verified": "2026-10-21T00:03:02.540491+00:00",
+    "last_verified": "2026-10-22T16:23:06.784130+00:00",
     "notes": "Step 28: Status dropdown menu item Released"
   },
   {
@@ -306,9 +306,9 @@
     "strategy": "role",
     "action": "click",
     "role_type": "button",
-    "pass_count": 36,
+    "pass_count": 37,
     "app_domain": "SAP S/4HANA",
-    "last_verified": "2026-10-20T16:06:21.545279+00:00",
+    "last_verified": "2026-10-22T07:34:23.370916+00:00",
     "notes": "Harvested from recording: RAR Flow"
   },
   {
@@ -317,10 +317,10 @@
     "strategy": "css",
     "action": "fill",
     "role_type": null,
-    "pass_count": 10,
+    "pass_count": 12,
     "app_domain": "SAP S/4HANA",
-    "last_verified": "2026-10-20T16:06:21.682181+00:00",
-    "notes": "Harvested from recording: RAR Flow"
+    "last_verified": "2026-10-22T05:24:47.597540+00:00",
+    "notes": "Harvested from recording: SAP RAR Testing flow"
   },
   {
     "element_label": "Click [id=\"C16_W64_V65_btdate_table\\[4\\]\\.time_unit_div\"]",
@@ -328,10 +328,10 @@
     "strategy": "css",
     "action": "click",
     "role_type": null,
-    "pass_count": 3,
+    "pass_count": 4,
     "app_domain": "SAP S/4HANA",
-    "last_verified": "2026-10-19T18:20:54.046419+00:00",
-    "notes": "Harvested from SAP RAR quotation recording"
+    "last_verified": "2026-10-22T05:18:38.906432+00:00",
+    "notes": "Harvested from recording: SAP RAR Testing flow"
   },
   {
     "element_label": "Click Year",
@@ -350,10 +350,10 @@
     "strategy": "css",
     "action": "click",
     "role_type": null,
-    "pass_count": 3,
+    "pass_count": 5,
     "app_domain": "SAP S/4HANA",
-    "last_verified": "2026-10-19T18:20:58.468410+00:00",
-    "notes": "Harvested from SAP RAR quotation recording"
+    "last_verified": "2026-10-22T05:24:47.613150+00:00",
+    "notes": "Harvested from recording: SAP RAR Testing flow"
   },
   {
     "element_label": "Enter '45157510101' into [id*='ordered_prod'], [id=\"C13_W49_V50_V54_btadmini_table\\[1\\]\\.ordered_prod\"]",
@@ -361,10 +361,10 @@
     "strategy": "css",
     "action": "fill",
     "role_type": null,
-    "pass_count": 12,
+    "pass_count": 16,
     "app_domain": "SAP S/4HANA",
-    "last_verified": "2026-10-20T16:06:21.741542+00:00",
-    "notes": "Harvested from recording: RAR Flow"
+    "last_verified": "2026-10-22T05:24:47.686905+00:00",
+    "notes": "Harvested from recording: SAP RAR Testing flow"
   },
   {
     "element_label": "Enter '1' into [id*='quantity'], [id=\"C13_W49_V50_V54_btadmini_table\\[1\\]\\.quantity\"]",
@@ -383,9 +383,9 @@
     "strategy": "text",
     "action": "click",
     "role_type": null,
-    "pass_count": 54,
+    "pass_count": 60,
     "app_domain": "SAP S/4HANA",
-    "last_verified": "2026-10-21T00:02:08.194457+00:00",
+    "last_verified": "2026-10-22T07:35:16.193569+00:00",
     "notes": "Step 20: Hyperlink to open item detail configuration"
   },
   {
@@ -394,10 +394,10 @@
     "strategy": "role",
     "action": "click",
     "role_type": "button",
-    "pass_count": 58,
+    "pass_count": 139,
     "app_domain": "SAP S/4HANA",
-    "last_verified": "2026-10-21T00:02:28.496836+00:00",
-    "notes": "Step 24: Navigation toolbar Back button"
+    "last_verified": "2026-10-22T16:22:26.283604+00:00",
+    "notes": "Harvested from recording: Create Billing Document"
   },
   {
     "element_label": "Click Edit",
@@ -438,9 +438,9 @@
     "strategy": "css",
     "action": "fill",
     "role_type": "textbox",
-    "pass_count": 53,
+    "pass_count": 90,
     "app_domain": "SAP S/4HANA",
-    "last_verified": "2026-10-21T00:01:39.134684+00:00",
+    "last_verified": "2026-10-22T17:05:48.105622+00:00",
     "notes": "Step 13: Direct input selector within Term of Quotation row"
   },
   {
@@ -478,20 +478,20 @@
     "selector": "#C9_W36_V39_V40_btadminh_lcstatus-btn, [id*='btadminh_lcstatus-btn']",
     "strategy": "css",
     "action": "click",
-    "pass_count": 44,
+    "pass_count": 61,
     "app_domain": "SAP S/4HANA",
     "notes": "Step 27: Status picker dropdown button",
-    "last_verified": "2026-10-21T00:02:57.991229+00:00"
+    "last_verified": "2026-10-22T16:23:01.967488+00:00"
   },
   {
     "element_label": "Quotation Accept Button",
     "selector": "button:has-text('Accept'), [title*='Accept'], a:has-text('Accept'), [role='menuitem']:has-text('Accept')",
     "strategy": "css",
     "action": "click",
-    "pass_count": 46,
+    "pass_count": 62,
     "app_domain": "SAP S/4HANA",
     "notes": "Step 30: Header toolbar Accept button (generates subsequent Sales Order)",
-    "last_verified": "2026-10-21T00:03:28.909291+00:00",
+    "last_verified": "2026-10-22T16:23:36.518846+00:00",
     "role_type": "button"
   },
   {
@@ -521,9 +521,9 @@
     "strategy": "role",
     "action": "click",
     "role_type": "button",
-    "pass_count": 8,
+    "pass_count": 9,
     "app_domain": "SAP S/4HANA",
-    "last_verified": "2026-10-21T00:22:26.970657+00:00",
+    "last_verified": "2026-10-21T01:51:47.435382+00:00",
     "notes": "Step 42: Opens top-right user profile / Me area menu"
   },
   {
@@ -532,10 +532,10 @@
     "strategy": "text",
     "action": "click",
     "role_type": null,
-    "pass_count": 4,
+    "pass_count": 5,
     "app_domain": "SAP S/4HANA",
-    "last_verified": "2026-10-20T16:06:21.563472+00:00",
-    "notes": "Harvested from recording: RAR Flow"
+    "last_verified": "2026-10-22T05:24:47.463750+00:00",
+    "notes": "Harvested from recording: SAP RAR Testing flow"
   },
   {
     "element_label": "Click Brugmann Hospital",
@@ -565,10 +565,10 @@
     "strategy": "role",
     "action": "fill",
     "role_type": "row",
-    "pass_count": 2,
+    "pass_count": 4,
     "app_domain": "SAP S/4HANA",
-    "last_verified": "2026-10-19T22:45:34.767910+00:00",
-    "notes": "Harvested from recording: SAP RAR Solution Quotation flow"
+    "last_verified": "2026-10-22T05:24:47.717451+00:00",
+    "notes": "Harvested from recording: SAP RAR Testing flow"
   },
   {
     "element_label": "Click VELLYS SATELLITE STATION SKU2",
@@ -752,9 +752,9 @@
     "strategy": "role",
     "action": "click",
     "role_type": "option",
-    "pass_count": 18,
+    "pass_count": 34,
     "app_domain": "SAP S/4HANA",
-    "last_verified": "2026-10-21T00:03:38.328407+00:00",
+    "last_verified": "2026-10-22T16:23:47.784154+00:00",
     "notes": "Step 31: View tab displaying subsequent document flow"
   },
   {
@@ -840,9 +840,9 @@
     "strategy": "css",
     "action": "click",
     "role_type": null,
-    "pass_count": 1,
+    "pass_count": 28,
     "app_domain": "SAP S/4HANA",
-    "last_verified": "2026-10-20T13:26:55.778752+00:00",
+    "last_verified": "2026-10-22T16:25:01.560640+00:00",
     "notes": "Learned from execution"
   },
   {
@@ -851,9 +851,9 @@
     "strategy": "css",
     "action": "click",
     "role_type": null,
-    "pass_count": 2,
+    "pass_count": 29,
     "app_domain": "SAP S/4HANA",
-    "last_verified": "2026-10-20T14:51:12.257499+00:00",
+    "last_verified": "2026-10-22T16:25:05.231098+00:00",
     "notes": "Learned from execution"
   },
   {
@@ -912,9 +912,9 @@
     "strategy": "css",
     "action": "click",
     "role_type": null,
-    "pass_count": 34,
+    "pass_count": 71,
     "app_domain": "SAP S/4HANA",
-    "last_verified": "2026-10-21T00:01:43.636558+00:00",
+    "last_verified": "2026-10-22T17:05:53.024146+00:00",
     "notes": "Step 14: Button to expand Time Unit dropdown list"
   },
   {
@@ -945,9 +945,9 @@
     "strategy": "css",
     "action": "click",
     "role_type": "button",
-    "pass_count": 28,
+    "pass_count": 51,
     "app_domain": "SAP S/4HANA",
-    "last_verified": "2026-10-21T00:02:53.366665+00:00",
+    "last_verified": "2026-10-22T16:24:07.749123+00:00",
     "notes": "Step 26: Header toolbar Edit toggle button"
   },
   {
@@ -956,10 +956,10 @@
     "strategy": "role",
     "action": "click",
     "role_type": "link",
-    "pass_count": 30,
+    "pass_count": 50,
     "app_domain": "SAP S/4HANA",
-    "last_verified": "2026-10-21T00:01:48.148395+00:00",
-    "notes": "Time unit option Month in Dates table dropdown popup"
+    "last_verified": "2026-10-22T07:34:59.036848+00:00",
+    "notes": "Harvested from recording: SAP RAR Testing flow"
   },
   {
     "element_label": "Enter '2' into Quantity:",
@@ -967,10 +967,10 @@
     "strategy": "role",
     "action": "fill",
     "role_type": "textbox",
-    "pass_count": 3,
+    "pass_count": 72,
     "app_domain": "SAP S/4HANA",
-    "last_verified": "2026-10-20T16:06:21.777544+00:00",
-    "notes": "Harvested from recording: RAR Flow"
+    "last_verified": "2026-10-22T17:06:17.994222+00:00",
+    "notes": "Harvested from recording: SAP RAR Testing flow"
   },
   {
     "element_label": "Enter 'BEV8' into ATP Plant:",
@@ -978,10 +978,10 @@
     "strategy": "role",
     "action": "fill",
     "role_type": "textbox",
-    "pass_count": 2,
+    "pass_count": 3,
     "app_domain": "SAP S/4HANA",
-    "last_verified": "2026-10-20T15:57:34.194505+00:00",
-    "notes": "Harvested from recording: RAR Flow"
+    "last_verified": "2026-10-22T05:24:47.796388+00:00",
+    "notes": "Harvested from recording: SAP RAR Testing flow"
   },
   {
     "element_label": "Click % Material Discou",
@@ -1121,9 +1121,9 @@
     "strategy": "role",
     "action": "fill",
     "role_type": "textbox",
-    "pass_count": 21,
+    "pass_count": 57,
     "app_domain": "SAP S/4HANA",
-    "last_verified": "2026-10-21T00:22:26.861280+00:00",
+    "last_verified": "2026-10-22T14:46:27.851433+00:00",
     "notes": "Step 35: Filter input for Operational Document (${OPERATIONAL_DOCUMENT})"
   },
   {
@@ -1132,9 +1132,9 @@
     "strategy": "text",
     "action": "click",
     "role_type": null,
-    "pass_count": 10,
+    "pass_count": 23,
     "app_domain": "SAP S/4HANA",
-    "last_verified": "2026-10-21T00:22:26.876903+00:00",
+    "last_verified": "2026-10-22T14:46:30.344608+00:00",
     "notes": "Step 37: Select all items matching operational document"
   },
   {
@@ -1143,9 +1143,9 @@
     "strategy": "role",
     "action": "click",
     "role_type": "dialog",
-    "pass_count": 10,
+    "pass_count": 21,
     "app_domain": "SAP S/4HANA",
-    "last_verified": "2026-10-21T00:22:26.892518+00:00",
+    "last_verified": "2026-10-22T14:46:30.816414+00:00",
     "notes": "Step 38: Focus value help modal dialog"
   },
   {
@@ -1154,9 +1154,9 @@
     "strategy": "role",
     "action": "click",
     "role_type": "button",
-    "pass_count": 10,
+    "pass_count": 23,
     "app_domain": "SAP S/4HANA",
-    "last_verified": "2026-10-21T00:22:26.939404+00:00",
+    "last_verified": "2026-10-22T14:46:36.805498+00:00",
     "notes": "Step 40: Execute filter query on Manage Revenue Contracts worklist"
   },
   {
@@ -1165,9 +1165,9 @@
     "strategy": "css",
     "action": "fill",
     "role_type": null,
-    "pass_count": 15,
+    "pass_count": 32,
     "app_domain": "SAP S/4HANA",
-    "last_verified": "2026-10-21T00:01:55.746606+00:00",
+    "last_verified": "2026-10-22T06:36:14.162069+00:00",
     "notes": "Learned from execution"
   },
   {
@@ -1176,9 +1176,9 @@
     "strategy": "css",
     "action": "fill",
     "role_type": null,
-    "pass_count": 25,
+    "pass_count": 35,
     "app_domain": "SAP S/4HANA",
-    "last_verified": "2026-10-21T00:01:59.597054+00:00",
+    "last_verified": "2026-10-22T00:04:41.266003+00:00",
     "notes": "Step 19: Keyboard Enter commit for line item 1"
   },
   {
@@ -1198,9 +1198,9 @@
     "strategy": "css",
     "action": "click",
     "role_type": null,
-    "pass_count": 10,
+    "pass_count": 29,
     "app_domain": "SAP S/4HANA",
-    "last_verified": "2026-10-21T00:04:28.554141+00:00",
+    "last_verified": "2026-10-22T16:25:22.076667+00:00",
     "notes": "Learned from execution"
   },
   {
@@ -1209,9 +1209,9 @@
     "strategy": "css",
     "action": "fill",
     "role_type": null,
-    "pass_count": 2,
+    "pass_count": 12,
     "app_domain": "SAP S/4HANA",
-    "last_verified": "2026-10-21T00:02:02.654292+00:00",
+    "last_verified": "2026-10-22T00:04:56.190550+00:00",
     "notes": "Learned from execution"
   },
   {
@@ -1235,5 +1235,1215 @@
     "app_domain": "SAP S/4HANA",
     "last_verified": "2026-10-21T00:22:26.845660+00:00",
     "notes": "Step 34: Opens Revenue Contract Value Help Dialog"
+  },
+  {
+    "element_label": "Reset database to clean seed state",
+    "selector": "reset-db-button",
+    "strategy": "test_id",
+    "action": "click",
+    "role_type": null,
+    "pass_count": 10,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-21T21:10:25.603322+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Enter Sold-to Party Customer ID",
+    "selector": "customer-id-input",
+    "strategy": "test_id",
+    "action": "fill",
+    "role_type": null,
+    "pass_count": 18,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-21T21:11:11.566205+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Enter Customer Legal Name",
+    "selector": "customer-name-input",
+    "strategy": "test_id",
+    "action": "fill",
+    "role_type": null,
+    "pass_count": 10,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-21T21:10:29.424988+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Select Aerospace Titanium Bolts",
+    "selector": "material-select",
+    "strategy": "test_id",
+    "action": "select_option",
+    "role_type": null,
+    "pass_count": 18,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-21T21:11:12.269013+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Enter Order Quantity of 2",
+    "selector": "quantity-input",
+    "strategy": "test_id",
+    "action": "fill",
+    "role_type": null,
+    "pass_count": 18,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-21T21:11:14.165955+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Select Priority Urgent",
+    "selector": "priority-select",
+    "strategy": "test_id",
+    "action": "select_option",
+    "role_type": null,
+    "pass_count": 10,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-21T21:10:32.822318+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Click submit button to trigger mandatory field validation",
+    "selector": "submit-order-button",
+    "strategy": "test_id",
+    "action": "click",
+    "role_type": null,
+    "pass_count": 15,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-21T21:11:15.055460+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Assert validation error banner is displayed",
+    "selector": "error-banner",
+    "strategy": "test_id",
+    "action": "assert_text",
+    "role_type": null,
+    "pass_count": 8,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-21T21:11:15.294313+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Verify new customer row rendered in SAP table",
+    "selector": "orders-table",
+    "strategy": "test_id",
+    "action": "assert_text",
+    "role_type": null,
+    "pass_count": 7,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-21T21:10:34.053682+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Enter Product ID 45157510707 for item 2",
+    "selector": "[id*='btadmini_table[2].ordered_prod'], [id*='ordered_prod'], [id='C13_W49_V50_V54_btadmini_table[2].ordered_prod']",
+    "strategy": "css",
+    "action": "fill",
+    "role_type": null,
+    "pass_count": 14,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T06:37:10.303877+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Enter Quantity 1 for item 2",
+    "selector": "input[id*='btadmini_table[2].quantity'], input[id*='btadmini_table[2]'][id*='quantity'], input[id*='quantity']:not([readonly]), input[aria-label*='Quantity' i]",
+    "strategy": "css",
+    "action": "fill",
+    "role_type": null,
+    "pass_count": 8,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T00:05:05.270825+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Enter Product ID 45147022301 for item 3",
+    "selector": "[id*='btadmini_table[3].ordered_prod'], [id*='ordered_prod'], [id='C13_W49_V50_V54_btadmini_table[3].ordered_prod']",
+    "strategy": "css",
+    "action": "fill",
+    "role_type": null,
+    "pass_count": 1,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-21T02:06:17.275505+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Enter Quantity 1 for item 3",
+    "selector": "input[id*='btadmini_table[3].quantity'], input[id*='btadmini_table[3]'][id*='quantity'], input[id*='quantity']:not([readonly]), input[aria-label*='Quantity' i]",
+    "strategy": "css",
+    "action": "fill",
+    "role_type": null,
+    "pass_count": 4,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-21T17:13:23.632682+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Press Enter to commit line item 2",
+    "selector": "input[id*='btadmini_table[2].quantity'], input[id*='table[2]'][id*='quantity'], input[name*='btadmini_table[2].quantity'], input[data-help-id*='I_quantity:R_2'], [id='C13_W49_V50_V54_btadmini_table[2].quantity']",
+    "strategy": "css",
+    "action": "fill",
+    "role_type": null,
+    "pass_count": 6,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T00:05:20.418248+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Enter Product ID 45157022301 for item 3",
+    "selector": "[id*='btadmini_table[3].ordered_prod'], [id*='table[3]'][id*='ordered_prod'], input[name*='btadmini_table[3].ordered_prod'], [data-help-id*='I_ordered_prod:R_3'], [id='C13_W49_V50_V54_btadmini_table[3].ordered_prod']",
+    "strategy": "css",
+    "action": "fill",
+    "role_type": null,
+    "pass_count": 3,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T06:38:06.635155+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Press Enter to commit line item 3",
+    "selector": "input[id*='btadmini_table[3].quantity'], input[id*='table[3]'][id*='quantity'], input[name*='btadmini_table[3].quantity'], input[data-help-id*='I_quantity:R_3'], [id='C13_W49_V50_V54_btadmini_table[3].quantity']",
+    "strategy": "css",
+    "action": "fill",
+    "role_type": null,
+    "pass_count": 2,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-21T17:13:38.003402+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Enter Product ID 45157022302 for item 4",
+    "selector": "[id*='btadmini_table[4].ordered_prod'], [id*='table[4]'][id*='ordered_prod'], input[name*='btadmini_table[4].ordered_prod'], [data-help-id*='I_ordered_prod:R_4'], [id='C13_W49_V50_V54_btadmini_table[4].ordered_prod']",
+    "strategy": "css",
+    "action": "fill",
+    "role_type": null,
+    "pass_count": 3,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T06:39:00.090261+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Enter Quantity 1 for item 4",
+    "selector": "input[id*='btadmini_table[4].quantity'], input[id*='table[4]'][id*='quantity'], input[name*='btadmini_table[4].quantity'], input[data-help-id*='I_quantity:R_4'], [id='C13_W49_V50_V54_btadmini_table[4].quantity']",
+    "strategy": "css",
+    "action": "fill",
+    "role_type": null,
+    "pass_count": 4,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-21T17:13:59.561946+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Enter Product ID 45157022900 for item 5",
+    "selector": "[id*='btadmini_table[5].ordered_prod'], [id*='table[5]'][id*='ordered_prod'], input[name*='btadmini_table[5].ordered_prod'], [data-help-id*='I_ordered_prod:R_5'], [id='C13_W49_V50_V54_btadmini_table[5].ordered_prod']",
+    "strategy": "css",
+    "action": "fill",
+    "role_type": null,
+    "pass_count": 3,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T06:39:53.754060+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Enter Quantity 1 for item 5",
+    "selector": "input[id*='btadmini_table[5].quantity'], input[id*='table[5]'][id*='quantity'], input[name*='btadmini_table[5].quantity'], input[data-help-id*='I_quantity:R_5'], [id='C13_W49_V50_V54_btadmini_table[5].quantity']",
+    "strategy": "css",
+    "action": "fill",
+    "role_type": null,
+    "pass_count": 4,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-21T17:14:21.216853+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Enter Product ID 45147022301 for item 6",
+    "selector": "[id*='btadmini_table[6].ordered_prod'], [id*='table[6]'][id*='ordered_prod'], input[name*='btadmini_table[6].ordered_prod'], [data-help-id*='I_ordered_prod:R_6'], [id='C13_W49_V50_V54_btadmini_table[6].ordered_prod']",
+    "strategy": "css",
+    "action": "fill",
+    "role_type": null,
+    "pass_count": 1,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-21T15:42:25.614463+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Enter Quantity 1 for item 6",
+    "selector": "input[id*='btadmini_table[6].quantity'], input[id*='table[6]'][id*='quantity'], input[name*='btadmini_table[6].quantity'], input[data-help-id*='I_quantity:R_6'], [id='C13_W49_V50_V54_btadmini_table[6].quantity']",
+    "strategy": "css",
+    "action": "fill",
+    "role_type": null,
+    "pass_count": 2,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-21T15:42:44.115983+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Transaction Type ZQDV Selection",
+    "selector": "ZQDV",
+    "strategy": "text",
+    "action": "click",
+    "role_type": null,
+    "pass_count": 12,
+    "app_domain": "SAP S/4HANA",
+    "notes": "Selects CE-Direct Sales quotation transaction type ZQDV from modal popup",
+    "last_verified": "2026-10-21T23:05:34.921677+00:00"
+  },
+  {
+    "element_label": "Transaction Type ZSVO Selection",
+    "selector": "ZSVO",
+    "strategy": "text",
+    "action": "click",
+    "role_type": null,
+    "pass_count": 5,
+    "app_domain": "SAP S/4HANA",
+    "notes": "Selects Service Order quotation transaction type ZSVO from modal popup",
+    "last_verified": "2026-10-21T17:04:30.538105+00:00"
+  },
+  {
+    "element_label": "Click Product Name to view item 1 details",
+    "selector": "[id*='btadmini_table[1].description'] a, [id*='btadmini_table[1].ordered_prod'] a, [id*='btadmini_table[1]'] a",
+    "strategy": "css",
+    "action": "click",
+    "role_type": null,
+    "pass_count": 27,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T17:06:14.411515+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Select condition type condition from popup for item 1",
+    "selector": "condition",
+    "strategy": "text",
+    "action": "click",
+    "role_type": null,
+    "pass_count": 4,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T00:05:44.158658+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Press Enter to commit Product ID 45157510101 for item 1",
+    "selector": "[id*='btadmini_table[1].ordered_prod'], [id*='table[1]'][id*='ordered_prod'], input[name*='btadmini_table[1].ordered_prod'], [data-help-id*='I_ordered_prod:R_1'], [id*='ordered_prod'], [id='C13_W49_V50_V54_btadmini_table[1].ordered_prod']",
+    "strategy": "css",
+    "action": "fill",
+    "role_type": null,
+    "pass_count": 7,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T06:36:29.700409+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Enter Quantity 1 for item 1 in item details",
+    "selector": "input[id*='quantity']:not([readonly]), input[name*='quantity'], input[aria-label*='Quantity' i], [aria-label*='Quantity:' i], input[title*='Quantity' i]",
+    "strategy": "css",
+    "action": "fill",
+    "role_type": null,
+    "pass_count": 16,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T06:40:16.031821+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Press Enter to commit Product ID 45157510707 for item 2",
+    "selector": "[id*='btadmini_table[2].ordered_prod'], input[name*='btadmini_table[2].ordered_prod'], [data-help-id*='I_ordered_prod:R_2'], [id='C13_W49_V50_V54_btadmini_table[2].ordered_prod']",
+    "strategy": "css",
+    "action": "fill",
+    "role_type": null,
+    "pass_count": 7,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T06:37:26.318792+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Click Product Name to view item 2 details",
+    "selector": "[id*='btadmini_table[2].description'] a, [id*='btadmini_table[2].ordered_prod'] a, [id*='btadmini_table[2]'] a",
+    "strategy": "css",
+    "action": "click",
+    "role_type": null,
+    "pass_count": 19,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T16:18:49.629311+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Click on Revenue Contract to view details",
+    "selector": "a:has-text('Revenue Contract'), tr[data-sap-ui-rowindex='0'] a, td a[id*='RevenueContract']",
+    "strategy": "css",
+    "action": "click",
+    "role_type": null,
+    "pass_count": 11,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T14:46:43.211867+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Click Create",
+    "selector": "Create",
+    "strategy": "role",
+    "action": "click",
+    "role_type": "button",
+    "pass_count": 2,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T05:24:47.430250+00:00",
+    "notes": "Harvested from recording: SAP RAR Testing flow"
+  },
+  {
+    "element_label": "Click Duration",
+    "selector": "Duration",
+    "strategy": "role",
+    "action": "click",
+    "role_type": "cell",
+    "pass_count": 1,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T05:24:47.581919+00:00",
+    "notes": "Harvested from recording: SAP RAR Testing flow"
+  },
+  {
+    "element_label": "Click Additional Options",
+    "selector": "Additional Options",
+    "strategy": "role",
+    "action": "click",
+    "role_type": "button",
+    "pass_count": 1,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T05:24:47.737727+00:00",
+    "notes": "Harvested from recording: SAP RAR Testing flow"
+  },
+  {
+    "element_label": "Press Enter to commit Product ID 45157022301 for item 3",
+    "selector": "[id*='btadmini_table[3].ordered_prod'], input[name*='btadmini_table[3].ordered_prod'], [data-help-id*='I_ordered_prod:R_3'], [id='C13_W49_V50_V54_btadmini_table[3].ordered_prod']",
+    "strategy": "css",
+    "action": "fill",
+    "role_type": null,
+    "pass_count": 1,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T06:38:22.523543+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Click Product Name to view item 3 details",
+    "selector": "[id*='btadmini_table[3].description'] a, [id*='btadmini_table[3].ordered_prod'] a, [id*='btadmini_table[3]'] a",
+    "strategy": "css",
+    "action": "click",
+    "role_type": null,
+    "pass_count": 13,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T16:19:51.438383+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Press Enter to commit Product ID 45157022302 for item 4",
+    "selector": "[id*='btadmini_table[4].ordered_prod'], input[name*='btadmini_table[4].ordered_prod'], [data-help-id*='I_ordered_prod:R_4'], [id='C13_W49_V50_V54_btadmini_table[4].ordered_prod']",
+    "strategy": "css",
+    "action": "fill",
+    "role_type": null,
+    "pass_count": 1,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T06:39:15.488232+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Click Product Name to view item 4 details",
+    "selector": "[id*='btadmini_table[4].description'] a, [id*='btadmini_table[4].ordered_prod'] a, [id*='btadmini_table[4]'] a",
+    "strategy": "css",
+    "action": "click",
+    "role_type": null,
+    "pass_count": 13,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T16:20:44.650996+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Press Enter to commit Product ID 45157022900 for item 5",
+    "selector": "[id*='btadmini_table[5].ordered_prod'], input[name*='btadmini_table[5].ordered_prod'], [data-help-id*='I_ordered_prod:R_5'], [id='C13_W49_V50_V54_btadmini_table[5].ordered_prod']",
+    "strategy": "css",
+    "action": "fill",
+    "role_type": null,
+    "pass_count": 1,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T06:40:09.434976+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Click Product Name to view item 5 details",
+    "selector": "[id*='btadmini_table[5].description'] a, [id*='btadmini_table[5].ordered_prod'] a, [id*='btadmini_table[5]'] a",
+    "strategy": "css",
+    "action": "click",
+    "role_type": null,
+    "pass_count": 10,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T16:21:38.746892+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Enter Product ID '45157510101' for Line Item 1",
+    "selector": "[id*='btadmini_table[1].ordered_prod'], [id='C13_W49_V50_V54_btadmini_table[1].ordered_prod']",
+    "strategy": "css",
+    "action": "fill",
+    "role_type": null,
+    "pass_count": 2,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T07:35:13.367407+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Enter Quantity '1' in Line Item 1 details",
+    "selector": "input[id*='quantity']:not([readonly]), input[name*='quantity'], input[aria-label*='Quantity' i]",
+    "strategy": "css",
+    "action": "fill",
+    "role_type": null,
+    "pass_count": 1,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T07:35:19.761195+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Select Transaction Type ${transaction_type} (${transaction_type_desc}) from popup",
+    "selector": "${transaction_type}",
+    "strategy": "text",
+    "action": "click",
+    "role_type": null,
+    "pass_count": 19,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T17:05:26.320588+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Select Time Unit ${term_time_unit}",
+    "selector": "${term_time_unit}",
+    "strategy": "role",
+    "action": "click",
+    "role_type": "link",
+    "pass_count": 19,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T17:05:57.776458+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Enter Product ID ${item1_product_id} (${item1_product_name}) for item 1",
+    "selector": "[id*='btadmini_table[1].ordered_prod'], input[name*='btadmini_table[1].ordered_prod'], [data-help-id*='I_ordered_prod:R_1'], [id*='table[1]'][id*='ordered_prod']",
+    "strategy": "css",
+    "action": "fill",
+    "role_type": null,
+    "pass_count": 38,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T17:06:12.598412+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Click Product Name ${item1_product_name} to view item 1 details",
+    "selector": "[id*='btadmini_table[1].description'] a, [id*='btadmini_table[1].ordered_prod'] a, text='${item1_product_name}', text='${item1_product_id}', [id*='btadmini_table[1]'] a",
+    "strategy": "css",
+    "action": "click",
+    "role_type": null,
+    "pass_count": 3,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T08:10:17.609942+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Enter Plant ${item1_plant} in Items table for item 1",
+    "selector": "input[id$='btadmini_table[1].plant'], [id*='btadmini_table[1]'][id*='plant' i]",
+    "strategy": "css",
+    "action": "fill",
+    "role_type": null,
+    "pass_count": 18,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T17:06:22.178466+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Click pencil (edit) icon next to product name to open Sales Item Details for item 1",
+    "selector": "[id*='btadmini_table[1].thtmlb_oca.EDIT']",
+    "strategy": "css",
+    "action": "click",
+    "role_type": null,
+    "pass_count": 15,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T17:06:26.716731+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Select condition type ${item1_cond1_type} from popup for item 1",
+    "selector": "${item1_cond1_type}",
+    "strategy": "text",
+    "action": "click",
+    "role_type": null,
+    "pass_count": 10,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T16:18:07.792248+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Enter rate '${item1_cond1_value}' for condition ${item1_cond1_type} on item 1",
+    "selector": "${item1_cond1_type} rate:",
+    "strategy": "role",
+    "action": "fill",
+    "role_type": "textbox",
+    "pass_count": 10,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T16:18:08.497296+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Select condition type ${item1_cond2_type} from popup for item 1",
+    "selector": "${item1_cond2_type}",
+    "strategy": "text",
+    "action": "click",
+    "role_type": null,
+    "pass_count": 10,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T16:18:15.774100+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Enter rate '${item1_cond2_value}' for condition ${item1_cond2_type} on item 1",
+    "selector": "${item1_cond2_type} rate:",
+    "strategy": "role",
+    "action": "fill",
+    "role_type": "textbox",
+    "pass_count": 10,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T16:18:18.511125+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Select condition type ${item1_cond3_type} from popup for item 1",
+    "selector": "${item1_cond3_type}",
+    "strategy": "text",
+    "action": "click",
+    "role_type": null,
+    "pass_count": 10,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T16:18:25.127045+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Enter rate '${item1_cond3_value}' for condition ${item1_cond3_type} on item 1",
+    "selector": "${item1_cond3_type} rate:",
+    "strategy": "role",
+    "action": "fill",
+    "role_type": "textbox",
+    "pass_count": 10,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T16:18:28.067700+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Enter Product ID ${item2_product_id} (${item2_product_name}) for item 2",
+    "selector": "[id*='btadmini_table[2].ordered_prod'], input[name*='btadmini_table[2].ordered_prod'], [data-help-id*='I_ordered_prod:R_2'], [id*='table[2]'][id*='ordered_prod']",
+    "strategy": "css",
+    "action": "fill",
+    "role_type": null,
+    "pass_count": 26,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T16:18:47.787204+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Click Product Name ${item2_product_name} to view item 2 details",
+    "selector": "[id*='btadmini_table[2].description'] a, [id*='btadmini_table[2].ordered_prod'] a, text='${item2_product_name}', text='${item2_product_id}', [id*='btadmini_table[2]'] a",
+    "strategy": "css",
+    "action": "click",
+    "role_type": null,
+    "pass_count": 1,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T08:01:50.120566+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Enter Plant ${item2_plant} in Items table for item 2",
+    "selector": "input[id$='btadmini_table[2].plant'], [id*='btadmini_table[2]'][id*='plant' i]",
+    "strategy": "css",
+    "action": "fill",
+    "role_type": null,
+    "pass_count": 13,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T16:18:57.950366+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Click pencil (edit) icon next to product name to open Sales Item Details for item 2",
+    "selector": "[id*='btadmini_table[2].thtmlb_oca.EDIT']",
+    "strategy": "css",
+    "action": "click",
+    "role_type": null,
+    "pass_count": 10,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T16:19:01.596573+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Select condition type ${item2_cond1_type} from popup for item 2",
+    "selector": "${item2_cond1_type}",
+    "strategy": "text",
+    "action": "click",
+    "role_type": null,
+    "pass_count": 10,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T16:19:11.095857+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Enter rate '${item2_cond1_value}' for condition ${item2_cond1_type} on item 2",
+    "selector": "${item2_cond1_type} rate:",
+    "strategy": "role",
+    "action": "fill",
+    "role_type": "textbox",
+    "pass_count": 10,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T16:19:11.832900+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Select condition type ${item2_cond2_type} from popup for item 2",
+    "selector": "${item2_cond2_type}",
+    "strategy": "text",
+    "action": "click",
+    "role_type": null,
+    "pass_count": 10,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T16:19:18.488278+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Enter rate '${item2_cond2_value}' for condition ${item2_cond2_type} on item 2",
+    "selector": "${item2_cond2_type} rate:",
+    "strategy": "role",
+    "action": "fill",
+    "role_type": "textbox",
+    "pass_count": 10,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T16:19:21.188685+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Select condition type ${item2_cond3_type} from popup for item 2",
+    "selector": "${item2_cond3_type}",
+    "strategy": "text",
+    "action": "click",
+    "role_type": null,
+    "pass_count": 10,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T16:19:27.746061+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Enter rate '${item2_cond3_value}' for condition ${item2_cond3_type} on item 2",
+    "selector": "${item2_cond3_type} rate:",
+    "strategy": "role",
+    "action": "fill",
+    "role_type": "textbox",
+    "pass_count": 10,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T16:19:30.598369+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Enter Product ID ${item3_product_id} (${item3_product_name}) for item 3",
+    "selector": "[id*='btadmini_table[3].ordered_prod'], input[name*='btadmini_table[3].ordered_prod'], [data-help-id*='I_ordered_prod:R_3'], [id*='table[3]'][id*='ordered_prod']",
+    "strategy": "css",
+    "action": "fill",
+    "role_type": null,
+    "pass_count": 26,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T16:19:49.647285+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Click Product Name ${item3_product_name} to view item 3 details",
+    "selector": "[id*='btadmini_table[3].description'] a, [id*='btadmini_table[3].ordered_prod'] a, text='${item3_product_name}', text='${item3_product_id}', [id*='btadmini_table[3]'] a",
+    "strategy": "css",
+    "action": "click",
+    "role_type": null,
+    "pass_count": 1,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T08:03:18.271808+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Enter Plant ${item3_plant} in Items table for item 3",
+    "selector": "input[id$='btadmini_table[3].plant'], [id*='btadmini_table[3]'][id*='plant' i]",
+    "strategy": "css",
+    "action": "fill",
+    "role_type": null,
+    "pass_count": 13,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T16:19:59.983840+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Click pencil (edit) icon next to product name to open Sales Item Details for item 3",
+    "selector": "[id*='btadmini_table[3].thtmlb_oca.EDIT']",
+    "strategy": "css",
+    "action": "click",
+    "role_type": null,
+    "pass_count": 10,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T16:20:03.829031+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Select condition type ${item3_cond1_type} from popup for item 3",
+    "selector": "${item3_cond1_type}",
+    "strategy": "text",
+    "action": "click",
+    "role_type": null,
+    "pass_count": 10,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T16:20:13.454924+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Enter rate '${item3_cond1_value}' for condition ${item3_cond1_type} on item 3",
+    "selector": "${item3_cond1_type} rate:",
+    "strategy": "role",
+    "action": "fill",
+    "role_type": "textbox",
+    "pass_count": 10,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T16:20:14.158971+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Select condition type ${item3_cond2_type} from popup for item 3",
+    "selector": "${item3_cond2_type}",
+    "strategy": "text",
+    "action": "click",
+    "role_type": null,
+    "pass_count": 10,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T16:20:20.913349+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Enter rate '${item3_cond2_value}' for condition ${item3_cond2_type} on item 3",
+    "selector": "${item3_cond2_type} rate:",
+    "strategy": "role",
+    "action": "fill",
+    "role_type": "textbox",
+    "pass_count": 10,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T16:20:23.749516+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Enter Product ID ${item4_product_id} (${item4_product_name}) for item 4",
+    "selector": "[id*='btadmini_table[4].ordered_prod'], input[name*='btadmini_table[4].ordered_prod'], [data-help-id*='I_ordered_prod:R_4'], [id*='table[4]'][id*='ordered_prod']",
+    "strategy": "css",
+    "action": "fill",
+    "role_type": null,
+    "pass_count": 26,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T16:20:42.763884+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Click Product Name ${item4_product_name} to view item 4 details",
+    "selector": "[id*='btadmini_table[4].description'] a, [id*='btadmini_table[4].ordered_prod'] a, text='${item4_product_name}', text='${item4_product_id}', [id*='btadmini_table[4]'] a",
+    "strategy": "css",
+    "action": "click",
+    "role_type": null,
+    "pass_count": 1,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T08:04:33.572259+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Enter Plant ${item4_plant} in Items table for item 4",
+    "selector": "input[id$='btadmini_table[4].plant'], [id*='btadmini_table[4]'][id*='plant' i]",
+    "strategy": "css",
+    "action": "fill",
+    "role_type": null,
+    "pass_count": 13,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T16:20:53.233605+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Click pencil (edit) icon next to product name to open Sales Item Details for item 4",
+    "selector": "[id*='btadmini_table[4].thtmlb_oca.EDIT']",
+    "strategy": "css",
+    "action": "click",
+    "role_type": null,
+    "pass_count": 10,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T16:20:57.148832+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Select condition type ${item4_cond1_type} from popup for item 4",
+    "selector": "${item4_cond1_type}",
+    "strategy": "text",
+    "action": "click",
+    "role_type": null,
+    "pass_count": 10,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T16:21:06.836857+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Enter rate '${item4_cond1_value}' for condition ${item4_cond1_type} on item 4",
+    "selector": "${item4_cond1_type} rate:",
+    "strategy": "role",
+    "action": "fill",
+    "role_type": "textbox",
+    "pass_count": 10,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T16:21:07.586900+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Select condition type ${item4_cond2_type} from popup for item 4",
+    "selector": "${item4_cond2_type}",
+    "strategy": "text",
+    "action": "click",
+    "role_type": null,
+    "pass_count": 10,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T16:21:14.806313+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Enter rate '${item4_cond2_value}' for condition ${item4_cond2_type} on item 4",
+    "selector": "${item4_cond2_type} rate:",
+    "strategy": "role",
+    "action": "fill",
+    "role_type": "textbox",
+    "pass_count": 10,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T16:21:17.591168+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Enter Product ID ${item5_product_id} (${item5_product_name}) for item 5",
+    "selector": "[id*='btadmini_table[5].ordered_prod'], input[name*='btadmini_table[5].ordered_prod'], [data-help-id*='I_ordered_prod:R_5'], [id*='table[5]'][id*='ordered_prod']",
+    "strategy": "css",
+    "action": "fill",
+    "role_type": null,
+    "pass_count": 20,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T16:21:36.898790+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Click Product Name ${item5_product_name} to view item 5 details",
+    "selector": "[id*='btadmini_table[5].description'] a, [id*='btadmini_table[5].ordered_prod'] a, text='${item5_product_name}', text='${item5_product_id}', [id*='btadmini_table[5]'] a",
+    "strategy": "css",
+    "action": "click",
+    "role_type": null,
+    "pass_count": 1,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T08:05:46.826337+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Enter Plant ${item5_plant} in Items table for item 5",
+    "selector": "input[id$='btadmini_table[5].plant'], [id*='btadmini_table[5]'][id*='plant' i]",
+    "strategy": "css",
+    "action": "fill",
+    "role_type": null,
+    "pass_count": 10,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T16:21:47.256264+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Click pencil (edit) icon next to product name to open Sales Item Details for item 5",
+    "selector": "[id*='btadmini_table[5].thtmlb_oca.EDIT']",
+    "strategy": "css",
+    "action": "click",
+    "role_type": null,
+    "pass_count": 10,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T16:21:51.502512+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Select condition type ${item5_cond1_type} from popup for item 5",
+    "selector": "${item5_cond1_type}",
+    "strategy": "text",
+    "action": "click",
+    "role_type": null,
+    "pass_count": 9,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T16:22:03.928327+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Enter rate '${item5_cond1_value}' for condition ${item5_cond1_type} on item 5",
+    "selector": "${item5_cond1_type} rate:",
+    "strategy": "role",
+    "action": "fill",
+    "role_type": "textbox",
+    "pass_count": 9,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T16:22:04.765380+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Select condition type ${item5_cond2_type} from popup for item 5",
+    "selector": "${item5_cond2_type}",
+    "strategy": "text",
+    "action": "click",
+    "role_type": null,
+    "pass_count": 9,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T16:22:13.522364+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Enter rate '${item5_cond2_value}' for condition ${item5_cond2_type} on item 5",
+    "selector": "${item5_cond2_type} rate:",
+    "strategy": "role",
+    "action": "fill",
+    "role_type": "textbox",
+    "pass_count": 9,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T16:22:17.263708+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Change status to ${status_released}",
+    "selector": "${status_released}",
+    "strategy": "role",
+    "action": "click",
+    "role_type": "link",
+    "pass_count": 2,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T09:14:13.905061+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Click Service contract link in Transaction History",
+    "selector": "Service contract",
+    "strategy": "text",
+    "action": "click",
+    "role_type": null,
+    "pass_count": 1,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T08:38:21.667940+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Click Transaction hyperlink for Service Contract in Transaction History",
+    "selector": "tr:has-text('Service Contract') a",
+    "strategy": "css",
+    "action": "click",
+    "role_type": null,
+    "pass_count": 6,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T16:24:03.064443+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Open Service contract Status dropdown",
+    "selector": "[id*='btadminh_lcstatus-btn'], [id*='lcstatus-btn']",
+    "strategy": "css",
+    "action": "click",
+    "role_type": null,
+    "pass_count": 6,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T16:24:09.542248+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Change Service contract Status from 'Open' to '${service_contract_status}'",
+    "selector": "${service_contract_status}",
+    "strategy": "role",
+    "action": "click",
+    "role_type": "link",
+    "pass_count": 6,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T16:24:14.261749+00:00",
+    "notes": "Learned from execution"
+  },
+  {
+    "element_label": "Enter '1024' into Order Required",
+    "selector": "Order Required",
+    "strategy": "role",
+    "action": "fill",
+    "role_type": "textbox",
+    "pass_count": 23,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T14:47:20.630603+00:00",
+    "notes": "Verified AC-03 selector from recorded flows: [TC-01] Create Outbound Delivery (24 steps) & [TC-02] Create Outbound Delivery (23 steps)"
+  },
+  {
+    "element_label": "Enter 'BEV8' into Shipping Point Required",
+    "selector": "Shipping Point Required",
+    "strategy": "role",
+    "action": "fill",
+    "role_type": "textbox",
+    "pass_count": 19,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T14:47:16.800243+00:00",
+    "notes": "Verified AC-03 selector from recorded flows: [TC-01] Create Outbound Delivery (24 steps) & [TC-02] Create Outbound Delivery (23 steps)"
+  },
+  {
+    "element_label": "Click Picking",
+    "selector": "Picking",
+    "strategy": "role",
+    "action": "click",
+    "role_type": "tab",
+    "pass_count": 19,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T14:47:25.403375+00:00",
+    "notes": "Verified AC-03 selector from recorded flows: [TC-01] Create Outbound Delivery (24 steps) & [TC-02] Create Outbound Delivery (23 steps)"
+  },
+  {
+    "element_label": "Click [id=\"M0\\:46\\:2\\:3B257\\:2\\[1\\,4\\]_c\"]",
+    "selector": "[id=\"M0\\:46\\:2\\:3B257\\:2\\[1\\,4\\]_c\"]",
+    "strategy": "css",
+    "action": "click",
+    "role_type": null,
+    "pass_count": 19,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T14:47:26.666933+00:00",
+    "notes": "Verified AC-03 selector from recorded flows: [TC-01] Create Outbound Delivery (24 steps) & [TC-02] Create Outbound Delivery (23 steps)"
+  },
+  {
+    "element_label": "Enter '6020' into All Items",
+    "selector": "All Items",
+    "strategy": "role",
+    "action": "fill",
+    "role_type": "grid",
+    "pass_count": 51,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T14:48:01.759877+00:00",
+    "notes": "Verified AC-03 selector from recorded flows: [TC-01] Create Outbound Delivery (24 steps) & [TC-02] Create Outbound Delivery (23 steps)"
+  },
+  {
+    "element_label": "Click [id=\"M0\\:46\\:2\\:3B257\\:2\\[1\\,8\\]_c\"]",
+    "selector": "[id=\"M0\\:46\\:2\\:3B257\\:2\\[1\\,8\\]_c\"]",
+    "strategy": "css",
+    "action": "click",
+    "role_type": null,
+    "pass_count": 19,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T14:47:31.660879+00:00",
+    "notes": "Verified AC-03 selector from recorded flows: [TC-01] Create Outbound Delivery (24 steps) & [TC-02] Create Outbound Delivery (23 steps)"
+  },
+  {
+    "element_label": "Click [id=\"M0\\:46\\:2\\:3B257\\:2\\[2\\,4\\]_c\"]",
+    "selector": "[id=\"M0\\:46\\:2\\:3B257\\:2\\[2\\,4\\]_c\"]",
+    "strategy": "css",
+    "action": "click",
+    "role_type": null,
+    "pass_count": 19,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T14:47:38.791758+00:00",
+    "notes": "Verified AC-03 selector from recorded flows: [TC-01] Create Outbound Delivery (24 steps) & [TC-02] Create Outbound Delivery (23 steps)"
+  },
+  {
+    "element_label": "Click [id=\"M0\\:46\\:2\\:3B257\\:2\\[2\\,8\\]_c\"]",
+    "selector": "[id=\"M0\\:46\\:2\\:3B257\\:2\\[2\\,8\\]_c\"]",
+    "strategy": "css",
+    "action": "click",
+    "role_type": null,
+    "pass_count": 19,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T14:47:43.678979+00:00",
+    "notes": "Verified AC-03 selector from recorded flows: [TC-01] Create Outbound Delivery (24 steps) & [TC-02] Create Outbound Delivery (23 steps)"
+  },
+  {
+    "element_label": "Click [id=\"M0\\:46\\:2\\:3B257\\:2\\[3\\,4\\]_c\"]",
+    "selector": "[id=\"M0\\:46\\:2\\:3B257\\:2\\[3\\,4\\]_c\"]",
+    "strategy": "css",
+    "action": "click",
+    "role_type": null,
+    "pass_count": 19,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T14:47:50.897135+00:00",
+    "notes": "Verified AC-03 selector from recorded flows: [TC-01] Create Outbound Delivery (24 steps) & [TC-02] Create Outbound Delivery (23 steps)"
+  },
+  {
+    "element_label": "Enter '1' into [id=\"M0\\:46\\:2\\:3B257\\:2\\[3\\,8\\]_c\"]",
+    "selector": "[id=\"M0\\:46\\:2\\:3B257\\:2\\[3\\,8\\]_c\"]",
+    "strategy": "css",
+    "action": "click",
+    "role_type": null,
+    "pass_count": 19,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T14:47:55.829832+00:00",
+    "notes": "Verified AC-03 selector from recorded flows: [TC-01] Create Outbound Delivery (24 steps) & [TC-02] Create Outbound Delivery (23 steps)"
+  },
+  {
+    "element_label": "Click Post Goods Issue",
+    "selector": "Post Goods Issue",
+    "strategy": "role",
+    "action": "click",
+    "role_type": "button",
+    "pass_count": 19,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T14:48:10.538271+00:00",
+    "notes": "Verified AC-03 selector from recorded flows: [TC-01] Create Outbound Delivery (24 steps) & [TC-02] Create Outbound Delivery (23 steps)"
+  },
+  {
+    "element_label": "Click 1023",
+    "selector": "1023",
+    "strategy": "role",
+    "action": "click",
+    "role_type": "gridcell",
+    "pass_count": 15,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T10:25:36.440530+00:00",
+    "notes": "Verified AC-03 selector from recorded flows: [TC-01] Create Outbound Delivery (24 steps) & [TC-02] Create Outbound Delivery (23 steps)"
+  },
+  {
+    "element_label": "Click Outbound Delivery 80000542 saved, material document 4900000927 created",
+    "selector": "Outbound Delivery 80000542 saved, material document 4900000927 created",
+    "strategy": "text",
+    "action": "click",
+    "role_type": null,
+    "pass_count": 15,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T10:25:36.667543+00:00",
+    "notes": "Verified AC-03 selector from recorded flows: [TC-01] Create Outbound Delivery (24 steps) & [TC-02] Create Outbound Delivery (23 steps)"
+  },
+  {
+    "element_label": "Click Outbound Delivery 80000542 saved, material document 4900000927 createdContinue",
+    "selector": "Outbound Delivery 80000542 saved, material document 4900000927 createdContinue",
+    "strategy": "text",
+    "action": "click",
+    "role_type": null,
+    "pass_count": 15,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T10:25:36.688544+00:00",
+    "notes": "Verified AC-03 selector from recorded flows: [TC-01] Create Outbound Delivery (24 steps) & [TC-02] Create Outbound Delivery (23 steps)"
+  },
+  {
+    "element_label": "Enter '80000542' into Documents to Be Processed",
+    "selector": "Documents to Be Processed",
+    "strategy": "role",
+    "action": "fill",
+    "role_type": "grid",
+    "pass_count": 23,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T14:48:46.218758+00:00",
+    "notes": "Verified AC-04 selector from recorded flow: [TC-03] Create Billing Document (9 steps)"
+  },
+  {
+    "element_label": "Click Save  Emphasized",
+    "selector": "Save  Emphasized",
+    "strategy": "role",
+    "action": "click",
+    "role_type": "button",
+    "pass_count": 18,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T14:48:59.997459+00:00",
+    "notes": "Verified AC-04 selector from recorded flow: [TC-03] Create Billing Document (9 steps)"
+  },
+  {
+    "element_label": "Click SAP Back button (< left to SAP logo) to navigate back to Transaction History",
+    "selector": "#backBtn",
+    "strategy": "css",
+    "action": "click",
+    "role_type": null,
+    "pass_count": 5,
+    "app_domain": "SAP S/4HANA",
+    "last_verified": "2026-10-22T16:24:43.772079+00:00",
+    "notes": "Learned from execution"
   }
 ]

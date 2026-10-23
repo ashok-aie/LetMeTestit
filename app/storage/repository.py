@@ -610,17 +610,19 @@ def save_golden_example(
     GOLDEN_FILE.write_text(json.dumps(examples, indent=2, ensure_ascii=False), encoding="utf-8")
 
 
-def get_golden_examples_prompt_context(limit: int = 4) -> str:
+def get_golden_examples_prompt_context(limit: int = 6) -> str:
     """Formats golden examples into few-shot demonstration context for LLM test design."""
     examples = list_golden_examples()
     if not examples:
         return ""
 
-    # Prioritize rich end-to-end business process flows (e.g. Service / Sales Quotation)
+    # Prioritize rich end-to-end business process flows (AC-03 Outbound Delivery, AC-04 Billing Document, Service Quotation)
     sorted_examples = sorted(
         examples,
         key=lambda ex: (
-            1 if any(k in (ex.get("pattern", "") + ex.get("description", "")).lower() for k in ["quotation", "service quotation", "e2e", "sales"]) else 0
+            2 if any(k in (ex.get("pattern", "") + " " + ex.get("description", "")).lower() for k in ["ac-03", "ac-04", "outbound delivery", "billing document"]) else (
+                1 if any(k in (ex.get("pattern", "") + " " + ex.get("description", "")).lower() for k in ["quotation", "service quotation", "e2e", "sales"]) else 0
+            )
         ),
         reverse=True,
     )
@@ -712,9 +714,32 @@ def get_full_knowledge_base_context() -> str:
     if corr_ctx:
         parts.append(corr_ctx)
 
-    gold_ctx = get_golden_examples_prompt_context(limit=4)
+    gold_ctx = get_golden_examples_prompt_context(limit=6)
     if gold_ctx:
         parts.append(gold_ctx)
+
+    # Enterprise testing standards (includes live-verified SAP flow rules)
+    try:
+        std = get_testing_standards()
+        if std:
+            parts.append("<testing_standards>\n" + std[-6000:] + "\n</testing_standards>")
+    except Exception:
+        pass
+
+    # Live-verified flows learned from executions (dynamic knowledge base)
+    try:
+        verified = [(n, f) for n, f in _load_flows_raw().items() if f.get("category") == "Verified Execution"]
+        if verified:
+            lines = ["<verified_flows>"]
+            for n, f in verified[-5:]:
+                lines.append(f"- {n}: {f.get('description', '')}")
+                for s in f.get("steps", [])[:60]:
+                    lines.append(f"  {s.get('step_number')}. {s.get('action')} | {s.get('selector_value') or ''} | "
+                                 f"{s.get('input_value') or ''} | {s.get('description') or ''}")
+            lines.append("</verified_flows>")
+            parts.append("\n".join(lines))
+    except Exception:
+        pass
 
     return "\n\n".join(parts)
 

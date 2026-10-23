@@ -1,0 +1,640 @@
+{
+  "suite_id": "SUITE-REC-01-202610221551",
+  "name": "SUITE-REC-01-202610221551",
+  "description": "Regression Suite for REC-01",
+  "requirement_key": "REC-01",
+  "version": 1,
+  "tags": [
+    "regression",
+    "sap"
+  ],
+  "total_cases": 3,
+  "total_steps": 56,
+  "last_saved_at": "2026-10-22T10:27:38.193306+00:00",
+  "last_run_status": "Recorded (Unexecuted)",
+  "suite_data": {
+    "suite_id": "SUITE-REC-01-202610221551",
+    "requirement_key": "REC-01",
+    "created_at": "2026-10-22T10:21:34.198657Z",
+    "version": 1,
+    "test_cases": [
+      {
+        "id": "TC-01",
+        "requirement_key": "REC-01",
+        "source_ac_id": "AC-03",
+        "title": "Create Outbound Delivery",
+        "objective": "Recorded flow for AC-03 ([TC-01] 📁 Recorded Create Outbound Delivery — 24 steps): multi-item picking across rows 1-3 (Storage Location 6020, Picked Qty 1) and Post Goods Issue",
+        "category": "positive",
+        "preconditions": [],
+        "test_data": {},
+        "steps": [
+          {
+            "step_number": 1,
+            "action": "navigate",
+            "locator_strategy": null,
+            "selector_value": null,
+            "role_name": null,
+            "input_value": "https://s4srv25.nodomain.com:44325/sap/bc/ui2/flp?sap-client=100&sap-language=EN#Launchpad-openFLPPage?pageId=SAP_CRM_PG_SERVICE_PROCESSING&spaceId=SAP_CRM_SP_SERVICE",
+            "expected_value": null,
+            "description": "Navigate to https://s4srv25.nodomain.com:44325/sap/bc/ui2/flp?sap-client=100&sap-language=EN#Launchpad-openFLPPage?pageId=SAP_CRM_PG_SERVICE_PROCESSING&spaceId=SAP_CRM_SP_SERVICE"
+          },
+          {
+            "step_number": 2,
+            "action": "fill",
+            "locator_strategy": "role",
+            "selector_value": "User",
+            "role_name": "textbox",
+            "input_value": "MYRAR1",
+            "expected_value": null,
+            "description": "Enter 'MYRAR1' into User"
+          },
+          {
+            "step_number": 3,
+            "action": "fill",
+            "locator_strategy": "role",
+            "selector_value": "User",
+            "role_name": "textbox",
+            "input_value": "Tab",
+            "expected_value": null,
+            "description": "Press 'Tab' into User"
+          },
+          {
+            "step_number": 4,
+            "action": "fill",
+            "locator_strategy": "role",
+            "selector_value": "Password",
+            "role_name": "textbox",
+            "input_value": "Pass23#$",
+            "expected_value": null,
+            "description": "Enter 'Pass23#$' into Password"
+          },
+          {
+            "step_number": 5,
+            "action": "click",
+            "locator_strategy": "role",
+            "selector_value": "Log On",
+            "role_name": "button",
+            "input_value": null,
+            "expected_value": null,
+            "description": "Click Log On"
+          },
+          {
+            "step_number": 6,
+            "action": "navigate",
+            "locator_strategy": null,
+            "selector_value": null,
+            "role_name": null,
+            "input_value": "https://s4srv25.nodomain.com:44325/sap/bc/ui2/flp?sap-client=100&sap-language=EN#OutboundDelivery-createInWebGUI?sap-ui-tech-hint=GUI",
+            "expected_value": null,
+            "description": "Navigate to https://s4srv25.nodomain.com:44325/sap/bc/ui2/flp?sap-client=100&sap-language=EN#OutboundDelivery-createInWebGUI?sap-ui-tech-hint=GUI"
+          },
+          {
+            "step_number": 7,
+            "action": "fill",
+            "locator_strategy": "role",
+            "selector_value": "Order Required",
+            "role_name": "textbox",
+            "input_value": "1024",
+            "expected_value": null,
+            "description": "Enter '1024' into Order Required"
+          },
+          {
+            "step_number": 8,
+            "action": "fill",
+            "locator_strategy": "role",
+            "selector_value": "Order Required",
+            "role_name": "textbox",
+            "input_value": "Enter",
+            "expected_value": null,
+            "description": "Press 'Enter' into Order Required"
+          },
+          {
+            "step_number": 9,
+            "action": "fill",
+            "locator_strategy": "role",
+            "selector_value": "Shipping Point Required",
+            "role_name": "textbox",
+            "input_value": "BEV8",
+            "expected_value": null,
+            "description": "Enter 'BEV8' into Shipping Point Required"
+          },
+          {
+            "step_number": 10,
+            "action": "fill",
+            "locator_strategy": "role",
+            "selector_value": "Shipping Point Required",
+            "role_name": "textbox",
+            "input_value": "Enter",
+            "expected_value": null,
+            "description": "Press 'Enter' into Shipping Point Required"
+          },
+          {
+            "step_number": 11,
+            "action": "click",
+            "locator_strategy": "role",
+            "selector_value": "Picking",
+            "role_name": "tab",
+            "input_value": null,
+            "expected_value": null,
+            "description": "Click Picking"
+          },
+          {
+            "step_number": 12,
+            "action": "click",
+            "locator_strategy": "css",
+            "selector_value": "[id=\"M0\\:46\\:2\\:3B257\\:2\\[1\\,4\\]_c\"]",
+            "role_name": null,
+            "input_value": null,
+            "expected_value": null,
+            "description": "Click [id=\"M0\\:46\\:2\\:3B257\\:2\\[1\\,4\\]_c\"]"
+          },
+          {
+            "step_number": 13,
+            "action": "fill",
+            "locator_strategy": "role",
+            "selector_value": "All Items",
+            "role_name": "grid",
+            "input_value": "6020",
+            "expected_value": null,
+            "description": "Enter '6020' into All Items"
+          },
+          {
+            "step_number": 14,
+            "action": "click",
+            "locator_strategy": "css",
+            "selector_value": "[id=\"M0\\:46\\:2\\:3B257\\:2\\[1\\,8\\]_c\"]",
+            "role_name": null,
+            "input_value": null,
+            "expected_value": null,
+            "description": "Click [id=\"M0\\:46\\:2\\:3B257\\:2\\[1\\,8\\]_c\"]"
+          },
+          {
+            "step_number": 15,
+            "action": "fill",
+            "locator_strategy": "role",
+            "selector_value": "All Items",
+            "role_name": "grid",
+            "input_value": "1",
+            "expected_value": null,
+            "description": "Enter '1' into All Items"
+          },
+          {
+            "step_number": 16,
+            "action": "click",
+            "locator_strategy": "css",
+            "selector_value": "[id=\"M0\\:46\\:2\\:3B257\\:2\\[2\\,4\\]_c\"]",
+            "role_name": null,
+            "input_value": null,
+            "expected_value": null,
+            "description": "Click [id=\"M0\\:46\\:2\\:3B257\\:2\\[2\\,4\\]_c\"]"
+          },
+          {
+            "step_number": 17,
+            "action": "fill",
+            "locator_strategy": "role",
+            "selector_value": "All Items",
+            "role_name": "grid",
+            "input_value": "6020",
+            "expected_value": null,
+            "description": "Enter '6020' into All Items"
+          },
+          {
+            "step_number": 18,
+            "action": "click",
+            "locator_strategy": "css",
+            "selector_value": "[id=\"M0\\:46\\:2\\:3B257\\:2\\[2\\,8\\]_c\"]",
+            "role_name": null,
+            "input_value": null,
+            "expected_value": null,
+            "description": "Click [id=\"M0\\:46\\:2\\:3B257\\:2\\[2\\,8\\]_c\"]"
+          },
+          {
+            "step_number": 19,
+            "action": "fill",
+            "locator_strategy": "role",
+            "selector_value": "All Items",
+            "role_name": "grid",
+            "input_value": "1",
+            "expected_value": null,
+            "description": "Enter '1' into All Items"
+          },
+          {
+            "step_number": 20,
+            "action": "click",
+            "locator_strategy": "css",
+            "selector_value": "[id=\"M0\\:46\\:2\\:3B257\\:2\\[3\\,4\\]_c\"]",
+            "role_name": null,
+            "input_value": null,
+            "expected_value": null,
+            "description": "Click [id=\"M0\\:46\\:2\\:3B257\\:2\\[3\\,4\\]_c\"]"
+          },
+          {
+            "step_number": 21,
+            "action": "fill",
+            "locator_strategy": "role",
+            "selector_value": "All Items",
+            "role_name": "grid",
+            "input_value": "6020",
+            "expected_value": null,
+            "description": "Enter '6020' into All Items"
+          },
+          {
+            "step_number": 22,
+            "action": "fill",
+            "locator_strategy": "css",
+            "selector_value": "[id=\"M0\\:46\\:2\\:3B257\\:2\\[3\\,8\\]_c\"]",
+            "role_name": null,
+            "input_value": "1",
+            "expected_value": null,
+            "description": "Enter '1' into [id=\"M0\\:46\\:2\\:3B257\\:2\\[3\\,8\\]_c\"]"
+          },
+          {
+            "step_number": 23,
+            "action": "fill",
+            "locator_strategy": "css",
+            "selector_value": "[id=\"M0\\:46\\:2\\:3B257\\:2\\[3\\,8\\]_c\"]",
+            "role_name": null,
+            "input_value": "Enter",
+            "expected_value": null,
+            "description": "Press 'Enter' into [id=\"M0\\:46\\:2\\:3B257\\:2\\[3\\,8\\]_c\"]"
+          },
+          {
+            "step_number": 24,
+            "action": "click",
+            "locator_strategy": "role",
+            "selector_value": "Post Goods Issue",
+            "role_name": "button",
+            "input_value": null,
+            "expected_value": null,
+            "description": "Click Post Goods Issue"
+          }
+        ],
+        "expected_result": "Recorded sequence completes without browser error",
+        "priority": "Medium",
+        "group": "Recorded",
+        "tags": [
+          "recorded",
+          "browser"
+        ]
+      },
+      {
+        "id": "TC-02",
+        "requirement_key": "REC-01",
+        "source_ac_id": "AC-03",
+        "title": "Create Outbound Delivery",
+        "objective": "Recorded flow for AC-03 ([TC-02] 📁 Recorded Create Outbound Delivery — 23 steps): Shipping Point BEV8, Order Required, Picking tab SLoc 6020 & Picked Qty 1, Post Goods Issue, and status bar confirmation (Outbound Delivery 80000542 saved, material document 4900000927 created)",
+        "category": "positive",
+        "preconditions": [],
+        "test_data": {},
+        "steps": [
+          {
+            "step_number": 1,
+            "action": "navigate",
+            "locator_strategy": null,
+            "selector_value": null,
+            "role_name": null,
+            "input_value": "https://s4srv25.nodomain.com:44325/sap/bc/ui2/flp?sap-client=100&sap-language=EN#Launchpad-openFLPPage?pageId=SAP_CRM_PG_SERVICE_PROCESSING&spaceId=SAP_CRM_SP_SERVICE",
+            "expected_value": null,
+            "description": "Navigate to https://s4srv25.nodomain.com:44325/sap/bc/ui2/flp?sap-client=100&sap-language=EN#Launchpad-openFLPPage?pageId=SAP_CRM_PG_SERVICE_PROCESSING&spaceId=SAP_CRM_SP_SERVICE"
+          },
+          {
+            "step_number": 2,
+            "action": "fill",
+            "locator_strategy": "role",
+            "selector_value": "User",
+            "role_name": "textbox",
+            "input_value": "MYRAR1",
+            "expected_value": null,
+            "description": "Enter 'MYRAR1' into User"
+          },
+          {
+            "step_number": 3,
+            "action": "fill",
+            "locator_strategy": "role",
+            "selector_value": "User",
+            "role_name": "textbox",
+            "input_value": "Tab",
+            "expected_value": null,
+            "description": "Press 'Tab' into User"
+          },
+          {
+            "step_number": 4,
+            "action": "fill",
+            "locator_strategy": "role",
+            "selector_value": "Password",
+            "role_name": "textbox",
+            "input_value": "Pass23#$",
+            "expected_value": null,
+            "description": "Enter 'Pass23#$' into Password"
+          },
+          {
+            "step_number": 5,
+            "action": "click",
+            "locator_strategy": "role",
+            "selector_value": "Log On",
+            "role_name": "button",
+            "input_value": null,
+            "expected_value": null,
+            "description": "Click Log On"
+          },
+          {
+            "step_number": 6,
+            "action": "navigate",
+            "locator_strategy": null,
+            "selector_value": null,
+            "role_name": null,
+            "input_value": "https://s4srv25.nodomain.com:44325/sap/bc/ui2/flp?sap-client=100&sap-language=EN#OutboundDelivery-createInWebGUI?sap-ui-tech-hint=GUI",
+            "expected_value": null,
+            "description": "Navigate to https://s4srv25.nodomain.com:44325/sap/bc/ui2/flp?sap-client=100&sap-language=EN#OutboundDelivery-createInWebGUI?sap-ui-tech-hint=GUI"
+          },
+          {
+            "step_number": 7,
+            "action": "fill",
+            "locator_strategy": "role",
+            "selector_value": "Shipping Point Required",
+            "role_name": "textbox",
+            "input_value": "BEV8",
+            "expected_value": null,
+            "description": "Enter 'BEV8' into Shipping Point Required"
+          },
+          {
+            "step_number": 8,
+            "action": "fill",
+            "locator_strategy": "role",
+            "selector_value": "Order Required",
+            "role_name": "textbox",
+            "input_value": "1023",
+            "expected_value": null,
+            "description": "Enter '1023' into Order Required"
+          },
+          {
+            "step_number": 9,
+            "action": "fill",
+            "locator_strategy": "role",
+            "selector_value": "Order Required",
+            "role_name": "textbox",
+            "input_value": "Enter",
+            "expected_value": null,
+            "description": "Press 'Enter' into Order Required"
+          },
+          {
+            "step_number": 10,
+            "action": "fill",
+            "locator_strategy": "role",
+            "selector_value": "Shipping Point Required",
+            "role_name": "textbox",
+            "input_value": "Enter",
+            "expected_value": null,
+            "description": "Press 'Enter' into Shipping Point Required"
+          },
+          {
+            "step_number": 11,
+            "action": "click",
+            "locator_strategy": "role",
+            "selector_value": "1023",
+            "role_name": "gridcell",
+            "input_value": null,
+            "expected_value": null,
+            "description": "Click 1023"
+          },
+          {
+            "step_number": 12,
+            "action": "click",
+            "locator_strategy": "role",
+            "selector_value": "Back",
+            "role_name": "button",
+            "input_value": null,
+            "expected_value": null,
+            "description": "Click Back"
+          },
+          {
+            "step_number": 13,
+            "action": "click",
+            "locator_strategy": "role",
+            "selector_value": "Back",
+            "role_name": "button",
+            "input_value": null,
+            "expected_value": null,
+            "description": "Click Back"
+          },
+          {
+            "step_number": 14,
+            "action": "fill",
+            "locator_strategy": "role",
+            "selector_value": "Order Required",
+            "role_name": "textbox",
+            "input_value": "1022",
+            "expected_value": null,
+            "description": "Enter '1022' into Order Required"
+          },
+          {
+            "step_number": 15,
+            "action": "fill",
+            "locator_strategy": "role",
+            "selector_value": "Order Required",
+            "role_name": "textbox",
+            "input_value": "Enter",
+            "expected_value": null,
+            "description": "Press 'Enter' into Order Required"
+          },
+          {
+            "step_number": 16,
+            "action": "click",
+            "locator_strategy": "role",
+            "selector_value": "Picking",
+            "role_name": "tab",
+            "input_value": null,
+            "expected_value": null,
+            "description": "Click Picking"
+          },
+          {
+            "step_number": 17,
+            "action": "click",
+            "locator_strategy": "css",
+            "selector_value": "[id=\"M0\\:46\\:2\\:3B257\\:2\\[1\\,4\\]_c\"]",
+            "role_name": null,
+            "input_value": null,
+            "expected_value": null,
+            "description": "Click [id=\"M0\\:46\\:2\\:3B257\\:2\\[1\\,4\\]_c\"]"
+          },
+          {
+            "step_number": 18,
+            "action": "fill",
+            "locator_strategy": "text",
+            "selector_value": "All Items",
+            "role_name": null,
+            "input_value": "6020",
+            "expected_value": null,
+            "description": "Enter '6020' into All Items"
+          },
+          {
+            "step_number": 19,
+            "action": "click",
+            "locator_strategy": "css",
+            "selector_value": "[id=\"M0\\:46\\:2\\:3B257\\:2\\[1\\,8\\]_c\"]",
+            "role_name": null,
+            "input_value": null,
+            "expected_value": null,
+            "description": "Click [id=\"M0\\:46\\:2\\:3B257\\:2\\[1\\,8\\]_c\"]"
+          },
+          {
+            "step_number": 20,
+            "action": "fill",
+            "locator_strategy": "role",
+            "selector_value": "All Items",
+            "role_name": "grid",
+            "input_value": "1",
+            "expected_value": null,
+            "description": "Enter '1' into All Items"
+          },
+          {
+            "step_number": 21,
+            "action": "click",
+            "locator_strategy": "role",
+            "selector_value": "Post Goods Issue",
+            "role_name": "button",
+            "input_value": null,
+            "expected_value": null,
+            "description": "Click Post Goods Issue"
+          },
+          {
+            "step_number": 22,
+            "action": "click",
+            "locator_strategy": "text",
+            "selector_value": "Outbound Delivery 80000542 saved, material document 4900000927 created",
+            "role_name": null,
+            "input_value": null,
+            "expected_value": null,
+            "description": "Click Outbound Delivery 80000542 saved, material document 4900000927 created"
+          },
+          {
+            "step_number": 23,
+            "action": "click",
+            "locator_strategy": "text",
+            "selector_value": "Outbound Delivery 80000542 saved, material document 4900000927 createdContinue",
+            "role_name": null,
+            "input_value": null,
+            "expected_value": null,
+            "description": "Click Outbound Delivery 80000542 saved, material document 4900000927 createdContinue"
+          }
+        ],
+        "expected_result": "Recorded sequence completes without browser error",
+        "priority": "Medium",
+        "group": "Recorded",
+        "tags": [
+          "recorded",
+          "browser"
+        ]
+      },
+      {
+        "id": "TC-03",
+        "requirement_key": "REC-01",
+        "source_ac_id": "AC-04",
+        "title": "Create Billing Document",
+        "objective": "Recorded flow for AC-04 ([TC-03] 📁 Recorded Create Billing Document — 9 steps): enter Outbound Delivery number (80000542) into Documents to Be Processed, press Enter, click Back, and click Save Emphasized",
+        "category": "positive",
+        "preconditions": [],
+        "test_data": {},
+        "steps": [
+          {
+            "step_number": 1,
+            "action": "navigate",
+            "locator_strategy": null,
+            "selector_value": null,
+            "role_name": null,
+            "input_value": "https://s4srv25.nodomain.com:44325/sap/bc/ui2/flp?sap-client=100&sap-language=EN#Launchpad-openFLPPage?pageId=SAP_CRM_PG_SERVICE_PROCESSING&spaceId=SAP_CRM_SP_SERVICE",
+            "expected_value": null,
+            "description": "Navigate to https://s4srv25.nodomain.com:44325/sap/bc/ui2/flp?sap-client=100&sap-language=EN#Launchpad-openFLPPage?pageId=SAP_CRM_PG_SERVICE_PROCESSING&spaceId=SAP_CRM_SP_SERVICE"
+          },
+          {
+            "step_number": 2,
+            "action": "fill",
+            "locator_strategy": "role",
+            "selector_value": "User",
+            "role_name": "textbox",
+            "input_value": "MYRAR1",
+            "expected_value": null,
+            "description": "Enter 'MYRAR1' into User"
+          },
+          {
+            "step_number": 3,
+            "action": "fill",
+            "locator_strategy": "role",
+            "selector_value": "Password",
+            "role_name": "textbox",
+            "input_value": "Pass23#$",
+            "expected_value": null,
+            "description": "Enter 'Pass23#$' into Password"
+          },
+          {
+            "step_number": 4,
+            "action": "click",
+            "locator_strategy": "role",
+            "selector_value": "Log On",
+            "role_name": "button",
+            "input_value": null,
+            "expected_value": null,
+            "description": "Click Log On"
+          },
+          {
+            "step_number": 5,
+            "action": "navigate",
+            "locator_strategy": null,
+            "selector_value": null,
+            "role_name": null,
+            "input_value": "https://s4srv25.nodomain.com:44325/sap/bc/ui2/flp?sap-client=100&sap-language=EN#BillingDocument-createBillingDocuments?sap-ui-tech-hint=GUI",
+            "expected_value": null,
+            "description": "Navigate to https://s4srv25.nodomain.com:44325/sap/bc/ui2/flp?sap-client=100&sap-language=EN#BillingDocument-createBillingDocuments?sap-ui-tech-hint=GUI"
+          },
+          {
+            "step_number": 6,
+            "action": "fill",
+            "locator_strategy": "role",
+            "selector_value": "Documents to Be Processed",
+            "role_name": "grid",
+            "input_value": "80000542",
+            "expected_value": null,
+            "description": "Enter '80000542' into Documents to Be Processed"
+          },
+          {
+            "step_number": 7,
+            "action": "fill",
+            "locator_strategy": "role",
+            "selector_value": "Documents to Be Processed",
+            "role_name": "grid",
+            "input_value": "Enter",
+            "expected_value": null,
+            "description": "Press 'Enter' into Documents to Be Processed"
+          },
+          {
+            "step_number": 8,
+            "action": "click",
+            "locator_strategy": "role",
+            "selector_value": "Back",
+            "role_name": "button",
+            "input_value": null,
+            "expected_value": null,
+            "description": "Click Back"
+          },
+          {
+            "step_number": 9,
+            "action": "click",
+            "locator_strategy": "role",
+            "selector_value": "Save  Emphasized",
+            "role_name": "button",
+            "input_value": null,
+            "expected_value": null,
+            "description": "Click Save  Emphasized"
+          }
+        ],
+        "expected_result": "Recorded sequence completes without browser error",
+        "priority": "Medium",
+        "group": "Recorded",
+        "tags": [
+          "recorded",
+          "browser"
+        ]
+      }
+    ]
+  }
+}

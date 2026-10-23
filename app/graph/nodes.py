@@ -163,7 +163,36 @@ class WorkflowNodes:
                 )
                 ac_idx += 1
 
-        # 2. Standard Ticket parsing (Explicit AC headers or bullet points)
+        # 2. Block-level Acceptance Criteria parsing (e.g. AC-01: ... AC-02: ... AC -03 ... AC -04 ...)
+        if not ac_list:
+            ac_blocks = re.findall(
+                r"(?:^|\n)\s*(?:[-*#]+\s*)?(?:\*\*|\[)*\s*(AC[\s\-_–—:]*\d+\b.*?)(?=(?:\n\s*(?:[-*#]+\s*)?(?:\*\*|\[)*\s*AC[\s\-_–—:]*\d+(?:\b|[:.\s(*\]]))|\Z)",
+                text,
+                re.DOTALL | re.IGNORECASE,
+            )
+            if ac_blocks:
+                ac_idx = 1
+                for blk in ac_blocks:
+                    clean_text = blk.strip()
+                    # Normalize leading "AC -03" / "AC - 03" header prefix to "AC-03:"
+                    clean_text = re.sub(
+                        r"^AC[\s\-_–—:]*0*(\d+)\s*[\]:.\-–—]*\s*",
+                        lambda m: f"AC-{int(m.group(1)):02d}: ",
+                        clean_text,
+                        count=1,
+                        flags=re.IGNORECASE,
+                    )
+                    if len(clean_text) > 5:
+                        ac_list.append(
+                            AcceptanceCriterion(
+                                id=f"AC-{ac_idx:02d}",
+                                text=clean_text,
+                                type=RequirementType.FUNCTIONAL,
+                            )
+                        )
+                        ac_idx += 1
+
+        # 3. Standard Ticket parsing (Explicit AC headers or bullet points)
         if not ac_list:
             lines = [line.strip() for line in text.splitlines() if line.strip()]
             ac_idx = 1

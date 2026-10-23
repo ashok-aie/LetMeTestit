@@ -14,6 +14,30 @@ from app.config import settings
 from app.agents.llm_client import OllamaClient, LLMResponse
 from app.models.requirements import JiraRequirement, AcceptanceCriterion
 from app.models.test_suite import TestSuite, TestCase, TestStep, ActionType, LocatorStrategy, TestCategory
+from app.flows.sap_flows import (
+    extract_sap_quotation_parameters,
+    extract_outbound_delivery_parameters,
+    extract_billing_document_parameters,
+    build_sap_login_steps,
+    build_sap_logoff_steps,
+    build_service_quotation_steps,
+    build_revenue_contract_steps,
+    build_outbound_delivery_steps,
+    build_billing_document_steps,
+    build_monolithic_rar_steps,
+    build_evidence_capture_steps,
+    build_bundle_validation_steps,
+    build_mandatory_validation_steps,
+    build_item_entry_steps,
+    build_header_creation_steps,
+    build_release_accept_steps,
+    build_pricing_condition_steps,
+    build_duration_dates_steps,
+    build_sap_quotation_test_data,
+    DEFAULT_MRC_URL,
+    DEFAULT_OUTBOUND_DELIVERY_URL,
+    DEFAULT_BILLING_DOC_URL,
+)
 from app.test_design.prompts import (
     SYSTEM_TEST_DESIGNER_PROMPT,
     format_requirement_prompt,
@@ -72,11 +96,15 @@ class TestDesigner:
         Returns:
             Validated TestSuite model with SHA-256 hash.
         """
-        base_url = target_base_url or settings.demo_app_url
+        req_corpus_check = f"{requirement.summary} {requirement.description_text}".lower()
+        is_sap_req = any(k in req_corpus_check for k in ["sap", "fiori", "quotation", "service quotation", "zqds", "rar", "manage revenue contracts", "contract", "obligation", "hospital"])
+        default_url = settings.sap_fiori_url if is_sap_req else settings.demo_app_url
+        base_url = target_base_url or default_url
 
-        # Incremental per-AC generation when progress_callback is provided
-        if progress_callback is not None and requirement.acceptance_criteria:
-            return self._generate_suite_incremental(requirement, base_url, progress_callback)
+        # Incremental per-AC generation when progress_callback is provided or when multiple ACs exist
+        if progress_callback is not None or (requirement.acceptance_criteria and len(requirement.acceptance_criteria) >= 2):
+            cb = progress_callback if progress_callback is not None else (lambda c, t, m: None)
+            return self._generate_suite_incremental(requirement, base_url, cb)
         user_prompt = format_requirement_prompt(requirement, target_base_url=base_url)
 
         current_prompt = user_prompt
@@ -151,7 +179,28 @@ class TestDesigner:
         Synthesizes test cases incrementally for each Acceptance Criterion,
         reporting live progress to the caller.
         """
-        acs = requirement.acceptance_criteria or [AcceptanceCriterion(id="AC-01", text=requirement.summary.strip())]
+        raw_acs = requirement.acceptance_criteria or [AcceptanceCriterion(id="AC-01", text=requirement.summary.strip())]
+        # Defensive split: if any AC block still contains embedded line-start "AC -03" / "AC-04" sections, split them out
+        acs: List[AcceptanceCriterion] = []
+        for raw_ac in raw_acs:
+            sub_blocks = re.findall(
+                r"(?:^|\n)\s*(?:[-*#]+\s*)?(?:\*\*|\[)*\s*(AC[\s\-_–—:]*\d+\b.*?)(?=(?:\n\s*(?:[-*#]+\s*)?(?:\*\*|\[)*\s*AC[\s\-_–—:]*\d+(?:\b|[:.\s(*\]]))|\Z)",
+                raw_ac.text or "",
+                re.DOTALL | re.IGNORECASE,
+            )
+            if len(sub_blocks) > 1:
+                for sb in sub_blocks:
+                    clean_sb = re.sub(
+                        r"^AC[\s\-_–—:]*0*(\d+)\s*[\]:.\-–—]*\s*",
+                        lambda m: f"AC-{int(m.group(1)):02d}: ",
+                        sb.strip(),
+                        count=1,
+                        flags=re.IGNORECASE,
+                    )
+                    acs.append(AcceptanceCriterion(id=f"AC-{len(acs) + 1:02d}", text=clean_sb, type=raw_ac.type))
+            else:
+                acs.append(AcceptanceCriterion(id=f"AC-{len(acs) + 1:02d}", text=raw_ac.text, type=raw_ac.type))
+        requirement.acceptance_criteria = acs
         total = len(acs)
         test_cases: List[TestCase] = []
 
@@ -185,284 +234,105 @@ class TestDesigner:
             except Exception as err:
                 logger.warning("Single AC generation failed for %s: %s. Using resilient fallback.", ac.id, err)
                 ac_lower = ac.text.lower()
-                req_corpus = (requirement.summary.lower() + " " + ac_lower)
-                is_demo_app = ("127.0.0.1" in base_url or "localhost" in base_url or ":8000" in base_url)
-                target_url = base_url if is_demo_app else (base_url if ("nodomain.com" in base_url or "44325" in base_url) else settings.sap_fiori_url)
-                is_sap = not is_demo_app and (
-                    "sap" in target_url.lower()
-                    or "44325" in target_url
-                    or "nodomain" in target_url
+                req_corpus = f"{requirement.summary.lower()} {requirement.description_text.lower()} {ac_lower}"
+                is_sap = (
+                    "nodomain.com" in base_url
+                    or "44325" in base_url
                     or any(k in req_corpus for k in ["sap", "fiori", "quotation", "service quotation", "zqds", "rar", "hospital"])
                 )
+                is_demo_app = not is_sap and ("127.0.0.1" in base_url or "localhost" in base_url or ":8000" in base_url)
+                target_url = settings.sap_fiori_url if is_sap else base_url
 
-                # Parameter extraction from requirement context
-                combined_corpus = f"{requirement.summary} {requirement.description_text} {ac.text}"
-                desc_val = "RAR Test"
-                m_desc = re.search(r"description\s*(?:as|is|:)?\s*['\"]?([a-zA-Z0-9_\- ]+?)['\"]?(?:\n|\r|\d+\s+|sold-to|\s+and|\s+with|\.|$)", combined_corpus, re.IGNORECASE)
-                if m_desc and m_desc.group(1).strip():
-                    desc_val = m_desc.group(1).strip()
-
-                soldto_val = "Brugmann Hospital"
-                m_soldto = re.search(r"sold-to\s*(?:party)?\s*(?:as|is|:)?\s*['\"]?([^'\"\n\r,;]+?)['\"]?(?:\n|\r|;|\d+\s+|\s+and|\s+with|\s+press|\.|$)", combined_corpus, re.IGNORECASE)
-                if m_soldto and m_soldto.group(1).strip():
-                    soldto_val = m_soldto.group(1).strip()
-
-                prod_val = "45157510101"
-                m_prod = re.search(r"(?:product\s*id|product)\s*(?:as|is|:)?\s*['\"]?([0-9]{5,})['\"]?", combined_corpus, re.IGNORECASE)
-                if m_prod and m_prod.group(1).strip():
-                    prod_val = m_prod.group(1).strip()
-
-                qty_val = "1"
-                m_qty = re.search(r"quantity.*?(?:is|as|:|enter|\b)\s*([0-9]+)", combined_corpus, re.IGNORECASE)
-                if m_qty:
-                    qty_val = m_qty.group(1).strip()
-                else:
-                    m_qty2 = re.search(r"(\d+)\s*quantity", combined_corpus, re.IGNORECASE)
-                    if m_qty2:
-                        qty_val = m_qty2.group(1).strip()
-
-                # Multi-product extraction: supports 1 or more line items
-                raw_prod_ids = re.findall(r"(?:product\s*(?:id)?\s*(?:as|is|:)?\s*['\"]?([0-9]{5,})['\"]?|\b(4515[0-9]{7})\b)", combined_corpus, re.IGNORECASE)
-                extracted_prods = []
-                for p_tup in raw_prod_ids:
-                    p = (p_tup[0] or p_tup[1]).strip()
-                    if p and p not in extracted_prods and p not in ("8000000631", "44325"):
-                        extracted_prods.append(p)
-
-                if not extracted_prods:
-                    extracted_prods = [prod_val]
-
-                duration_val = "1"
-                m_dur = re.search(r"(?:duration\s*(?:as|is|:)?\s*['\"]?(\d+)['\"]?|term\s*(?:of\s*quotation)?\s*.*?(\d+))", combined_corpus, re.IGNORECASE)
-                if m_dur:
-                    duration_val = (m_dur.group(1) or m_dur.group(2)).strip()
-
-                time_unit_val = "Year"
-                m_tu = re.search(r"time\s*unit\s*(?:as|is|:)?\s*['\"]?([a-zA-Z]+)['\"]?", combined_corpus, re.IGNORECASE)
-                if m_tu:
-                    raw_tu = m_tu.group(1).strip()
-                    time_unit_val = "Month" if "month" in raw_tu.lower() else ("Day" if "day" in raw_tu.lower() else "Year")
-
-                pricing_val = "ZTAF"
-                m_price = re.search(r"(?:pricing\s*element|condition\s*type|pricing)\s*(?:as|is|:)?\s*['\"]?([a-zA-Z0-9_\-]+)['\"]?", combined_corpus, re.IGNORECASE)
-                if m_price and m_price.group(1).strip():
-                    pricing_val = m_price.group(1).strip()
-
-                ttype_val = "ZQDS"
-                m_ttype = re.search(r"(?:transaction\s*type)\s*(?:as|is|:)?\s*['\"]?([a-zA-Z0-9_\-]+)['\"]?", combined_corpus, re.IGNORECASE)
-                if m_ttype and m_ttype.group(1).strip():
-                    ttype_val = m_ttype.group(1).strip()
+                # Parameter extraction from centralized flow registry
+                params = extract_sap_quotation_parameters(requirement, ac)
+                desc_val = params["desc_val"]
+                soldto_val = params["soldto_val"]
+                prod_val = params["prod_val"]
+                qty_val = params["qty_val"]
+                duration_val = params["duration_val"]
+                time_unit_val = params["time_unit_val"]
+                pricing_val = params["pricing_val"]
+                ttype_val = params["ttype_val"]
+                extracted_items = params["extracted_items"]
 
                 is_neg = any(w in ac_lower for w in ["invalid", "without", "missing", "error", "exceed", "blank", "cannot", "fail", "reject", "negative", "boundary", "zero", "limit"])
 
                 if is_sap:
-                    # Shared base steps: SAP Logon, Create Quotation, Header fields, Dates
-                    base_quotation_steps = [
-                        TestStep(step_number=1, action=ActionType.NAVIGATE, input_value=target_url, description="Open SAP Fiori Logon screen"),
-                        TestStep(step_number=2, action=ActionType.FILL, locator_strategy=LocatorStrategy.CSS, selector_value="#USERNAME_FIELD-inner", input_value=(settings.sap_username or "MYRAR1").strip(), description="Enter SAP username"),
-                        TestStep(step_number=3, action=ActionType.FILL, locator_strategy=LocatorStrategy.CSS, selector_value="#PASSWORD_FIELD-inner", input_value=(settings.sap_password or "Pass23#$").strip(), description="Enter SAP password"),
-                        TestStep(step_number=4, action=ActionType.CLICK, locator_strategy=LocatorStrategy.CSS, selector_value="#LOGIN_LINK", description="Click Log On button"),
-                        TestStep(step_number=5, action=ActionType.ASSERT_TEXT, locator_strategy=LocatorStrategy.CSS, selector_value="body", expected_value="Home", description="Assert SAP Fiori Launchpad loaded"),
-                        TestStep(step_number=6, action=ActionType.CLICK, locator_strategy=LocatorStrategy.TEXT, selector_value="Manage Service Quotations", description="Click Manage Service Quotations tile"),
-                        TestStep(step_number=7, action=ActionType.CLICK, locator_strategy=LocatorStrategy.CSS, selector_value="button:has-text('New Create'), button:has-text('Create'), [title*='Create'], #btnCreate", description="Click Create button on Service Quotations worklist"),
-                        TestStep(step_number=8, action=ActionType.CLICK, locator_strategy=LocatorStrategy.TEXT, selector_value=ttype_val, description=f"Select Transaction Type {ttype_val} from popup"),
-                        TestStep(step_number=9, action=ActionType.FILL, locator_strategy=LocatorStrategy.ROLE, role_name="textbox", selector_value="Description:", input_value=desc_val, description=f"Enter Quotation Description '{desc_val}'"),
-                        TestStep(step_number=10, action=ActionType.FILL, locator_strategy=LocatorStrategy.ROLE, role_name="textbox", selector_value="Sold-To Party:", input_value=soldto_val, description=f"Enter Sold-to Party customer '{soldto_val}'"),
-                        TestStep(step_number=11, action=ActionType.FILL, locator_strategy=LocatorStrategy.ROLE, role_name="textbox", selector_value="Sold-To Party:", input_value="Enter", description="Press Enter to commit Sold-to Party"),
-                        TestStep(step_number=12, action=ActionType.CLICK, locator_strategy=LocatorStrategy.ROLE, role_name="option", selector_value="Dates", description="Open Dates tab"),
-                        TestStep(step_number=13, action=ActionType.FILL, locator_strategy=LocatorStrategy.CSS, selector_value="#C16_W64_V65_DatesTable_bottom_div tr:has-text('Term of Quotation') input, #C16_W64_V65_DatesTable_bottom_div tr:has-text('Term of Quotation') [role='textbox']", input_value=duration_val, description=f"Enter Term of Quotation Duration as {duration_val}"),
-                        TestStep(step_number=14, action=ActionType.CLICK, locator_strategy=LocatorStrategy.CSS, selector_value="[id='C16_W64_V65_btdate_table[4].time_unit-btn']", description="Open Time Unit dropdown"),
-                        TestStep(step_number=15, action=ActionType.CLICK, locator_strategy=LocatorStrategy.ROLE, role_name="link", selector_value=time_unit_val, description=f"Select Time Unit {time_unit_val}"),
-                        TestStep(step_number=16, action=ActionType.CLICK, locator_strategy=LocatorStrategy.ROLE, role_name="option", selector_value="Items", description="Open Items tab"),
-                    ]
+                    is_outbound_delivery_ac = any(k in ac_lower for k in ["outbound delivery", "post goods issue", "picking"]) and not any(k in ac_lower for k in ["start new quotation", "term of quotation"])
+                    is_billing_doc_ac = any(k in ac_lower for k in ["create billing document", "billing document", "fully invoiced", "billing number"]) and not any(k in ac_lower for k in ["outbound delivery", "post goods issue", "start new quotation"])
+                    is_mrc_ac = any(k in ac_lower for k in ["manage revenue contracts", "revenue contract", "rar contract", "operational document"]) and not any(k in ac_lower for k in ["quotation of transaction type", "term of", "containing 5 line items", "start new quotation", "sold-to"])
+                    has_downstream_contract_ac = any(any(k in o_ac.text.lower() for k in ["manage revenue contracts", "revenue contract", "rar contract", "operational document", "outbound delivery", "create billing document"]) for o_ac in acs if o_ac.id != ac.id)
 
-                    # Multi-product dynamic line item steps: 8 steps per product ID
-                    cur_snum = 17
-                    item_loop_steps = []
-                    for idx, p_id in enumerate(extracted_prods, start=1):
-                        item_loop_steps.extend([
-                            TestStep(step_number=cur_snum, action=ActionType.FILL, locator_strategy=LocatorStrategy.CSS, selector_value=f"[id*='btadmini_table[{idx}].ordered_prod'], [id*='ordered_prod'], [id='C13_W49_V50_V54_btadmini_table[{idx}].ordered_prod']", input_value=p_id, description=f"Enter Product ID {p_id} for item {idx}"),
-                            TestStep(step_number=cur_snum + 1, action=ActionType.FILL, locator_strategy=LocatorStrategy.CSS, selector_value=f"[id*='btadmini_table[{idx}].quantity'], [id*='quantity'], [id='C13_W49_V50_V54_btadmini_table[{idx}].quantity']", input_value=qty_val, description=f"Enter Quantity {qty_val} for item {idx}"),
-                            TestStep(step_number=cur_snum + 2, action=ActionType.FILL, locator_strategy=LocatorStrategy.CSS, selector_value=f"[id*='btadmini_table[{idx}].quantity'], [id*='quantity'], [id='C13_W49_V50_V54_btadmini_table[{idx}].quantity']", input_value="Enter", description=f"Press Enter to commit line item {idx}"),
-                            TestStep(step_number=cur_snum + 3, action=ActionType.CLICK, locator_strategy=LocatorStrategy.TEXT, selector_value="VELLYS SATELLITE STATION SKU1", description=f"Click Product Name to view item {idx} details"),
-                            TestStep(step_number=cur_snum + 4, action=ActionType.CLICK, locator_strategy=LocatorStrategy.ROLE, role_name="option", selector_value="Price Details", description=f"Open Price Details tab for item {idx}"),
-                            TestStep(step_number=cur_snum + 5, action=ActionType.CLICK, locator_strategy=LocatorStrategy.ROLE, role_name="button", selector_value="Add", description=f"Click Add Pricing Element button for item {idx}"),
-                            TestStep(step_number=cur_snum + 6, action=ActionType.CLICK, locator_strategy=LocatorStrategy.TEXT, selector_value=pricing_val, description=f"Select condition type {pricing_val} from popup"),
-                            TestStep(step_number=cur_snum + 7, action=ActionType.CLICK, locator_strategy=LocatorStrategy.ROLE, role_name="button", selector_value="Back", description=f"Click Back to return to quotation"),
-                        ])
-                        cur_snum += 8
-
-                    # Lifecycle status: Save, Edit, Released, Save, Accept
-                    lifecycle_steps = [
-                        TestStep(step_number=cur_snum, action=ActionType.CLICK, locator_strategy=LocatorStrategy.ROLE, role_name="button", selector_value="Save (Ctrl+S)", description="Click Save button to persist quotation"),
-                        TestStep(step_number=cur_snum + 1, action=ActionType.CLICK, locator_strategy=LocatorStrategy.CSS, selector_value="button:has-text('Edit'), a:has-text('Edit'), [title*='Edit'], [aria-label*='Edit']", description="Click Edit button"),
-                        TestStep(step_number=cur_snum + 2, action=ActionType.CLICK, locator_strategy=LocatorStrategy.CSS, selector_value="#C9_W36_V39_V40_btadminh_lcstatus-btn, [id*='btadminh_lcstatus-btn']", description="Open Lifecycle Status dropdown"),
-                        TestStep(step_number=cur_snum + 3, action=ActionType.CLICK, locator_strategy=LocatorStrategy.ROLE, role_name="link", selector_value="Released", description="Change status to Released"),
-                        TestStep(step_number=cur_snum + 4, action=ActionType.CLICK, locator_strategy=LocatorStrategy.ROLE, role_name="button", selector_value="Save (Ctrl+S)", description="Click Save button to persist Released status"),
-                        TestStep(step_number=cur_snum + 5, action=ActionType.CLICK, locator_strategy=LocatorStrategy.CSS, selector_value="button:has-text('Accept'), [title*='Accept'], a:has-text('Accept'), [role='menuitem']:has-text('Accept')", description="Click Accept quotation button"),
-                    ]
-                    cur_snum += 6
-
-                    # SAP-Native Fallback Branches
-                    if any(k in req_corpus for k in ["contract", "obligation", "pob", "operational document", "manage contracts", "accounting validation"]):
-                        # Complete SAP RAR End-to-End Fallback (KAN-25): Capture Transaction History + Direct Navigation to Manage Revenue Contracts
-                        mrc_url = "https://s4srv25.nodomain.com:44325/sap/bc/ui2/flp?sap-client=100&sap-language=EN#RevenueAccountingContract-manageContract&/?sap-iapp-state--history=TAS60ZN0APGEXK9SB8U7CWP0998E9ZTQEZ7DBW9FR"
-                        rar_downstream_steps = [
-                            TestStep(step_number=cur_snum, action=ActionType.CLICK, locator_strategy=LocatorStrategy.TEXT, selector_value="Transaction History", description="Click Transaction History tab"),
-                            TestStep(step_number=cur_snum + 1, action=ActionType.ASSERT_TEXT, locator_strategy=LocatorStrategy.CSS, selector_value="body", expected_value="Transaction", description="Capture Operational Document / Transaction ID as test evidence"),
-                            TestStep(step_number=cur_snum + 2, action=ActionType.NAVIGATE, input_value=mrc_url, description="Navigate directly to Manage Revenue Contracts application"),
-                            TestStep(step_number=cur_snum + 3, action=ActionType.CLICK, locator_strategy=LocatorStrategy.CSS, selector_value="[id*='RevenueAccountingContract-vhi'], [id*='RevenueContract-vhi'], div:has(> label:has-text('Revenue Contract')) .sapMInputValHelpInner, label:has-text('Revenue Contract') ~ div .sapMInputValHelpInner, [id='fin.rar.manage.contract::sap.suite.ui.generic.template.ListReport.view.ListReport::C_RAContrWithPostedBalanceTP--listReportFilter-filterItemControl_BASIC-RevenueAccountingContract-vhi']", description="Click Revenue Accounting Contract Value Help"),
-                            TestStep(step_number=cur_snum + 4, action=ActionType.FILL, locator_strategy=LocatorStrategy.ROLE, role_name="textbox", selector_value="Operational Document:", input_value="${OPERATIONAL_DOCUMENT}", description="Enter captured Operational Document into Operational Document:"),
-                            TestStep(step_number=cur_snum + 5, action=ActionType.FILL, locator_strategy=LocatorStrategy.ROLE, role_name="textbox", selector_value="Operational Document:", input_value="Enter", description="Press 'Enter' into Operational Document:"),
-                            TestStep(step_number=cur_snum + 6, action=ActionType.CLICK, locator_strategy=LocatorStrategy.TEXT, selector_value="Selection column", description="Click Selection column"),
-                            TestStep(step_number=cur_snum + 7, action=ActionType.CLICK, locator_strategy=LocatorStrategy.ROLE, role_name="dialog", selector_value="Revenue Contract", description="Click Revenue Contract dialog"),
-                            TestStep(step_number=cur_snum + 8, action=ActionType.CLICK, locator_strategy=LocatorStrategy.ROLE, role_name="button", selector_value="OK", description="Click OK"),
-                            TestStep(step_number=cur_snum + 9, action=ActionType.CLICK, locator_strategy=LocatorStrategy.ROLE, role_name="button", selector_value="Go", description="Click Go"),
-                            TestStep(step_number=cur_snum + 10, action=ActionType.ASSERT_TEXT, locator_strategy=LocatorStrategy.CSS, selector_value="body", expected_value="Revenue Contract", description="Verify Revenue Contract loaded"),
-                            TestStep(step_number=cur_snum + 11, action=ActionType.CLICK, locator_strategy=LocatorStrategy.ROLE, role_name="button", selector_value="Avatar", description="Click User Profile Avatar Menu"),
-                            TestStep(step_number=cur_snum + 12, action=ActionType.CLICK, locator_strategy=LocatorStrategy.ROLE, role_name="button", selector_value="Sign Out", description="Click Sign Out"),
-                            TestStep(step_number=cur_snum + 13, action=ActionType.CLICK, locator_strategy=LocatorStrategy.ROLE, role_name="button", selector_value="OK", description="Confirm Sign Out dialog"),
-                            TestStep(step_number=cur_snum + 14, action=ActionType.ASSERT_TEXT, locator_strategy=LocatorStrategy.CSS, selector_value="body", expected_value="logged off", description="Verify returned to Logoff screen"),
-                        ]
-                        steps = base_quotation_steps + item_loop_steps + lifecycle_steps + rar_downstream_steps
+                    # SAP-Native Fallback Branches via Centralized Flow Registry
+                    if is_outbound_delivery_ac:
+                        steps = build_outbound_delivery_steps(
+                            target_url=target_url,
+                            outbound_delivery_url=DEFAULT_OUTBOUND_DELIVERY_URL,
+                            include_logoff=True,
+                        )
+                    elif is_billing_doc_ac:
+                        steps = build_billing_document_steps(
+                            target_url=target_url,
+                            billing_doc_url=DEFAULT_BILLING_DOC_URL,
+                            include_logoff=True,
+                        )
+                    elif is_mrc_ac and total >= 2:
+                        steps = build_revenue_contract_steps(
+                            target_url=target_url,
+                            operational_doc="${OPERATIONAL_DOCUMENT}",
+                            mrc_url=DEFAULT_MRC_URL,
+                            include_logoff=True,
+                        )
+                    elif total >= 2 and has_downstream_contract_ac:
+                        steps = build_service_quotation_steps(
+                            params=params,
+                            target_url=target_url,
+                            capture_transaction_history=True,
+                            include_logoff=True,
+                        )
+                    elif any(k in req_corpus for k in ["contract", "obligation", "pob", "operational document", "manage contracts", "accounting validation"]):
+                        steps = build_monolithic_rar_steps(
+                            params=params,
+                            target_url=target_url,
+                            operational_doc="${OPERATIONAL_DOCUMENT}",
+                            mrc_url=DEFAULT_MRC_URL,
+                            include_logoff=True,
+                        )
                     elif any(k in ac_lower for k in ["end-to-end", "e2e", "procedural flow", "business flow", "complete flow", "lifecycle"]) or (
                         any(k in req_corpus for k in ["quotation", "service quotation", "zqds"]) and
                         any(k in req_corpus for k in ["item", "product", "45157510101"]) and
                         any(k in req_corpus for k in ["dates", "term", "duration"]) and
                         any(k in req_corpus for k in ["price", "ztaf", "release", "accept"])
                     ):
-                        # Complete SAP Service Quotation End-to-End Fallback (KAN-23)
-                        sq_logout_steps = [
-                            TestStep(step_number=cur_snum, action=ActionType.CLICK, locator_strategy=LocatorStrategy.CSS, selector_value="#userActionsMenuHeaderButton, #meAreaHeaderButton", description="Click User Profile Avatar Menu"),
-                            TestStep(step_number=cur_snum + 1, action=ActionType.CLICK, locator_strategy=LocatorStrategy.CSS, selector_value="button:has-text('Sign Out'), #logoutBtn", description="Click Sign Out"),
-                            TestStep(step_number=cur_snum + 2, action=ActionType.CLICK, locator_strategy=LocatorStrategy.CSS, selector_value="button:has-text('OK'), #logoutConfirm", description="Confirm Sign Out dialog"),
-                            TestStep(step_number=cur_snum + 3, action=ActionType.ASSERT_TEXT, locator_strategy=LocatorStrategy.CSS, selector_value="body", expected_value="logged off", description="Verify returned to Logoff screen"),
-                        ]
-                        steps = base_quotation_steps + item_loop_steps + lifecycle_steps + sq_logout_steps
+                        steps = build_service_quotation_steps(
+                            params=params,
+                            target_url=target_url,
+                            capture_transaction_history=False,
+                            include_logoff=True,
+                        )
                     elif any(k in ac_lower for k in ["evidence", "number", "quotation number", "status", "document", "saved quotation"]) and not any(k in ac_lower for k in ["release", "accept"]):
-                        steps = [
-                            TestStep(step_number=1, action=ActionType.NAVIGATE, input_value=target_url, description="Open SAP Fiori Logon screen"),
-                            TestStep(step_number=2, action=ActionType.FILL, locator_strategy=LocatorStrategy.CSS, selector_value="#USERNAME_FIELD-inner", input_value=(settings.sap_username or "MYRAR1").strip(), description="Enter SAP username"),
-                            TestStep(step_number=3, action=ActionType.FILL, locator_strategy=LocatorStrategy.CSS, selector_value="#PASSWORD_FIELD-inner", input_value=(settings.sap_password or "Pass23#$").strip(), description="Enter SAP password"),
-                            TestStep(step_number=4, action=ActionType.CLICK, locator_strategy=LocatorStrategy.CSS, selector_value="#LOGIN_LINK", description="Click Log On button"),
-                            TestStep(step_number=5, action=ActionType.ASSERT_TEXT, locator_strategy=LocatorStrategy.CSS, selector_value="body", expected_value="Home", description="Assert SAP Fiori Launchpad loaded"),
-                            TestStep(step_number=6, action=ActionType.CLICK, locator_strategy=LocatorStrategy.TEXT, selector_value="Manage Service Quotations", description="Click Manage Service Quotations tile"),
-                            TestStep(step_number=7, action=ActionType.CLICK, locator_strategy=LocatorStrategy.ROLE, role_name="button", selector_value="Save (Ctrl+S)", description="Click Save button to persist quotation"),
-                            TestStep(step_number=8, action=ActionType.ASSERT_TEXT, locator_strategy=LocatorStrategy.CSS, selector_value="body", expected_value="saved", description="Verify quotation saved confirmation in status bar"),
-                            TestStep(step_number=9, action=ActionType.ASSERT_TEXT, locator_strategy=LocatorStrategy.CSS, selector_value="body", expected_value="Quotation", description="Capture saved quotation number and status as test evidence"),
-                            TestStep(step_number=10, action=ActionType.CLICK, locator_strategy=LocatorStrategy.CSS, selector_value="#userActionsMenuHeaderButton, #meAreaHeaderButton", description="Click User Profile Avatar Menu"),
-                            TestStep(step_number=11, action=ActionType.CLICK, locator_strategy=LocatorStrategy.CSS, selector_value="button:has-text('Sign Out'), #logoutBtn", description="Click Sign Out"),
-                            TestStep(step_number=12, action=ActionType.CLICK, locator_strategy=LocatorStrategy.CSS, selector_value="button:has-text('OK'), #logoutConfirm", description="Confirm Sign Out dialog"),
-                            TestStep(step_number=13, action=ActionType.ASSERT_TEXT, locator_strategy=LocatorStrategy.CSS, selector_value="body", expected_value="logged off", description="Verify returned to Logoff screen"),
-                        ]
+                        steps = build_evidence_capture_steps(params=params, target_url=target_url)
                     elif any(k in ac_lower for k in ["bundle", "installation", "warranty", "relationship", "configured"]):
-                        steps = [
-                            TestStep(step_number=1, action=ActionType.NAVIGATE, input_value=target_url, description="Open SAP Fiori Logon screen"),
-                            TestStep(step_number=2, action=ActionType.FILL, locator_strategy=LocatorStrategy.CSS, selector_value="#USERNAME_FIELD-inner", input_value=(settings.sap_username or "MYRAR1").strip(), description="Enter SAP username"),
-                            TestStep(step_number=3, action=ActionType.FILL, locator_strategy=LocatorStrategy.CSS, selector_value="#PASSWORD_FIELD-inner", input_value=(settings.sap_password or "Pass23#$").strip(), description="Enter SAP password"),
-                            TestStep(step_number=4, action=ActionType.CLICK, locator_strategy=LocatorStrategy.CSS, selector_value="#LOGIN_LINK", description="Click Log On button"),
-                            TestStep(step_number=5, action=ActionType.ASSERT_TEXT, locator_strategy=LocatorStrategy.CSS, selector_value="body", expected_value="Home", description="Assert SAP Fiori Launchpad loaded"),
-                            TestStep(step_number=6, action=ActionType.CLICK, locator_strategy=LocatorStrategy.ROLE, role_name="option", selector_value="Items", description="Open Items tab"),
-                            TestStep(step_number=7, action=ActionType.FILL, locator_strategy=LocatorStrategy.CSS, selector_value="[id*='ordered_prod'], input[id*='ordered_prod']", input_value=prod_val, description=f"Enter Product ID {prod_val}"),
-                            TestStep(step_number=8, action=ActionType.FILL, locator_strategy=LocatorStrategy.CSS, selector_value="[id*='ordered_prod'], input[id*='ordered_prod']", input_value="Enter", description="Press Enter to trigger bundle explosion and partner derivations"),
-                            TestStep(step_number=9, action=ActionType.ASSERT_TEXT, locator_strategy=LocatorStrategy.CSS, selector_value="body", expected_value=prod_val, description="Verify main product row visible in Items table"),
-                            TestStep(step_number=10, action=ActionType.ASSERT_TEXT, locator_strategy=LocatorStrategy.CSS, selector_value="body", expected_value="Service", description="Verify configured service, installation, and warranty bundle items present"),
-                            TestStep(step_number=11, action=ActionType.CLICK, locator_strategy=LocatorStrategy.CSS, selector_value="#userActionsMenuHeaderButton, #meAreaHeaderButton", description="Click User Profile Avatar Menu"),
-                            TestStep(step_number=12, action=ActionType.CLICK, locator_strategy=LocatorStrategy.CSS, selector_value="button:has-text('Sign Out'), #logoutBtn", description="Click Sign Out"),
-                            TestStep(step_number=13, action=ActionType.CLICK, locator_strategy=LocatorStrategy.CSS, selector_value="button:has-text('OK'), #logoutConfirm", description="Confirm Sign Out dialog"),
-                            TestStep(step_number=14, action=ActionType.ASSERT_TEXT, locator_strategy=LocatorStrategy.CSS, selector_value="body", expected_value="logged off", description="Verify returned to Logoff screen"),
-                        ]
+                        steps = build_bundle_validation_steps(params=params, target_url=target_url)
                     elif any(k in ac_lower for k in ["required", "mandatory", "validation message", "validation"]):
-                        steps = [
-                            TestStep(step_number=1, action=ActionType.NAVIGATE, input_value=target_url, description="Open SAP Fiori Logon screen"),
-                            TestStep(step_number=2, action=ActionType.FILL, locator_strategy=LocatorStrategy.CSS, selector_value="#USERNAME_FIELD-inner", input_value=(settings.sap_username or "MYRAR1").strip(), description="Enter SAP username"),
-                            TestStep(step_number=3, action=ActionType.FILL, locator_strategy=LocatorStrategy.CSS, selector_value="#PASSWORD_FIELD-inner", input_value=(settings.sap_password or "Pass23#$").strip(), description="Enter SAP password"),
-                            TestStep(step_number=4, action=ActionType.CLICK, locator_strategy=LocatorStrategy.CSS, selector_value="#LOGIN_LINK", description="Click Log On button"),
-                            TestStep(step_number=5, action=ActionType.ASSERT_TEXT, locator_strategy=LocatorStrategy.CSS, selector_value="body", expected_value="Home", description="Assert SAP Fiori Launchpad loaded"),
-                            TestStep(step_number=6, action=ActionType.CLICK, locator_strategy=LocatorStrategy.TEXT, selector_value="Manage Service Quotations", description="Click Manage Service Quotations tile"),
-                            TestStep(step_number=7, action=ActionType.CLICK, locator_strategy=LocatorStrategy.CSS, selector_value="button:has-text('New Create'), button:has-text('Create'), [title*='Create'], #btnCreate", description="Click Create button on Service Quotations worklist"),
-                            TestStep(step_number=8, action=ActionType.CLICK, locator_strategy=LocatorStrategy.TEXT, selector_value=ttype_val, description=f"Select Transaction Type {ttype_val} from popup"),
-                            TestStep(step_number=9, action=ActionType.FILL, locator_strategy=LocatorStrategy.ROLE, role_name="textbox", selector_value="Sold-To Party:", input_value="", description="Leave mandatory Sold-to Party field empty"),
-                            TestStep(step_number=10, action=ActionType.FILL, locator_strategy=LocatorStrategy.ROLE, role_name="textbox", selector_value="Sold-To Party:", input_value="Enter", description="Press Enter to trigger backend validation"),
-                            TestStep(step_number=11, action=ActionType.CLICK, locator_strategy=LocatorStrategy.ROLE, role_name="button", selector_value="Save (Ctrl+S)", description="Attempt Save with missing mandatory field"),
-                            TestStep(step_number=12, action=ActionType.ASSERT_TEXT, locator_strategy=LocatorStrategy.CSS, selector_value="body", expected_value="sold-to", description="Verify mandatory Sold-to Party validation error message is handled correctly"),
-                            TestStep(step_number=13, action=ActionType.CLICK, locator_strategy=LocatorStrategy.CSS, selector_value="#userActionsMenuHeaderButton, #meAreaHeaderButton", description="Click User Profile Avatar Menu"),
-                            TestStep(step_number=14, action=ActionType.CLICK, locator_strategy=LocatorStrategy.CSS, selector_value="button:has-text('Sign Out'), #logoutBtn", description="Click Sign Out"),
-                            TestStep(step_number=15, action=ActionType.CLICK, locator_strategy=LocatorStrategy.CSS, selector_value="button:has-text('OK'), #logoutConfirm", description="Confirm Sign Out dialog"),
-                            TestStep(step_number=16, action=ActionType.ASSERT_TEXT, locator_strategy=LocatorStrategy.CSS, selector_value="body", expected_value="logged off", description="Verify returned to Logoff screen"),
-                        ]
+                        steps = build_mandatory_validation_steps(params=params, target_url=target_url)
                     elif any(k in ac_lower for k in ["item", "product", "quantity", "45157510101"]):
-                        steps = [
-                            TestStep(step_number=1, action=ActionType.NAVIGATE, input_value=target_url, description="Open SAP Fiori Logon screen"),
-                            TestStep(step_number=2, action=ActionType.FILL, locator_strategy=LocatorStrategy.CSS, selector_value="#USERNAME_FIELD-inner", input_value=(settings.sap_username or "MYRAR1").strip(), description="Enter SAP username"),
-                            TestStep(step_number=3, action=ActionType.FILL, locator_strategy=LocatorStrategy.CSS, selector_value="#PASSWORD_FIELD-inner", input_value=(settings.sap_password or "Pass23#$").strip(), description="Enter SAP password"),
-                            TestStep(step_number=4, action=ActionType.CLICK, locator_strategy=LocatorStrategy.CSS, selector_value="#LOGIN_LINK", description="Click Log On button"),
-                            TestStep(step_number=5, action=ActionType.ASSERT_TEXT, locator_strategy=LocatorStrategy.CSS, selector_value="body", expected_value="Home", description="Assert SAP Fiori Launchpad loaded"),
-                            TestStep(step_number=6, action=ActionType.CLICK, locator_strategy=LocatorStrategy.ROLE, role_name="option", selector_value="Items", description="Open Items tab"),
-                            TestStep(step_number=7, action=ActionType.FILL, locator_strategy=LocatorStrategy.CSS, selector_value="[id*='ordered_prod'], input[id*='ordered_prod']", input_value=prod_val, description=f"Enter Product ID {prod_val}"),
-                            TestStep(step_number=8, action=ActionType.FILL, locator_strategy=LocatorStrategy.CSS, selector_value="[id*='quantity'], input[id*='quantity']", input_value=qty_val, description=f"Enter Quantity {qty_val}"),
-                            TestStep(step_number=9, action=ActionType.FILL, locator_strategy=LocatorStrategy.CSS, selector_value="[id*='quantity'], input[id*='quantity']", input_value="Enter", description="Press Enter to commit line item"),
-                            TestStep(step_number=10, action=ActionType.CLICK, locator_strategy=LocatorStrategy.ROLE, role_name="button", selector_value="Save (Ctrl+S)", description="Click Save button to persist quotation line items"),
-                            TestStep(step_number=11, action=ActionType.ASSERT_TEXT, locator_strategy=LocatorStrategy.CSS, selector_value="body", expected_value=prod_val, description=f"Assert main product {prod_val} and quantity {qty_val} saved correctly"),
-                            TestStep(step_number=12, action=ActionType.CLICK, locator_strategy=LocatorStrategy.CSS, selector_value="#userActionsMenuHeaderButton, #meAreaHeaderButton", description="Click User Profile Avatar Menu"),
-                            TestStep(step_number=13, action=ActionType.CLICK, locator_strategy=LocatorStrategy.CSS, selector_value="button:has-text('Sign Out'), #logoutBtn", description="Click Sign Out"),
-                            TestStep(step_number=14, action=ActionType.CLICK, locator_strategy=LocatorStrategy.CSS, selector_value="button:has-text('OK'), #logoutConfirm", description="Confirm Sign Out dialog"),
-                            TestStep(step_number=15, action=ActionType.ASSERT_TEXT, locator_strategy=LocatorStrategy.CSS, selector_value="body", expected_value="logged off", description="Verify returned to Logoff screen"),
-                        ]
+                        steps = build_item_entry_steps(params=params, target_url=target_url)
                     elif any(k in ac_lower for k in ["create", "header", "sold-to", "party", "customer", "zqds"]):
-                        steps = [
-                            TestStep(step_number=1, action=ActionType.NAVIGATE, input_value=target_url, description="Open SAP Fiori Logon screen"),
-                            TestStep(step_number=2, action=ActionType.FILL, locator_strategy=LocatorStrategy.CSS, selector_value="#USERNAME_FIELD-inner", input_value=(settings.sap_username or "MYRAR1").strip(), description="Enter SAP username"),
-                            TestStep(step_number=3, action=ActionType.FILL, locator_strategy=LocatorStrategy.CSS, selector_value="#PASSWORD_FIELD-inner", input_value=(settings.sap_password or "Pass23#$").strip(), description="Enter SAP password"),
-                            TestStep(step_number=4, action=ActionType.CLICK, locator_strategy=LocatorStrategy.CSS, selector_value="#LOGIN_LINK", description="Click Log On button"),
-                            TestStep(step_number=5, action=ActionType.ASSERT_TEXT, locator_strategy=LocatorStrategy.CSS, selector_value="body", expected_value="Home", description="Assert SAP Fiori Launchpad loaded"),
-                            TestStep(step_number=6, action=ActionType.CLICK, locator_strategy=LocatorStrategy.TEXT, selector_value="Manage Service Quotations", description="Click Manage Service Quotations tile"),
-                            TestStep(step_number=7, action=ActionType.CLICK, locator_strategy=LocatorStrategy.CSS, selector_value="button:has-text('New Create'), button:has-text('Create'), [title*='Create'], #btnCreate", description="Click Create button on Service Quotations worklist"),
-                            TestStep(step_number=8, action=ActionType.CLICK, locator_strategy=LocatorStrategy.TEXT, selector_value=ttype_val, description=f"Select Transaction Type {ttype_val} (CE-Direct Sales) from popup"),
-                            TestStep(step_number=9, action=ActionType.FILL, locator_strategy=LocatorStrategy.ROLE, role_name="textbox", selector_value="Description:", input_value=desc_val, description=f"Enter Quotation Description '{desc_val}'"),
-                            TestStep(step_number=10, action=ActionType.FILL, locator_strategy=LocatorStrategy.ROLE, role_name="textbox", selector_value="Sold-To Party:", input_value=soldto_val, description=f"Enter Sold-to Party customer '{soldto_val}'"),
-                            TestStep(step_number=11, action=ActionType.FILL, locator_strategy=LocatorStrategy.ROLE, role_name="textbox", selector_value="Sold-To Party:", input_value="Enter", description="Press Enter to commit Sold-to Party and trigger partner determination"),
-                            TestStep(step_number=12, action=ActionType.ASSERT_TEXT, locator_strategy=LocatorStrategy.CSS, selector_value="body", expected_value=soldto_val, description="Assert quotation created with required transaction type and sold-to party"),
-                            TestStep(step_number=13, action=ActionType.CLICK, locator_strategy=LocatorStrategy.CSS, selector_value="#userActionsMenuHeaderButton, #meAreaHeaderButton", description="Click User Profile Avatar Menu"),
-                            TestStep(step_number=14, action=ActionType.CLICK, locator_strategy=LocatorStrategy.CSS, selector_value="button:has-text('Sign Out'), #logoutBtn", description="Click Sign Out"),
-                            TestStep(step_number=15, action=ActionType.CLICK, locator_strategy=LocatorStrategy.CSS, selector_value="button:has-text('OK'), #logoutConfirm", description="Confirm Sign Out dialog"),
-                            TestStep(step_number=16, action=ActionType.ASSERT_TEXT, locator_strategy=LocatorStrategy.CSS, selector_value="body", expected_value="logged off", description="Verify returned to Logoff screen"),
-                        ]
+                        steps = build_header_creation_steps(params=params, target_url=target_url)
                     elif any(k in ac_lower for k in ["release", "accept"]):
-                        steps = [
-                            TestStep(step_number=1, action=ActionType.CLICK, locator_strategy=LocatorStrategy.CSS, selector_value="button:has-text('Edit'), a:has-text('Edit'), [title*='Edit'], [aria-label*='Edit']", description="Click Edit button"),
-                            TestStep(step_number=2, action=ActionType.CLICK, locator_strategy=LocatorStrategy.CSS, selector_value="#C9_W36_V39_V40_btadminh_lcstatus-btn, [id*='btadminh_lcstatus-btn']", description="Open Lifecycle Status dropdown"),
-                            TestStep(step_number=3, action=ActionType.CLICK, locator_strategy=LocatorStrategy.ROLE, role_name="link", selector_value="Released", description="Change status to Released"),
-                            TestStep(step_number=4, action=ActionType.CLICK, locator_strategy=LocatorStrategy.ROLE, role_name="button", selector_value="Save (Ctrl+S)", description="Click Save button"),
-                            TestStep(step_number=5, action=ActionType.CLICK, locator_strategy=LocatorStrategy.CSS, selector_value="button:has-text('Accept'), [title*='Accept'], a:has-text('Accept'), [role='menuitem']:has-text('Accept')", description="Click Accept button on header toolbar"),
-                            TestStep(step_number=6, action=ActionType.ASSERT_TEXT, locator_strategy=LocatorStrategy.CSS, selector_value="body", expected_value="Accepted", description="Verify quotation status updated to Accepted"),
-                        ]
+                        steps = build_release_accept_steps()
                     elif any(k in ac_lower for k in ["price", "pricing", "ztaf", "condition"]):
-                        steps = [
-                            TestStep(step_number=1, action=ActionType.CLICK, locator_strategy=LocatorStrategy.ROLE, role_name="option", selector_value="Price Details", description="Click Price Details tab"),
-                            TestStep(step_number=2, action=ActionType.CLICK, locator_strategy=LocatorStrategy.ROLE, role_name="button", selector_value="Add", description="Click Add Pricing Element button"),
-                            TestStep(step_number=3, action=ActionType.CLICK, locator_strategy=LocatorStrategy.TEXT, selector_value=pricing_val, description=f"Select condition type {pricing_val} from popup"),
-                            TestStep(step_number=4, action=ActionType.CLICK, locator_strategy=LocatorStrategy.ROLE, role_name="button", selector_value="Back", description="Click Back to return to quotation"),
-                            TestStep(step_number=5, action=ActionType.ASSERT_TEXT, locator_strategy=LocatorStrategy.CSS, selector_value="body", expected_value=pricing_val, description=f"Verify condition type {pricing_val} present in pricing elements"),
-                        ]
+                        steps = build_pricing_condition_steps(pricing_val=pricing_val)
                     elif any(k in ac_lower for k in ["duration", "date", "term"]):
-                        steps = [
-                            TestStep(step_number=1, action=ActionType.CLICK, locator_strategy=LocatorStrategy.ROLE, role_name="option", selector_value="Dates", description="Open Dates tab"),
-                            TestStep(step_number=2, action=ActionType.FILL, locator_strategy=LocatorStrategy.CSS, selector_value="#C16_W64_V65_DatesTable_bottom_div tr:has-text('Term of Quotation') input, #C16_W64_V65_DatesTable_bottom_div tr:has-text('Term of Quotation') [role='textbox']", input_value=duration_val, description=f"Go to Term of Quotation and enter Duration as {duration_val}"),
-                            TestStep(step_number=3, action=ActionType.CLICK, locator_strategy=LocatorStrategy.CSS, selector_value="[id='C16_W64_V65_btdate_table[4].time_unit-btn']", description="Open Time Unit dropdown"),
-                            TestStep(step_number=4, action=ActionType.CLICK, locator_strategy=LocatorStrategy.ROLE, role_name="link", selector_value=time_unit_val, description=f"Select time unit {time_unit_val}"),
-                            TestStep(step_number=5, action=ActionType.ASSERT_TEXT, locator_strategy=LocatorStrategy.CSS, selector_value="body", expected_value=time_unit_val, description="Verify duration and validity dates section displayed"),
-                        ]
+                        steps = build_duration_dates_steps(duration_val=duration_val, time_unit_val=time_unit_val)
                     else:
-                        steps = [
-                            TestStep(step_number=1, action=ActionType.NAVIGATE, input_value=target_url, description="Open SAP Fiori Logon screen"),
-                            TestStep(step_number=2, action=ActionType.FILL, locator_strategy=LocatorStrategy.CSS, selector_value="#USERNAME_FIELD-inner", input_value=(settings.sap_username or "MYRAR1").strip(), description="Enter SAP username"),
-                            TestStep(step_number=3, action=ActionType.FILL, locator_strategy=LocatorStrategy.CSS, selector_value="#PASSWORD_FIELD-inner", input_value=(settings.sap_password or "Pass23#$").strip(), description="Enter SAP password"),
-                            TestStep(step_number=4, action=ActionType.CLICK, locator_strategy=LocatorStrategy.CSS, selector_value="#LOGIN_LINK", description="Click Log On button"),
-                            TestStep(step_number=5, action=ActionType.ASSERT_TEXT, locator_strategy=LocatorStrategy.CSS, selector_value="body", expected_value="Home", description="Assert SAP Fiori Launchpad loaded"),
+                        login = build_sap_login_steps(target_url)
+                        launch = [
                             TestStep(step_number=6, action=ActionType.CLICK, locator_strategy=LocatorStrategy.TEXT, selector_value="Manage Service Quotations", description="Click Manage Service Quotations tile"),
                             TestStep(step_number=7, action=ActionType.ASSERT_TEXT, locator_strategy=LocatorStrategy.CSS, selector_value="body", expected_value="Service Quotations", description="Verify Service Quotations screen loaded"),
                         ]
+                        steps = login + launch
                 else:
                     # Generic Non-SAP (Demo App) Fallback
                     if is_neg:
@@ -508,6 +378,27 @@ class TestDesigner:
 
             normalized_tc = self._enforce_sap_lifecycle(tc_obj, base_url, requirement)
             normalized_tc.id = f"TC-{idx:02d}"
+            # Dynamic test data: bind ${key} placeholders to values extracted from the AC text (no hardcoding)
+            try:
+                ac_low_td = ac.text.lower()
+                if any(k in ac_low_td for k in ["outbound delivery", "post goods issue", "picking"]) and not any(k in ac_low_td for k in ["start new quotation", "term of quotation"]):
+                    merged_td = dict(normalized_tc.test_data or {})
+                    merged_td.update(extract_outbound_delivery_parameters(ac.text))
+                    merged_td["storage_location"] = merged_td.get("storage_location") if str(merged_td.get("storage_location", "")).isdigit() and len(str(merged_td.get("storage_location", ""))) == 4 else "6020"
+                    merged_td["picking_quantity"] = "1"
+                    normalized_tc.test_data = merged_td
+                elif any(k in ac_low_td for k in ["create billing document", "billing document", "fully invoiced", "billing number"]) and not any(k in ac_low_td for k in ["outbound delivery", "post goods issue", "start new quotation"]):
+                    merged_td = dict(normalized_tc.test_data or {})
+                    merged_td.update(extract_billing_document_parameters(ac.text))
+                    normalized_tc.test_data = merged_td
+                else:
+                    td_params = extract_sap_quotation_parameters(requirement, ac)
+                    if td_params.get("line_items"):
+                        merged_td = build_sap_quotation_test_data(td_params)
+                        merged_td.update(normalized_tc.test_data or {})
+                        normalized_tc.test_data = merged_td
+            except Exception as td_err:
+                logger.debug("Test data extraction skipped for %s: %s", ac.id, td_err)
             test_cases.append(normalized_tc)
             progress_callback(idx, total, f"Completed Scenario {idx}/{total}: {normalized_tc.title} [Done]")
 
@@ -575,53 +466,16 @@ class TestDesigner:
         if not sap_url:
             sap_url = settings.sap_fiori_url
 
-        sap_user = (settings.sap_username or "MYRAR1").strip()
-        sap_pwd = (settings.sap_password or "Pass23#$").strip()
+        # Credentials are never hardcoded: ${...} placeholders are resolved at execution time from settings
+        sap_user = "${sap_username}"
+        sap_pwd = "${sap_password}"
 
         steps = list(tc.steps)
 
         # ----------------------------------------------------------------------
         # PART 1: ENSURE FULL LOGIN STEPS AT BEGINNING (DEDUPLICATED)
         # ----------------------------------------------------------------------
-        standard_login_steps = [
-            TestStep(
-                step_number=1,
-                action=ActionType.NAVIGATE,
-                input_value=sap_url,
-                description="Open SAP Fiori Logon screen",
-            ),
-            TestStep(
-                step_number=2,
-                action=ActionType.FILL,
-                locator_strategy=LocatorStrategy.CSS,
-                selector_value="#USERNAME_FIELD-inner",
-                input_value=sap_user,
-                description="Enter SAP username",
-            ),
-            TestStep(
-                step_number=3,
-                action=ActionType.FILL,
-                locator_strategy=LocatorStrategy.CSS,
-                selector_value="#PASSWORD_FIELD-inner",
-                input_value=sap_pwd,
-                description="Enter SAP password",
-            ),
-            TestStep(
-                step_number=4,
-                action=ActionType.CLICK,
-                locator_strategy=LocatorStrategy.CSS,
-                selector_value="#LOGIN_LINK",
-                description="Click Log On button",
-            ),
-            TestStep(
-                step_number=5,
-                action=ActionType.ASSERT_TEXT,
-                locator_strategy=LocatorStrategy.CSS,
-                selector_value="body",
-                expected_value="Home",
-                description="Assert SAP Fiori Launchpad loaded",
-            ),
-        ]
+        standard_login_steps = build_sap_login_steps(target_url=sap_url, username=sap_user, password=sap_pwd)
 
         def is_leading_login_step(s: TestStep) -> bool:
             act = s.action
@@ -631,7 +485,17 @@ class TestDesigner:
             s_exp = (s.expected_value or "").lower()
 
             if act == ActionType.NAVIGATE:
-                return True
+                if idx_start == 0:
+                    nav_url = (s.input_value or "").lower()
+                    is_deep_app_url = any(
+                        h in nav_url
+                        for h in ["outbounddelivery-", "billingdocument-", "revenueaccountingcontract-"]
+                    )
+                    has_later_nav = any(st.action == ActionType.NAVIGATE for st in steps[1:])
+                    if is_deep_app_url and not has_later_nav:
+                        return False
+                    return True
+                return False
 
             if act == ActionType.FILL and (
                 any(k in s_val for k in ["username", "user", "sap-user", "login"]) or
@@ -677,37 +541,7 @@ class TestDesigner:
                 has_logoff_end = True
                 break
 
-        standard_logoff_steps = [
-            TestStep(
-                step_number=901,
-                action=ActionType.CLICK,
-                locator_strategy=LocatorStrategy.CSS,
-                selector_value="#userActionsMenuHeaderButton, #meAreaHeaderButton",
-                description="Click User Profile Avatar Menu",
-            ),
-            TestStep(
-                step_number=902,
-                action=ActionType.CLICK,
-                locator_strategy=LocatorStrategy.CSS,
-                selector_value="button:has-text('Sign Out'), text='Sign Out'",
-                description="Click Sign Out",
-            ),
-            TestStep(
-                step_number=903,
-                action=ActionType.CLICK,
-                locator_strategy=LocatorStrategy.CSS,
-                selector_value="button:has-text('OK'), text='OK'",
-                description="Confirm Sign Out dialog",
-            ),
-            TestStep(
-                step_number=904,
-                action=ActionType.ASSERT_TEXT,
-                locator_strategy=LocatorStrategy.CSS,
-                selector_value="body",
-                expected_value="logged off",
-                description="Verify returned to Logoff screen",
-            ),
-        ]
+        standard_logoff_steps = build_sap_logoff_steps(start_step_number=901)
 
         if not has_logoff_end:
             final_steps_list = functional_steps + standard_logoff_steps

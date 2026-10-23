@@ -8,8 +8,8 @@ from playwright.sync_api import Page, expect
 
 def test_tc_01_positive(page: Page):
     """
-    [Category: POSITIVE] Validate AC-01: End-to-End Procedural Flow: Complete bun
-    Objective: Verify behavior for End-to-End Procedural Flow: Complete bundle quotation -> accept -> order -> Manage Revenue Contracts -> obligation processing -> safe sign out
+    [Category: POSITIVE] Validate AC-01: The resulting Operational Document succe
+    Objective: Verify behavior for The resulting Operational Document successfully appears in Manage Revenue Contracts
     """
     # Step 1: navigate
     page.goto("https://s4srv25.nodomain.com:44325/sap/bc/ui2/flp?sap-client=100&sap-language=EN#Launchpad-openFLPPage?pageId=SAP_CRM_PG_SERVICE_PROCESSING&spaceId=SAP_CRM_SP_SERVICE")
@@ -37,7 +37,7 @@ def test_tc_01_positive(page: Page):
     page.locator("ZQDS").click()
 
     # Step 9: fill
-    page.get_by_role("textbox").fill("RAR Test")
+    page.get_by_role("textbox").fill("RAR test")
 
     # Step 10: fill
     page.get_by_role("textbox").fill("Brugmann Hospital")
@@ -49,7 +49,7 @@ def test_tc_01_positive(page: Page):
     page.get_by_role("option").click()
 
     # Step 13: fill
-    page.locator("#C16_W64_V65_DatesTable_bottom_div tr:has-text('Term of Quotation') input, #C16_W64_V65_DatesTable_bottom_div tr:has-text('Term of Quotation') [role='textbox']").fill("1")
+    page.locator("#C16_W64_V65_DatesTable_bottom_div tr:has-text('Term of Quotation') input, #C16_W64_V65_DatesTable_bottom_div tr:has-text('Term of Quotation') [role='textbox']").fill("24")
 
     # Step 14: click
     page.locator("[id='C16_W64_V65_btdate_table[4].time_unit-btn']").click()
@@ -61,90 +61,126 @@ def test_tc_01_positive(page: Page):
     page.get_by_role("option").click()
 
     # Step 17: fill
-    page.locator("[id*='btadmini_table[1].ordered_prod'], [id*='ordered_prod'], [id='C13_W49_V50_V54_btadmini_table[1].ordered_prod']").fill("45157510101")
+    page.locator("[id*='btadmini_table[1].ordered_prod'], [id*='table[1]'][id*='ordered_prod'], input[name*='btadmini_table[1].ordered_prod'], [data-help-id*='I_ordered_prod:R_1'], [id*='ordered_prod'], [id='C13_W49_V50_V54_btadmini_table[1].ordered_prod']").fill("45157510101")
 
     # Step 18: fill
-    page.locator("input[id*='btadmini_table[1].quantity'], input[id*='btadmini_table'][id*='quantity'], input[id*='quantity']:not([readonly]), input[aria-label*='Quantity' i]").fill("1")
+    page.locator("input[id*='btadmini_table[1].quantity'], input[id*='table[1]'][id*='quantity'], input[name*='btadmini_table[1].quantity'], input[data-help-id*='I_quantity:R_1'], [id='C13_W49_V50_V54_btadmini_table[1].quantity'], input[id*='quantity']:not([readonly]), input[aria-label*='Quantity' i]").fill("1")
 
     # Step 19: fill
-    page.locator("input[id*='btadmini_table[1].quantity'], input[id*='btadmini_table'][id*='quantity'], input[id*='quantity']:not([readonly]), input[aria-label*='Quantity' i]").fill("Enter")
+    page.locator("input[id*='btadmini_table[1].quantity'], input[id*='table[1]'][id*='quantity'], input[name*='btadmini_table[1].quantity'], input[data-help-id*='I_quantity:R_1'], [id='C13_W49_V50_V54_btadmini_table[1].quantity'], input[id*='quantity']:not([readonly]), input[aria-label*='Quantity' i]").fill("Enter")
 
-    # Step 20: click
+    # Step 20: fill
+    page.locator("[id*='btadmini_table[2].ordered_prod'], input[name*='btadmini_table[2].ordered_prod'], [data-help-id*='I_ordered_prod:R_2'], [id='C13_W49_V50_V54_btadmini_table[2].ordered_prod']").fill("45157510707")
+
+    # Step 21: fill
+    page.locator("input[id*='btadmini_table[2].quantity'], input[id*='table[2]'][id*='quantity'], input[name*='btadmini_table[2].quantity'], input[data-help-id*='I_quantity:R_2'], [id='C13_W49_V50_V54_btadmini_table[2].quantity']").fill("1")
+
+    # Step 22: fill
+    page.locator("input[id*='btadmini_table[2].quantity'], input[id*='table[2]'][id*='quantity'], input[name*='btadmini_table[2].quantity'], input[data-help-id*='I_quantity:R_2'], [id='C13_W49_V50_V54_btadmini_table[2].quantity']").fill("Enter")
+
+    # Step 23: fill
+    page.locator("[id*='btadmini_table[3].ordered_prod'], input[name*='btadmini_table[3].ordered_prod'], [data-help-id*='I_ordered_prod:R_3'], [id='C13_W49_V50_V54_btadmini_table[3].ordered_prod']").fill("45157022301")
+
+    # Step 24: fill
+    page.locator("input[id*='btadmini_table[3].quantity'], input[id*='table[3]'][id*='quantity'], input[name*='btadmini_table[3].quantity'], input[data-help-id*='I_quantity:R_3'], [id='C13_W49_V50_V54_btadmini_table[3].quantity']").fill("1")
+
+    # Step 25: fill
+    page.locator("input[id*='btadmini_table[3].quantity'], input[id*='table[3]'][id*='quantity'], input[name*='btadmini_table[3].quantity'], input[data-help-id*='I_quantity:R_3'], [id='C13_W49_V50_V54_btadmini_table[3].quantity']").fill("Enter")
+
+    # Step 26: fill
+    page.locator("[id*='btadmini_table[4].ordered_prod'], input[name*='btadmini_table[4].ordered_prod'], [data-help-id*='I_ordered_prod:R_4'], [id='C13_W49_V50_V54_btadmini_table[4].ordered_prod']").fill("45157022302")
+
+    # Step 27: fill
+    page.locator("input[id*='btadmini_table[4].quantity'], input[id*='table[4]'][id*='quantity'], input[name*='btadmini_table[4].quantity'], input[data-help-id*='I_quantity:R_4'], [id='C13_W49_V50_V54_btadmini_table[4].quantity']").fill("1")
+
+    # Step 28: fill
+    page.locator("input[id*='btadmini_table[4].quantity'], input[id*='table[4]'][id*='quantity'], input[name*='btadmini_table[4].quantity'], input[data-help-id*='I_quantity:R_4'], [id='C13_W49_V50_V54_btadmini_table[4].quantity']").fill("Enter")
+
+    # Step 29: fill
+    page.locator("[id*='btadmini_table[5].ordered_prod'], input[name*='btadmini_table[5].ordered_prod'], [data-help-id*='I_ordered_prod:R_5'], [id='C13_W49_V50_V54_btadmini_table[5].ordered_prod']").fill("45157022900")
+
+    # Step 30: fill
+    page.locator("input[id*='btadmini_table[5].quantity'], input[id*='table[5]'][id*='quantity'], input[name*='btadmini_table[5].quantity'], input[data-help-id*='I_quantity:R_5'], [id='C13_W49_V50_V54_btadmini_table[5].quantity']").fill("1")
+
+    # Step 31: fill
+    page.locator("input[id*='btadmini_table[5].quantity'], input[id*='table[5]'][id*='quantity'], input[name*='btadmini_table[5].quantity'], input[data-help-id*='I_quantity:R_5'], [id='C13_W49_V50_V54_btadmini_table[5].quantity']").fill("Enter")
+
+    # Step 32: click
     page.locator("VELLYS SATELLITE STATION SKU1").click()
 
-    # Step 21: click
+    # Step 33: click
     page.get_by_role("option").click()
 
-    # Step 22: click
+    # Step 34: click
     page.get_by_role("button").click()
 
-    # Step 23: click
-    page.locator("values").click()
+    # Step 35: click
+    page.locator("ZTAF").click()
 
-    # Step 24: click
+    # Step 36: click
     page.get_by_role("button").click()
 
-    # Step 25: click
+    # Step 37: click
     page.get_by_role("button").click()
 
-    # Step 26: click
+    # Step 38: click
     page.locator("button:has-text('Edit'), a:has-text('Edit'), [title*='Edit'], [aria-label*='Edit']").click()
 
-    # Step 27: click
+    # Step 39: click
     page.locator("#C9_W36_V39_V40_btadminh_lcstatus-btn, [id*='btadminh_lcstatus-btn']").click()
 
-    # Step 28: click
+    # Step 40: click
     page.get_by_role("link").click()
 
-    # Step 29: click
+    # Step 41: click
     page.get_by_role("button").click()
 
-    # Step 30: click
+    # Step 42: click
     page.locator("button:has-text('Accept'), [title*='Accept'], a:has-text('Accept'), [role='menuitem']:has-text('Accept')").click()
 
-    # Step 31: click
+    # Step 43: click
     page.locator("Transaction History").click()
 
-    # Step 32: assert_text
+    # Step 44: assert_text
     expect(page.locator("body")).to_contain_text("Transaction")
 
-    # Step 33: navigate
+    # Step 45: navigate
     page.goto("https://s4srv25.nodomain.com:44325/sap/bc/ui2/flp?sap-client=100&sap-language=EN#RevenueAccountingContract-manageContract&/?sap-iapp-state--history=TAS60ZN0APGEXK9SB8U7CWP0998E9ZTQEZ7DBW9FR")
     page.wait_for_load_state("networkidle")
 
-    # Step 34: click
+    # Step 46: click
     page.locator("[id*='RevenueAccountingContract-vhi'], [id*='RevenueContract-vhi'], div:has(> label:has-text('Revenue Contract')) .sapMInputValHelpInner, label:has-text('Revenue Contract') ~ div .sapMInputValHelpInner, [id='fin.rar.manage.contract::sap.suite.ui.generic.template.ListReport.view.ListReport::C_RAContrWithPostedBalanceTP--listReportFilter-filterItemControl_BASIC-RevenueAccountingContract-vhi']").click()
 
-    # Step 35: fill
+    # Step 47: fill
     page.get_by_role("textbox").fill("${OPERATIONAL_DOCUMENT}")
 
-    # Step 36: fill
+    # Step 48: fill
     page.get_by_role("textbox").fill("Enter")
 
-    # Step 37: click
+    # Step 49: click
     page.locator("Selection column").click()
 
-    # Step 38: click
+    # Step 50: click
     page.get_by_role("dialog").click()
 
-    # Step 39: click
+    # Step 51: click
     page.get_by_role("button").click()
 
-    # Step 40: click
+    # Step 52: click
     page.get_by_role("button").click()
 
-    # Step 41: assert_text
+    # Step 53: assert_text
     expect(page.locator("body")).to_contain_text("Revenue Contract")
 
-    # Step 42: click
+    # Step 54: click
     page.get_by_role("button").click()
 
-    # Step 43: click
+    # Step 55: click
     page.get_by_role("button").click()
 
-    # Step 44: click
+    # Step 56: click
     page.get_by_role("button").click()
 
-    # Step 45: assert_text
+    # Step 57: assert_text
     expect(page.locator("body")).to_contain_text("logged off")
 

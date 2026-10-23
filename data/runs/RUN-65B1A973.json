@@ -1,0 +1,35 @@
+{
+  "run_id": "RUN-65B1A973",
+  "suite_id": "SUITE-SAP-200-NEG",
+  "environment": "local",
+  "target_url": "http://127.0.0.1:8000/",
+  "started_at": "2026-10-22T10:52:52.324773Z",
+  "finished_at": "2026-10-22T10:52:56.652036Z",
+  "total_tests": 1,
+  "passed_tests": 0,
+  "failed_tests": 1,
+  "blocked_tests": 0,
+  "error_tests": 0,
+  "trace_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261022_105252\\traces\\trace.zip",
+  "results": [
+    {
+      "test_case_id": "TC-SAP-NEG-01",
+      "outcome": "FAIL",
+      "classification": "application_defect",
+      "duration_seconds": 2.67,
+      "step_results": [
+        {
+          "step_number": 1,
+          "action": "navigate",
+          "duration_ms": 2543.13,
+          "passed": false,
+          "actual_value": null,
+          "error_message": "Navigation failed: Unable to establish TCP connection to '127.0.0.1:8000' (Error code 10061). The target SAP host or VM (127.0.0.1) appears to be offline or unreachable on your network. Diagnosis: The active SAP server was discovered at IP '192.168.1.198:8000', but your Windows hosts file (C:\\Windows\\System32\\drivers\\etc\\hosts) maps '127.0.0.1' to an unreachable IP (192.168.1.50). Original Playwright error: Page.goto: net::ERR_CONNECTION_REFUSED at http://127.0.0.1:8000/\nCall log:\n  - navigating to \"http://127.0.0.1:8000/\", waiting until \"domcontentloaded\"\n",
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261022_105252\\screenshots\\TC-SAP-NEG-01_step_1.png"
+        }
+      ],
+      "failure_message": "Step 1 (navigate) failed: Navigation failed: Unable to establish TCP connection to '127.0.0.1:8000' (Error code 10061). The target SAP host or VM (127.0.0.1) appears to be offline or unreachable on your network. Diagnosis: The active SAP server was discovered at IP '192.168.1.198:8000', but your Windows hosts file (C:\\Windows\\System32\\drivers\\etc\\hosts) maps '127.0.0.1' to an unreachable IP (192.168.1.50). Original Playwright error: Page.goto: net::ERR_CONNECTION_REFUSED at http://127.0.0.1:8000/\nCall log:\n  - navigating to \"http://127.0.0.1:8000/\", waiting until \"domcontentloaded\"\n",
+      "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261022_105252\\screenshots\\TC-SAP-NEG-01_step_1.png"
+    }
+  ]
+}

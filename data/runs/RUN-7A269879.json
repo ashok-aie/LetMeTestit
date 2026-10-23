@@ -1,0 +1,44 @@
+{
+  "run_id": "RUN-7A269879",
+  "suite_id": "SUITE-SAP-200-ERR",
+  "environment": "local",
+  "target_url": "http://127.0.0.1:8000/",
+  "started_at": "2026-10-21T01:40:39.563993Z",
+  "finished_at": "2026-10-21T01:40:46.110166Z",
+  "total_tests": 1,
+  "passed_tests": 0,
+  "failed_tests": 1,
+  "blocked_tests": 0,
+  "error_tests": 0,
+  "trace_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261021_014039\\traces\\trace.zip",
+  "results": [
+    {
+      "test_case_id": "TC-SAP-EXEC-ERR-BANNER",
+      "outcome": "FAIL",
+      "classification": "application_defect",
+      "duration_seconds": 5.07,
+      "step_results": [
+        {
+          "step_number": 1,
+          "action": "navigate",
+          "duration_ms": 4624.31,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261021_014039\\screenshots\\TC-SAP-EXEC-ERR-BANNER_step_1.png"
+        },
+        {
+          "step_number": 2,
+          "action": "assert_text",
+          "duration_ms": 97.6,
+          "passed": false,
+          "actual_value": null,
+          "error_message": "Unexpected application error banner displayed during positive test 'TC-SAP-EXEC-ERR-BANNER': '⚠️ Error: Validation Error: Customer ID is mandatory.'",
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261021_014039\\screenshots\\TC-SAP-EXEC-ERR-BANNER_step_2.png"
+        }
+      ],
+      "failure_message": "Step 2 (assert_text) failed: Unexpected application error banner displayed during positive test 'TC-SAP-EXEC-ERR-BANNER': '⚠️ Error: Validation Error: Customer ID is mandatory.'",
+      "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261021_014039\\screenshots\\TC-SAP-EXEC-ERR-BANNER_step_2.png"
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "run_id": "RUN-16D7CEB7",
+  "suite_id": "SUITE-SAP-200-FAIL",
+  "environment": "local",
+  "target_url": "http://127.0.0.1:8000/",
+  "started_at": "2026-10-21T20:23:38.049409Z",
+  "finished_at": "2026-10-21T20:24:00.437277Z",
+  "total_tests": 1,
+  "passed_tests": 0,
+  "failed_tests": 1,
+  "blocked_tests": 0,
+  "error_tests": 0,
+  "trace_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261021_202338\\traces\\trace.zip",
+  "results": [
+    {
+      "test_case_id": "TC-SAP-EXEC-FAIL-02",
+      "outcome": "FAIL",
+      "classification": "application_defect",
+      "duration_seconds": 20.07,
+      "step_results": [
+        {
+          "step_number": 1,
+          "action": "navigate",
+          "duration_ms": 4652.63,
+          "passed": true,
+          "actual_value": null,
+          "error_message": null,
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261021_202338\\screenshots\\TC-SAP-EXEC-FAIL-02_step_1.png"
+        },
+        {
+          "step_number": 2,
+          "action": "assert_text",
+          "duration_ms": 15101.79,
+          "passed": false,
+          "actual_value": null,
+          "error_message": "Text assertion failed on 'orders-table'. Expected 'NON_EXISTENT_GHOST_CUSTOMER_9999' to be contained in 'ORDER ID\tSOLD-TO PARTY\tMATERIAL & QTY\tNET VALUE\tLIFECYCLE STATUS\tACTIONS\nSO-45000103\n2026-10-22 01:53\tZephyr Industrial Turbines\nCUST-7777\t\nTitanium Hex Bolts (Box 500)\nQty: 2 BX @ $120.00\t$240.00\tSubmitted\t\nApprove\nCancel\n\nSO-45000101\n2026-10-10 09:30\tGlobal Heavy Industries Ltd\nCUST-1001\t\nIndustrial Steel Coil (Grade A)\nQty: 4 TO @ $450.00\t$1800.00\tApproved\t\nDispatch\nCancel\n\nSO-45000102\n2026-10-11 08:15\tAerospace Precision Components\nCUST-2002\t\nTitanium Hex Bolts (Box 500)\nQty: 10 BX @ $120.00\t$1200.00\tSubmitted\t\nApprove\nCancel'.",
+          "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261021_202338\\screenshots\\TC-SAP-EXEC-FAIL-02_step_2.png"
+        }
+      ],
+      "failure_message": "Step 2 (assert_text) failed: Text assertion failed on 'orders-table'. Expected 'NON_EXISTENT_GHOST_CUSTOMER_9999' to be contained in 'ORDER ID\tSOLD-TO PARTY\tMATERIAL & QTY\tNET VALUE\tLIFECYCLE STATUS\tACTIONS\nSO-45000103\n2026-10-22 01:53\tZephyr Industrial Turbines\nCUST-7777\t\nTitanium Hex Bolts (Box 500)\nQty: 2 BX @ $120.00\t$240.00\tSubmitted\t\nApprove\nCancel\n\nSO-45000101\n2026-10-10 09:30\tGlobal Heavy Industries Ltd\nCUST-1001\t\nIndustrial Steel Coil (Grade A)\nQty: 4 TO @ $450.00\t$1800.00\tApproved\t\nDispatch\nCancel\n\nSO-45000102\n2026-10-11 08:15\tAerospace Precision Components\nCUST-2002\t\nTitanium Hex Bolts (Box 500)\nQty: 10 BX @ $120.00\t$1200.00\tSubmitted\t\nApprove\nCancel'.",
+      "screenshot_path": "C:\\Users\\Myrar1\\LetMeTestit\\artifacts\\runs\\run_20261021_202338\\screenshots\\TC-SAP-EXEC-FAIL-02_step_2.png"
+    }
+  ]
+}

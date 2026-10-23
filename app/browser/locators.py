@@ -75,15 +75,17 @@ class LocatorResolver:
                 clean_name = value.rstrip(":").strip()
                 return (
                     target.locator(
-                        "[id*='btadminh_struct.description'], "
+                        "input[id*='btadminh_struct.description'], "
+                        "textarea[id*='btadminh_struct.description'], "
+                        "[id*='btadminh_struct.description']:not(span):not(label), "
                         "input[id*='description' i], "
                         "textarea[id*='description' i], "
-                        "[aria-label*='Description' i], "
-                        "[title*='Description' i]"
+                        "input[aria-label*='Description' i], "
+                        "textarea[aria-label*='Description' i], "
+                        "input[title*='Description' i]"
                     )
                     .or_(target.get_by_role("textbox", name=re.compile(r"description", re.I)))
                     .or_(target.get_by_role("textbox", name=clean_name))
-                    .or_(target.get_by_role(role_type, name=value, exact=exact))
                 )
             elif role_type == "textbox" and any(k in value.lower() for k in ("sold-to", "soldto", "party")):
                 clean_name = value.rstrip(":").strip()
@@ -265,20 +267,55 @@ class LocatorResolver:
                     .or_(target.get_by_role("textbox", name=re.compile(r"operational\s*document", re.I)))
                 )
             elif any(k in value.lower() for k in ("quantity", "qty")):
-                return (
-                    target.locator(
-                        "input[id*='btadmini_table[1].quantity'], "
-                        "input[name*='btadmini_table[1].quantity'], "
-                        "input[id*='btadmini_table'][id*='quantity'], "
-                        "input[name*='btadmini_table'][name*='quantity'], "
-                        "input[id*='quantity']:not([readonly]), "
-                        "input[id*='quantity'], "
-                        "[id*='btadmini_table'] input[id*='quantity'], "
-                        "input[aria-label*='Quantity' i], "
-                        "input[title*='Quantity' i]"
+                m_row = re.search(r"(?:table\[|item\s*|R_)(\d+)", value, re.IGNORECASE)
+                row_idx = m_row.group(1) if m_row else "1"
+                if row_idx == "1":
+                    return (
+                        target.locator(
+                            "input[id*='btadmini_table[1].quantity'], "
+                            "input[name*='btadmini_table[1].quantity'], "
+                            "input[id*='btadmini_table'][id*='quantity'], "
+                            "input[name*='btadmini_table'][name*='quantity'], "
+                            "input[id*='quantity']:not([readonly]), "
+                            "input[id*='quantity'], "
+                            "[id*='btadmini_table'] input[id*='quantity'], "
+                            "input[aria-label*='Quantity' i], "
+                            "input[title*='Quantity' i]"
+                        )
+                        .or_(target.locator("input[id*='quantity']"))
                     )
-                    .or_(target.locator("input[id*='quantity']"))
-                )
+                else:
+                    return target.locator(
+                        f"input[id*='btadmini_table[{row_idx}].quantity'], "
+                        f"input[name*='btadmini_table[{row_idx}].quantity'], "
+                        f"input[id*='table[{row_idx}]'][id*='quantity'], "
+                        f"input[name*='table[{row_idx}]'][name*='quantity'], "
+                        f"input[data-help-id*='I_quantity:R_{row_idx}'], "
+                        f"[id='C13_W49_V50_V54_btadmini_table[{row_idx}].quantity']"
+                    )
+            elif any(k in value.lower() for k in ("ordered_prod", "product id", "product_id")) and any(k in value.lower() for k in ("table", "btadmini", "item", "c13_w49")):
+                m_row = re.search(r"(?:table\[|item\s*|R_)(\d+)", value, re.IGNORECASE)
+                row_idx = m_row.group(1) if m_row else "1"
+                if row_idx == "1":
+                    return (
+                        target.locator(
+                            "[id*='btadmini_table[1].ordered_prod'], "
+                            "input[name*='btadmini_table[1].ordered_prod'], "
+                            "[data-help-id*='I_ordered_prod:R_1'], "
+                            "[id*='table[1]'][id*='ordered_prod'], "
+                            "[id='C13_W49_V50_V54_btadmini_table[1].ordered_prod'], "
+                            "[id*='ordered_prod']"
+                        )
+                        .or_(target.locator("input[id*='ordered_prod']"))
+                    )
+                else:
+                    return target.locator(
+                        f"[id*='btadmini_table[{row_idx}].ordered_prod'], "
+                        f"input[name*='btadmini_table[{row_idx}].ordered_prod'], "
+                        f"[data-help-id*='I_ordered_prod:R_{row_idx}'], "
+                        f"[id*='table[{row_idx}]'][id*='ordered_prod'], "
+                        f"[id='C13_W49_V50_V54_btadmini_table[{row_idx}].ordered_prod']"
+                    )
             elif "," in value:
                 # Comma-separated multi-candidate selector
                 candidates = [c.strip() for c in value.split(",") if c.strip()]

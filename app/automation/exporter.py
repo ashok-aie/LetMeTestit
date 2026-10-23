@@ -71,7 +71,12 @@ def export_suite_to_playwright_script(
                 if strategy == "test_id":
                     locator_expr = f'page.get_by_test_id("{selector}")'
                 elif strategy == "role":
-                    locator_expr = f'page.get_by_role("{step.role_name or selector}")'
+                    if step.role_name and selector and step.role_name != selector:
+                        locator_expr = f'page.get_by_role("{step.role_name}", name="{selector}")'
+                    else:
+                        locator_expr = f'page.get_by_role("{step.role_name or selector}")'
+                elif strategy == "text":
+                    locator_expr = f'page.get_by_text("{selector}")'
                 else:
                     locator_expr = f'page.locator("{selector}")'
                 val = step.input_value or ""
@@ -81,7 +86,12 @@ def export_suite_to_playwright_script(
                 if strategy == "test_id":
                     locator_expr = f'page.get_by_test_id("{selector}")'
                 elif strategy == "role":
-                    locator_expr = f'page.get_by_role("{step.role_name or selector}")'
+                    if step.role_name and selector and step.role_name != selector:
+                        locator_expr = f'page.get_by_role("{step.role_name}", name="{selector}")'
+                    else:
+                        locator_expr = f'page.get_by_role("{step.role_name or selector}")'
+                elif strategy == "text":
+                    locator_expr = f'page.get_by_text("{selector}")'
                 else:
                     locator_expr = f'page.locator("{selector}")'
                 code_lines.append(f'    {locator_expr}.click()')

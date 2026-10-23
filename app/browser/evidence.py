@@ -31,6 +31,13 @@ class EvidenceManager:
         """Default path for the Playwright trace.zip archive."""
         return (self.traces_dir / "trace.zip").resolve()
 
+    def get_trace_path(self, test_case_id: Optional[str] = None) -> Path:
+        """Returns the targeted filepath for a Playwright trace archive."""
+        if test_case_id:
+            clean_tc_id = test_case_id.replace(" ", "_").replace("/", "-")
+            return (self.traces_dir / f"trace_{clean_tc_id}.zip").resolve()
+        return (self.traces_dir / "trace.zip").resolve()
+
     def get_screenshot_path(self, test_case_id: str, step_number: Optional[int] = None) -> Path:
         """Returns the targeted filepath for a screenshot."""
         clean_tc_id = test_case_id.replace(" ", "_").replace("/", "-")

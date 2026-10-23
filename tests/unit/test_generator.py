@@ -5,7 +5,7 @@ Verifies prompt construction, schema validation, and self-correction retry handl
 import pytest
 from unittest.mock import MagicMock
 
-from app.models.requirements import JiraRequirement
+from app.models.requirements import JiraRequirement, AcceptanceCriterion
 from app.models.test_suite import TestSuite
 from app.agents.llm_client import LLMResponse
 from app.test_design.prompts import format_requirement_prompt
@@ -367,4 +367,106 @@ logout of SAP"""
     assert any("Operational Document" in sel for sel in step_selectors)
 
 
+
+
+
+def test_generator_multi_product_row_isolation():
+    """Validates that multi-product requirements generate distinct row selectors without greedy fallbacks."""
+    req_text = """## User Story
+In Service Quotation application', start new Quotation. -> Select Transaction Type ZQDS — CE-Direct Sales -> Give Description as 'RAR test'  and Sold-to Party as Brugmann Hospital -> In the ‘Dates’ tab, In ‘Term of Quotation’ and give its Duration as 24 and Time Unit as Months -> In Items tab, Product ID is 45157510101, 45157510707, 45147022301 and Quantity is 1 for each  each Product ID and then click enter
+"""
+    req = JiraRequirement(
+        key="KAN-28",
+        summary="SAP RAR – Service Quotation multi product",
+        description_text=req_text,
+        acceptance_criteria=[
+            AcceptanceCriterion(
+                id="AC-01",
+                text="In Items tab, Product ID is 45157510101, 45157510707, 45147022301 and Quantity is 1 for each each Product ID and then click enter",
+            )
+        ],
+    )
+
+    mock_llm = MagicMock()
+    mock_llm.generate.side_effect = Exception("LLM fallback trigger")
+
+    designer = TestDesigner(llm_client=mock_llm)
+    suite = designer.generate_suite(
+        requirement=req,
+        target_base_url="https://s4srv25.nodomain.com:44325/sap/bc/ui2/flp",
+        progress_callback=lambda c, t, m: None,
+    )
+
+    tc = suite.test_cases[0]
+
+    p1_step = next(s for s in tc.steps if s.input_value == "45157510101")
+    p2_step = next(s for s in tc.steps if s.input_value == "45157510707")
+    p3_step = next(s for s in tc.steps if s.input_value == "45147022301")
+
+    p2_tokens = [s.strip() for s in p2_step.selector_value.split(",")]
+    p3_tokens = [s.strip() for s in p3_step.selector_value.split(",")]
+
+    assert "btadmini_table[1].ordered_prod" in p1_step.selector_value
+    assert "btadmini_table[2].ordered_prod" in p2_step.selector_value
+    assert "[id*='ordered_prod']" not in p2_tokens
+    assert "btadmini_table[3].ordered_prod" in p3_step.selector_value
+    assert "[id*='ordered_prod']" not in p3_tokens
+
+    q2_step = next(s for s in tc.steps if s.step_number == p2_step.step_number + 1)
+    q3_step = next(s for s in tc.steps if s.step_number == p3_step.step_number + 1)
+    q2_tokens = [s.strip() for s in q2_step.selector_value.split(",")]
+    q3_tokens = [s.strip() for s in q3_step.selector_value.split(",")]
+
+    assert "btadmini_table[2].quantity" in q2_step.selector_value
+    assert "input[id*='quantity']:not([readonly])" not in q2_tokens
+    assert "btadmini_table[3].quantity" in q3_step.selector_value
+    assert "input[id*='quantity']:not([readonly])" not in q3_tokens
+
+
+def test_generator_multi_product_row_isolation():
+    """Validates that multi-product requirements generate distinct row selectors without greedy fallbacks."""
+    req_text = """## User Story
+In Service Quotation application', start new Quotation. -> Select Transaction Type ZQDS — CE-Direct Sales -> Give Description as 'RAR test'  and Sold-to Party as Brugmann Hospital -> In the ‘Dates’ tab, In ‘Term of Quotation’ and give its Duration as 24 and Time Unit as Months -> In Items tab, Product ID is 45157510101, 45157510707, 45147022301 and Quantity is 1 for each  each Product ID and then click enter
+"""
+    req = JiraRequirement(
+        key="KAN-28",
+        summary="SAP RAR – Service Quotation multi product",
+        description_text=req_text,
+        acceptance_criteria=[
+            AcceptanceCriterion(
+                id="AC-01",
+                text="In Items tab, Product ID is 45157510101, 45157510707, 45147022301 and Quantity is 1 for each each Product ID and then click enter",
+            )
+        ],
+    )
+
+    mock_llm = MagicMock()
+    mock_llm.generate.side_effect = Exception("LLM fallback trigger")
+
+    designer = TestDesigner(llm_client=mock_llm)
+    suite = designer.generate_suite(
+        requirement=req,
+        target_base_url="https://s4srv25.nodomain.com:44325/sap/bc/ui2/flp",
+        progress_callback=lambda c, t, m: None,
+    )
+
+    tc = suite.test_cases[0]
+
+    p1_step = next(s for s in tc.steps if s.input_value == "45157510101")
+    p2_step = next(s for s in tc.steps if s.input_value == "45157510707")
+    p3_step = next(s for s in tc.steps if s.input_value == "45147022301")
+
+    assert "btadmini_table[1].ordered_prod" in p1_step.selector_value
+    assert "btadmini_table[2].ordered_prod" in p2_step.selector_value
+    assert "[id*='ordered_prod']" not in p2_step.selector_value
+    assert "btadmini_table[3].ordered_prod" in p3_step.selector_value
+    assert "[id*='ordered_prod']" not in p3_step.selector_value
+
+    q2_step = next(s for s in tc.steps if s.step_number == p2_step.step_number + 1)
+    q3_step = next(s for s in tc.steps if s.step_number == p3_step.step_number + 1)
+
+    assert "btadmini_table[2].quantity" in q2_step.selector_value
+    assert "input[id*='quantity']:not([readonly])" not in q2_step.selector_value
+    assert "btadmini_table[3].quantity" in q3_step.selector_value
+    assert "input[id*='quantity']:not([readonly])" not in q3_step.selector_value
 

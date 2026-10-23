@@ -198,6 +198,7 @@ class BrowserContextManager:
         evidence_manager: Optional[EvidenceManager] = None,
         enable_tracing: bool = True,
         cdp_url: Optional[str] = None,
+        test_case_id: Optional[str] = None,
     ):
         self.headless = settings.browser_headless if headless is None else headless
         self.cdp_url = cdp_url or settings.cdp_endpoint_url
@@ -210,6 +211,7 @@ class BrowserContextManager:
 
         self.evidence_manager = evidence_manager or EvidenceManager()
         self.enable_tracing = enable_tracing
+        self.test_case_id = test_case_id
 
         self._playwright: Optional[Playwright] = None
         self._browser: Optional[Browser] = None
@@ -408,8 +410,14 @@ class BrowserContextManager:
         """Stops tracing, exports trace archive, closes context, and terminates interactive Chrome."""
         try:
             if self._context and self.enable_tracing:
-                trace_path = self.evidence_manager.trace_file_path
+                trace_path = self.evidence_manager.get_trace_path(self.test_case_id)
                 self._context.tracing.stop(path=str(trace_path))
+                default_trace = self.evidence_manager.trace_file_path
+                if trace_path != default_trace:
+                    try:
+                        shutil.copyfile(trace_path, default_trace)
+                    except Exception:
+                        pass
         except Exception:
             pass
 
